@@ -6,25 +6,19 @@ name: argosbuild
 platform:
   os: linux
   arch: amd64
+  
+workspace:
+  path: /drone/src
 
 steps:
-- name: set version
-  image: argosnotary/argos-build:3.6.3
-  commands:
-  - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
-  volumes:
-  - name: mvn_cache
-    path: /root/.m2/repository
-
 - name: build
   image: argosnotary/argos-build:3.6.3
   commands:
-  - mvn -q install
+  - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
+  - mvn -q verify -Ppitest install
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
-  depends_on:
-  - set version
 
 - name: sonar
   image: argosnotary/argos-build:3.6.3
@@ -38,79 +32,13 @@ steps:
     path: /root/.m2/repository
   depends_on:
   - build
-
-- name: pitest
-  image: argosnotary/argos-build:3.6.3
-  commands:
-  - mvn -q -e verify -Ppitest
-  volumes:
-  - name: mvn_cache
-    path: /root/.m2/repository
-  depends_on:
-  - sonar
-
-- name: build argos service image
-  image: plugins/docker
-  settings:
-    context: argos-docker
-    dockerfile: argos-docker/ServiceDockerfile
-    password:
-      from_secret: docker_login_token
-    repo: argosnotary/argos-service-snapshot
-    tags: ${DRONE_TAG:-${DRONE_BRANCH//\//_}}
-    username:
-      from_secret: docker_login_user
-  depends_on:
-  - pitest
-  - sonar
-
-- name: build argos integration test service image
-  image: plugins/docker
-  settings:
-    context: argos-docker
-    dockerfile: argos-docker/IntegrationTestServiceDockerfile
-    password:
-      from_secret: docker_login_token
-    repo: argosnotary/argos-integration-test-service
-    tags: ${DRONE_TAG:-${DRONE_BRANCH//\//_}}
-    username:
-      from_secret: docker_login_user
-  depends_on:
-  - pitest
-  - sonar
-
-- name: build argos integration test stub image
-  image: plugins/docker
-  settings:
-    context: argos-docker/oauth-stub
-    dockerfile: argos-docker/oauth-stub/Dockerfile
-    password:
-      from_secret: docker_login_token
-    repo: argosnotary/argos-integration-test-stub
-    tags: ${DRONE_TAG:-${DRONE_BRANCH//\//_}}
-    username:
-      from_secret: docker_login_user
-  depends_on:
-  - pitest
-  - sonar
-
-- name: build argos jenkins image
-  image: plugins/docker
-  settings:
-    context: argos-docker
-    dockerfile: argos-docker/JenkinsDockerfile
-    password:
-      from_secret: docker_login_token
-    repo: argosnotary/argos-jenkins-snapshot
-    tags: ${DRONE_TAG:-${DRONE_BRANCH//\//_}}
-    username:
-      from_secret: docker_login_user
-  depends_on:
-  - pitest
-  - sonar
+  when:
+    event:
+    - tag
+    - push
   
 - name: argos-service
-  image: argosnotary/argos-service-snapshot:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
+  image: argosnotary/argos-docker-base:11.0.8
   pull: always
   detach: true
   environment:
@@ -124,30 +52,29 @@ steps:
     spring.security.oauth2.client.registration.azure.clientId: client-id
     spring.security.oauth2.client.registration.azure.clientSecret: client-secret
     spring.profiles.active: integration-test
+    RUNNABLE_JAR: '/drone/src/argos-service/target/argos-service.jar'
   depends_on:
   - mongodb
-  - build argos service image
-
+  - build
+  - argos-integration-test-stub
+  - sonar
+  
 - name: argos-integration-test-service
-  image: argosnotary/argos-integration-test-service:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
+  image: argosnotary/argos-docker-base:11.0.8
   pull: always
   detach: true
   environment:
     spring.data.mongodb.uri: mongodb://mongodb/argos
     spring.data.mongodb.database: argos
+    RUNNABLE_JAR: '/drone/src/argos-integration-test-service/target/argos-integration-test-service.jar'
   depends_on:
   - mongodb
-  - build argos integration test service image
-
-- name: argos-integration-test-stub
-  image: argosnotary/argos-integration-test-stub:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
-  pull: always
-  detach: true
-  depends_on:
-  - build argos integration test stub image
-
+  - build
+  - argos-integration-test-stub
+  - sonar
+  
 - name: argos-jenkins
-  image: argosnotary/argos-jenkins-snapshot:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
+  image: argosnotary/argos-jenkins-base:latest
   pull: always
   detach: true
   environment:
@@ -159,8 +86,10 @@ steps:
   - name: mvn_cache
     path: /root/.m2/repository
   depends_on:
-  - build argos jenkins image
-
+  - build
+  - nexus
+  - sonar
+  
 - name: regression test
   image: argosnotary/argos-build:3.6.3
   commands:
@@ -174,6 +103,7 @@ steps:
   - argos-service
   - argos-integration-test-service
   - nexus
+  - sonar
 
 - name: release argos service image
   image: plugins/docker
@@ -209,6 +139,9 @@ steps:
       from_secret: argos-signing-private-key
     passphrase:
       from_secret: argos-signing-private-key-passphrase
+  when:
+    event:
+    - tag
   depends_on:
   - regression test
 
@@ -238,19 +171,26 @@ steps:
   settings:
     webhook:
       from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
   depends_on:
   - regression test
   - release argos service image
   - deploy release to sonatype
-
-services:
-- name: nexus
-  image: sonatype/nexus:2.14.15-01
   
+services:
 - name: mongodb
   image: argosnotary/mongo:4.2.8
+- name: nexus
+  image: sonatype/nexus:2.14.15-01
+- name: argos-integration-test-stub
+  image: argosnotary/oauth-stub:2.25.1
   
 volumes:
+- name: mvn_cache
+  temp: {}
 - name: mvn_cache
   temp: {}
 
@@ -258,6 +198,7 @@ trigger:
   event:
   - push
   - tag
+  - pull_request
 
 ---
 kind: pipeline
@@ -278,6 +219,9 @@ steps:
 trigger:
   status:
   - failure
+  event:
+  - push
+  - tag
 
 depends_on:
 - argosbuild

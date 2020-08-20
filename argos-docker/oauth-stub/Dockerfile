@@ -14,15 +14,12 @@
 # limitations under the License.
 #
 
-FROM openjdk:8-jre-alpine
+FROM openjdk:11.0.8-jre-slim-buster
 
-ENV WIREMOCK_VERSION 2.25.1
+ARG WIREMOCK_VERSION
 
-RUN apk add --update openssl
-
-# grab su-exec for easy step-down from root
-# and bash for "bin/elasticsearch" among others
-RUN apk add --no-cache 'su-exec>=0.2' bash
+RUN apt-get update \
+    && apt-get install -y wget
 
 # grab wiremock standalone jar
 RUN mkdir -p /var/wiremock/lib/ \

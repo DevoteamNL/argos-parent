@@ -14,6 +14,25 @@
 # limitations under the License.
 #
 
-FROM argosnotary/argos-docker-base:11.0.8
+version: '3.1'
 
-ADD target/lib/argos-integration-test-service.jar /argos.jar
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ee:latest'
+    hostname: '192.168.120.10'
+    extra_hosts:
+    - "drone.local:192.168.120.10"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://192.168.120.10'
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - './temp/gitlab/config:/etc/gitlab'
+      - './temp/gitlab/logs:/var/log/gitlab'
+      - './temp/gitlab/data:/var/opt/gitlab'
+      
+

@@ -25,11 +25,7 @@ version: '3.1'
 services:
 
   argos-service:
-    build:
-      context: .
-      dockerfile: ServiceDockerfile
-      args:
-        - VERSION=compose
+    image: argosnotary/argos-docker-base:11.0.8
     environment:
       spring.data.mongodb.uri: mongodb://mongodb/argos
       spring.data.mongodb.database: argos
@@ -44,21 +40,20 @@ services:
       JAVA_OPTS: '-Xmx1g'
     ports:
       - 8080:8080
+    volumes:
+      - ../argos-service/target/argos-service.jar:/argos.jar
     depends_on:
       - mongodb
 
   oauth-stub:
-    build:
-      context: oauth-stub
+    image: argosnotary/oauth-stub:2.25.1
     environment:
       JAVA_OPTS: '-Xmx500m'
     ports:
       - 8087:8080
 
   argos-integration-test-service:
-    build:
-      context: .
-      dockerfile: IntegrationTestServiceDockerfile
+    image: argosnotary/argos-docker-base:11.0.8
     environment:
       spring.data.mongodb.uri: mongodb://mongodb/argos
       spring.data.mongodb.database: argos
@@ -66,6 +61,8 @@ services:
       JAVA_OPTS: '-Xmx500m'
     ports:
       - 2877:2877
+    volumes:
+      - ../argos-integration-test-service/target/argos-integration-test-service.jar:/argos.jar
     depends_on:
       - mongodb
 
@@ -75,9 +72,7 @@ services:
       - 27017:27017
 
   jenkins:
-    build:
-      context: .
-      dockerfile: JenkinsDockerfile
+    image: argosnotary/argos-jenkins-base:latest
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Xmx1g
       - snapshotsUrl=http://nexus:8081/nexus/content/repositories/snapshots/
@@ -85,6 +80,7 @@ services:
       - argosServiceUrl=http://argos-service:8080
     volumes:
       - maven_cache:/root/.m2/repository
+      - ../argos-jenkins-plugin/target/argos.hpi:/usr/share/jenkins/ref/plugins/argos.hpi
     ports:
       - 9080:8080
     depends_on:

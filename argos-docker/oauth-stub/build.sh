@@ -16,25 +16,24 @@
 #
 
 set -x
-name_space=$(grep "name_space=" build.config | cut -d '=' -f2)
-docker_from_image=$(grep "docker_from_image=" build.config | cut -d '=' -f2)
-latest_tag=$(grep "latest_tag" build.config | cut -d '=' -f2)
+WIREMOCK_VERSION="2.25.1"
+IMAGE_TAG=${WIREMOCK_VERSION}
+REGISTRY="argosnotary"
+IMAGE_NAME="oauth-stub"
+build_image=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
 
-REGISTRY="${name_space}"
-JENKINS_NAME=$(grep "jenkins_name=" build.config | cut -d '=' -f2)
-IMAGE_LATEST="${JENKINS_NAME}:${latest_tag}"
 
 image() {
-  build_image=${REGISTRY}/${IMAGE_LATEST}
   echo "Build image ${build_image}"
   docker build \
+    --build-arg WIREMOCK_VERSION=${WIREMOCK_VERSION} \
     --tag ${build_image} \
   .
 }
 
 push() {
   image
-  docker push ${REGISTRY}/${JENKINS_NAME}:${latest_tag}
+  docker push ${build_image}
 }
 
 help() {
@@ -48,6 +47,8 @@ help() {
   printf "   \033[36m%-30s\033[0m %s\n" "name=<name>" "Name of the Docker image, required."
   echo ""
 }
+
+#sed -e "s/@@VERSION@@/$VERSION/g" docker/Dockerfile.template > docker/Dockerfile 
 
 if [ -z "${1}" ]; then
   echo "ERROR: function required"
