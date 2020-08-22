@@ -1,0 +1,47 @@
+#
+# Copyright (C) 2019 - 2020 Rabobank Nederland
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+version: '3.1'
+
+services:
+  drone:
+    image: 'drone/drone:1'
+    environment:
+      DRONE_GITHUB_CLIENT_ID: <client id>
+      DRONE_GITHUB_CLIENT_SECRET: <client secret>
+      DRONE_RPC_SECRET: drone-secret
+      DRONE_SERVER_HOST: <drone host>
+      DRONE_SERVER_PROTO: http
+    ports:
+      - '80:80'
+      - '443:443'
+      - '2222:22'
+    volumes:
+      - './temp/drone:/data'
+      
+  runner:
+    image: 'drone/drone-runner-docker:1'
+    environment:
+      DRONE_RPC_SECRET: drone-secret
+      DRONE_RPC_HOST: drone
+      DRONE_RPC_PROTO: http
+      DRONE_RUNNER_CAPACITY: 2
+    ports:
+      - '3000:3000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+    - drone

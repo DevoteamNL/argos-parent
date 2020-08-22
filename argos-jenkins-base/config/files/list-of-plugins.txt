@@ -1,4 +1,6 @@
 blueocean
 git
 greenballs
-deployit-plugin
+bouncycastle-api
+credentials
+plain-credentials

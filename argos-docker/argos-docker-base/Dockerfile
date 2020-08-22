@@ -14,6 +14,14 @@
 # limitations under the License.
 #
 
-FROM argosnotary/argos-docker-base:11.0.8
+FROM openjdk:11.0.8-jre-slim-buster
 
-ADD target/lib/argos-integration-test-service.jar /argos.jar
+COPY config/run.sh /run.sh
+
+RUN adduser --system --home /home/argos --uid 1000 argos
+
+USER argos
+
+WORKDIR /home/argos
+
+ENTRYPOINT ["/run.sh"]

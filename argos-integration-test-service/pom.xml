@@ -185,6 +185,7 @@
     </distributionManagement>
 
     <build>
+        <finalName>argos-integration-test-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

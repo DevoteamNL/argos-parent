@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (C) 2019 - 2020 Rabobank Nederland
 #
@@ -14,6 +15,12 @@
 # limitations under the License.
 #
 
-FROM argosnotary/argos-docker-base:11.0.8
-
-ADD target/lib/argos-integration-test-service.jar /argos.jar
+set -x
+RUNNABLE_JAR=${RUNNABLE_JAR:-/argos.jar}
+if [ -z "$1" ]; then
+	exec java ${JAVA_OPTS} -jar ${RUNNABLE_JAR}
+elif [ "$1" = "version" ]; then
+	echo ${ARGOS_VERSION:-"no version"}
+else
+	$@     
+fi
