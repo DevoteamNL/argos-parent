@@ -17,8 +17,12 @@ package com.rabobank.argos.domain.crypto;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.Security;
+import java.security.spec.X509EncodedKeySpec;
 
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,6 +49,16 @@ public class PublicKey {
     
     @JsonIgnore
     public java.security.PublicKey getJavaPublicKey() throws GeneralSecurityException, IOException {
-    	return PublicKeyFactory.instance(publicKey);
+    	return PublicKey.instance(publicKey);
+    }
+
+    public static java.security.PublicKey instance(byte[] encodedKey) throws GeneralSecurityException, IOException {
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(encodedKey);
+        KeyFactory keyFactory = null;
+        try (ASN1InputStream aIn = new ASN1InputStream(encodedKey)) {
+            SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(aIn.readObject());
+            keyFactory = KeyFactory.getInstance(info.getAlgorithm().getAlgorithm().getId(), "BC");
+        }
+        return keyFactory.generatePublic(x509EncodedKeySpec);
     }
 }

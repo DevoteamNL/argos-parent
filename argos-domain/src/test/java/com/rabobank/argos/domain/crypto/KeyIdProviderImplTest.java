@@ -18,8 +18,6 @@ package com.rabobank.argos.domain.crypto;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
-import com.rabobank.argos.domain.crypto.KeyIdProvider;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
@@ -32,7 +30,7 @@ class KeyIdProviderImplTest {
     @Test
     void computeKeyId() throws IOException, GeneralSecurityException {
         byte[] decode = Base64.getDecoder().decode(IOUtils.toByteArray(this.getClass().getResourceAsStream("/publickey")));
-        String keyId = KeyIdProvider.computeKeyId(PublicKeyFactory.instance(decode));
+        String keyId = KeyIdProvider.computeKeyId(PublicKey.instance(decode));
         assertThat(keyId, is("a1d531635534c408a0286ce38423adc3da2cbaf1e635d98262db64cd858b0671"));        
 
         keyId = KeyIdProvider.computeKeyId(decode);
