@@ -16,7 +16,6 @@
 package com.rabobank.argos.service.adapter.in.rest;
 
 import com.rabobank.argos.domain.crypto.KeyPair;
-import com.rabobank.argos.domain.crypto.PublicKeyFactory;
 import com.rabobank.argos.domain.crypto.Signature;
 import com.rabobank.argos.domain.crypto.signing.SignatureValidator;
 import com.rabobank.argos.domain.layout.Layout;
@@ -65,7 +64,7 @@ public class SignatureValidatorService {
     private PublicKey getPublicKey(Signature signature) throws GeneralSecurityException, IOException {
     	KeyPair keyPair = accountService.findKeyPairByKeyId(signature.getKeyId())
     	        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "signature with keyId [" + signature.getKeyId() + "] not found"));
-    	return PublicKeyFactory.instance(keyPair.getPublicKey());
+    	return com.rabobank.argos.domain.crypto.PublicKey.instance(keyPair.getPublicKey());
     }
 
 }

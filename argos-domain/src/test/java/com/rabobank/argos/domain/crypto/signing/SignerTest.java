@@ -17,7 +17,6 @@ package com.rabobank.argos.domain.crypto.signing;
 
 import com.rabobank.argos.domain.ArgosError;
 import com.rabobank.argos.domain.crypto.KeyPair;
-import com.rabobank.argos.domain.crypto.PublicKeyFactory;
 import com.rabobank.argos.domain.crypto.ServiceAccountKeyPair;
 import com.rabobank.argos.domain.crypto.Signature;
 
@@ -50,7 +49,7 @@ class SignerTest {
     void setUp() throws GeneralSecurityException, IOException, OperatorCreationException {
     	KeyPair keyPair = KeyPair.createKeyPair(PASSWORD);
     	pair1 = new ServiceAccountKeyPair(keyPair.getKeyId(), keyPair.getPublicKey(), keyPair.getEncryptedPrivateKey(), null);
-    	publicKey = PublicKeyFactory.instance(pair1.getPublicKey());
+    	publicKey = com.rabobank.argos.domain.crypto.PublicKey.instance(pair1.getPublicKey());
     }
 
     @Test
