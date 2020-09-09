@@ -75,7 +75,7 @@ mp.getSourcesList().add(new BranchSource(scms, new DefaultBranchPropertyStrategy
 
 argosConfig = instance.getExtensionList(ArgosServiceConfiguration)[0]
 
-argosConfig.setUrl("http://argos-service:8080")
+argosConfig.setArgosBaseUrl("http://argos-service:8080")
 argosConfig.setPrivateKeyCredentialId("default-sa2")
 
 FreeStyleProject fp = instance.createProject(FreeStyleProject.class, "argos-test-app-freestyle-recording")

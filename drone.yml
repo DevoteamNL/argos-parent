@@ -15,7 +15,8 @@ steps:
   image: argosnotary/argos-build:3.6.3
   commands:
   - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
-  - mvn -q verify -Ppitest install
+  - mvn -q install
+  - mvn -q verify -Ppitest
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository

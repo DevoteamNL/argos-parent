@@ -19,7 +19,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
     <f:section title="${%In Argos Configuration}">
-        <f:entry field="url" title="${%Argos base url}">
+        <f:entry field="argosBaseUrl" title="${%Argos base url}">
             <f:textbox/>
         </f:entry>
         <f:entry field="privateKeyCredentialId" title="${%Default Private Credential Id}">
