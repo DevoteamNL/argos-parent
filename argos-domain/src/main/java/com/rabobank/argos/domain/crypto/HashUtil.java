@@ -36,7 +36,7 @@ public class HashUtil {
             InputStream file = normalizeLineEndings ? new UnixLineEndingInputStream(inputStream, false) : inputStream;
             byte[] buffer = new byte[2048];
             int len;
-            while ((len = file.read(buffer)) > 0) {
+            while ((len = file.read(buffer)) > -1) {
                 digest.update(buffer, 0, len);
             }
         } catch (IOException e) {

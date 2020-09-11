@@ -90,7 +90,6 @@ public class RestServiceExceptionHandler {
 
     @ExceptionHandler(value = {JsonMappingException.class})
     public ResponseEntity<RestValidationError> handleJsonMappingException(JsonMappingException ex) {
-        log.info("error with json {}", ex);
         return ResponseEntity.badRequest().contentType(APPLICATION_JSON).body(createValidationError("invalid json"));
     }
 
@@ -134,6 +133,7 @@ public class RestServiceExceptionHandler {
         RestValidationError restValidationError = new RestValidationError();
         List<RestValidationMessage> validationMessages = new ArrayList<>(ex.getValidationMessages());
         sortValidationMessages(validationMessages);
+        validationMessages.forEach(message -> log.error("Rest Validation Error: [{}]", message));
         restValidationError.setMessages(validationMessages);
         return restValidationError;
     }
@@ -145,6 +145,7 @@ public class RestServiceExceptionHandler {
     }
 
     private RestValidationError createValidationError(String reason) {
+        log.error("Rest Validation Error: [{}]", reason);
         return new RestValidationError()
                 .messages(singletonList(new RestValidationMessage()
                         .message(reason)
@@ -152,6 +153,7 @@ public class RestServiceExceptionHandler {
     }
 
     private RestError createRestErrorMessage(String message) {
+        log.error("Rest Error: [{}]", message);
         return new RestError().message(message);
     }
 

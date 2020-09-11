@@ -146,7 +146,7 @@ Feature: Verification
   Scenario: SERVICE_ACCOUNT in other root label cannot verify
     * url karate.properties['server.baseurl']
     * def rootLabel = call read('classpath:feature/label/create-label.feature') { name: 'root1'}
-    * def otherRootLabel = call read('classpath:feature/label/create-label.feature') { name: 'other_root_label'}
+    * def otherRootLabel = call read('classpath:feature/label/create-label.feature') { name: 'other-root-label'}
     * def personalAccount = defaultTestData.personalAccounts['default-pa1']
     * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(rootLabel.response.id), permissions: [READ, SERVICE_ACCOUNT_EDIT,TREE_EDIT]}
     * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(otherRootLabel.response.id), permissions: [READ, SERVICE_ACCOUNT_EDIT,TREE_EDIT]}

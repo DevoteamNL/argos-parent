@@ -69,8 +69,8 @@ class Argos4jIT {
 
         DefaultTestData defaultTestData = createDefaultTestData();
         String adminAccountToken = defaultTestData.getAdminToken();
-        getHierarchyApi(adminAccountToken).updateLabelById(defaultTestData.getDefaultRootLabel().getId(), new RestLabel().name("root_label"));
-        RestLabel childLabel = getHierarchyApi(adminAccountToken).createLabel(new RestLabel().name("child_label").parentLabelId(defaultTestData.getDefaultRootLabel().getId()));
+        getHierarchyApi(adminAccountToken).updateLabelById(defaultTestData.getDefaultRootLabel().getId(), new RestLabel().name("root-label"));
+        RestLabel childLabel = getHierarchyApi(adminAccountToken).createLabel(new RestLabel().name("child-label").parentLabelId(defaultTestData.getDefaultRootLabel().getId()));
 
         String supplyChainId = getSupplychainApi(adminAccountToken).createSupplyChain(new RestSupplyChain().name("test-supply-chain").parentLabelId(childLabel.getId())).getId();
 
@@ -84,11 +84,11 @@ class Argos4jIT {
         Argos4jSettings settings = Argos4jSettings.builder()
                 .argosServerBaseUrl(properties.getApiBaseUrl() + "/api")
                 .supplyChainName("test-supply-chain")
-                .path(List.of("root_label", "child_label"))
+                .path(List.of("root-label", "child-label"))
                 .keyId(serviceAccount.getKeyId())
                 .build();
         Argos4j argos4j = new Argos4j(settings);
-        LinkBuilder linkBuilder = argos4j.getLinkBuilder(LinkBuilderSettings.builder().layoutSegmentName("layoutSegmentName").stepName("build").runId("runId").build());
+        LinkBuilder linkBuilder = argos4j.getLinkBuilder(LinkBuilderSettings.builder().layoutSegmentName("layoutsegmentname").stepName("build").runId("runId").build());
         FileCollector fileCollector = LocalFileCollector.builder().path(new File(".").toPath()).basePath(new File(".").toPath()).build();
         linkBuilder.collectProducts(fileCollector);
         linkBuilder.collectMaterials(fileCollector);
@@ -123,12 +123,12 @@ class Argos4jIT {
                 		.publicKey(serviceAccount.getPublicKey()))
                 .addAuthorizedKeyIdsItem(personalAccount.getKeyId())
                 .addExpectedEndProductsItem(new RestMatchRule()
-                        .destinationSegmentName("layoutSegmentName")
+                        .destinationSegmentName("layoutsegmentname")
                         .destinationStepName("build")
                         .destinationType(RestMatchRule.DestinationTypeEnum.PRODUCTS)
                         .destinationPathPrefix("src/test/resources/")
                         .pattern("karate-config.js"))
-                .addLayoutSegmentsItem(new RestLayoutSegment().name("layoutSegmentName")
+                .addLayoutSegmentsItem(new RestLayoutSegment().name("layoutsegmentname")
                         .addStepsItem(new RestStep().requiredNumberOfLinks(1)
                                 .addAuthorizedKeyIdsItem(serviceAccount.getKeyId())
                                 .addExpectedProductsItem(new RestRule().ruleType(RestRule.RuleTypeEnum.ALLOW).pattern("**"))

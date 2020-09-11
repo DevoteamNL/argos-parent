@@ -158,11 +158,17 @@ Feature: SupplyChain
     When method GET
     Then status 401
 
-  Scenario: get supplychain with invalid id should return a 404
+  Scenario: get supplychain with invalid id should return a 400
     Given path '/api/supplychain/invalidid'
     When method GET
+    Then status 400
+    And match response contains read('classpath:testmessages/supplychain/invalid-id-response.json')
+
+  Scenario: get supplychain with unknown id should return a 404
+    Given path '/api/supplychain/3b90ef66-eb39-4355-b93a-e762b32b992e'
+    When method GET
     Then status 404
-    And match response == {"message":"supply chain not found : invalidid"}
+    And match response == {"message":"supply chain not found : 3b90ef66-eb39-4355-b93a-e762b32b992e"}
 
   Scenario: query supplychain with name should return a 200
     * def result = call read('create-supplychain-with-label.feature') { supplyChainName: 'supply-chain-name'}
@@ -203,7 +209,7 @@ Feature: SupplyChain
     * configure headers = call read('classpath:headers.js') { username: #(keyPair.keyId), password: #(keyPair.hashedKeyPassphrase)}
     Given path '/api/supplychain'
     And param name = 'supply-chain-name'
-    And param path = 'default_root_label'
+    And param path = 'default-root-label'
     When method GET
     Then status 200
     And match response == { name: 'supply-chain-name', id: '#(supplyChain.response.id)', parentLabelId: '#(defaultTestData.defaultRootLabel.id)' }

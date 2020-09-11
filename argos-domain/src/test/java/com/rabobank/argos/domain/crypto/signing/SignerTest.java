@@ -27,12 +27,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,6 +73,14 @@ class SignerTest {
     		Signer.sign(pair1, OTHER_PASSWORD, "string to sign");
           });
     	assertEquals("unable to read encrypted data: Error finalising cipher", exception.getMessage());
+    }
+    
+    @Test
+    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+      Constructor<Signer> constructor = Signer.class.getDeclaredConstructor();
+      assertThat(Modifier.isPrivate(constructor.getModifiers()), is(true));
+      constructor.setAccessible(true);
+      constructor.newInstance();
     }
     
 }

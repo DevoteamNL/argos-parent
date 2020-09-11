@@ -65,6 +65,7 @@ services:
       - ../argos-integration-test-service/target/argos-integration-test-service.jar:/argos.jar
     depends_on:
       - mongodb
+      - argos-service
 
   mongodb:
     image: argosnotary/mongo:4.2.8

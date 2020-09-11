@@ -23,7 +23,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter
 @Getter
 @ToString
 public class MatchRule extends Rule {

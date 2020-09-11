@@ -56,13 +56,13 @@ public class TreeNode {
     @With
     private List<Permission> permissions;
 
-    public boolean accept(TreeNodeVisitor<?> treeNodeVisitor) {
+    public void visit(TreeNodeVisitor<?> treeNodeVisitor) {
         if (isLeafNode()) {
-            return treeNodeVisitor.visitLeaf(this);
+            treeNodeVisitor.visitLeaf(this);
         } else if (treeNodeVisitor.visitEnter(this)) {
-            children.forEach(child -> child.accept(treeNodeVisitor));
+            children.forEach(child -> child.visit(treeNodeVisitor));
+            treeNodeVisitor.visitExit(this);
         }
-        return treeNodeVisitor.visitExit(this);
     }
 
     public boolean isLeafNode() {

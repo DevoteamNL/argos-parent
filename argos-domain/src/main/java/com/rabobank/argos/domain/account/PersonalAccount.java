@@ -18,19 +18,16 @@ package com.rabobank.argos.domain.account;
 import com.rabobank.argos.domain.crypto.KeyPair;
 import com.rabobank.argos.domain.permission.LocalPermissions;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
 public class PersonalAccount extends Account {
     @Builder
     public PersonalAccount(
@@ -47,11 +44,11 @@ public class PersonalAccount extends Account {
                 name,
                 email,
                 activeKeyPair,
-                inactiveKeyPairs == null ? emptyList() : inactiveKeyPairs,
-                localPermissions == null ? emptyList() : localPermissions);
+                inactiveKeyPairs == null ? new ArrayList<>() : inactiveKeyPairs,
+                localPermissions == null ? new ArrayList<>() : localPermissions);
         this.providerName = providerName;
         this.providerId = providerId;
-        this.roleIds = roleIds == null ? emptyList() : roleIds;
+        this.roleIds = roleIds == null ? new ArrayList<>() : roleIds;
     }
 
     private String providerName;
@@ -59,9 +56,6 @@ public class PersonalAccount extends Account {
     private List<String> roleIds;
 
     public void addRoleId(String roleId) {
-        if (roleIds == null) {
-            roleIds = new ArrayList<>();
-        }
         roleIds = new ArrayList<>(roleIds);
         roleIds.add(roleId);
     }

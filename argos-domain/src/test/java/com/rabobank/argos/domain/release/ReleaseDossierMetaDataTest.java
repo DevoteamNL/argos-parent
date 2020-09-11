@@ -17,6 +17,7 @@ package com.rabobank.argos.domain.release;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,13 +31,55 @@ class ReleaseDossierMetaDataTest {
 
     static {
         ARTIFACT_LIST = new ArrayList<>();
-        ARTIFACT_LIST.add("string");
         ARTIFACT_LIST.add("string2");
+        ARTIFACT_LIST.add("string");
     }
 
     @Test
     void createHashFromArtifactList() {
         String result = ReleaseDossierMetaData.createHashFromArtifactList(ARTIFACT_LIST);
         assertThat(result, is(HASH));
+    }
+    
+    @Test
+    void equalsTest() {
+        List<List<String>> releaseArtifacts = new ArrayList<>();
+        releaseArtifacts.add(ARTIFACT_LIST);
+        ReleaseDossierMetaData dossier = ReleaseDossierMetaData.builder().documentId("documentId").releaseArtifacts(releaseArtifacts).build();
+        ReleaseDossierMetaData dossier2 = ReleaseDossierMetaData.builder().documentId("documentId").releaseArtifacts(releaseArtifacts).build();
+        assertThat(dossier, is(dossier2));
+    }
+    
+    @Test
+    void buildTest() {
+        OffsetDateTime time = OffsetDateTime.now();
+        List<List<String>> releaseArtifacts = new ArrayList<>();
+        releaseArtifacts.add(ARTIFACT_LIST);
+        ReleaseDossierMetaData dossier = ReleaseDossierMetaData.builder()
+                .documentId("documentId")
+                .releaseArtifacts(releaseArtifacts)
+                .releaseDate(time)
+                .supplyChainPath("foo.bar:sc")
+                .build();
+        assertThat(dossier.getDocumentId(), is("documentId"));
+        assertThat(dossier.getReleaseArtifacts(), is(releaseArtifacts));
+        assertThat(dossier.getReleaseDate(), is(time));
+        assertThat(dossier.getSupplyChainPath(), is("foo.bar:sc"));
+    }
+    
+    @Test
+    void settersTest() {
+        OffsetDateTime time = OffsetDateTime.now();
+        List<List<String>> releaseArtifacts = new ArrayList<>();
+        releaseArtifacts.add(ARTIFACT_LIST);
+        ReleaseDossierMetaData dossier = ReleaseDossierMetaData.builder().build();
+        dossier.setDocumentId("documentId");
+        dossier.setReleaseArtifacts(releaseArtifacts);
+        dossier.setReleaseDate(time);
+        dossier.setSupplyChainPath("foo.bar:sc");
+        assertThat(dossier.getDocumentId(), is("documentId"));
+        assertThat(dossier.getReleaseArtifacts(), is(releaseArtifacts));
+        assertThat(dossier.getReleaseDate(), is(time));
+        assertThat(dossier.getSupplyChainPath(), is("foo.bar:sc"));
     }
 }

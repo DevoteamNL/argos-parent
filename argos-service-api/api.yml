@@ -39,6 +39,7 @@ paths:
             application/json:
               schema:
                 type: array
+                maxItems: 20
                 items:
                   $ref: "#/components/schemas/OAuthProvider"
         '500':
@@ -81,7 +82,7 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/NameString"
         - name: path
           in: query
           style: simple
@@ -90,8 +91,9 @@ paths:
           allowEmptyValue: false
           schema:
             type: array
+            maxItems: 20
             items:
-              type: string
+              $ref: "#/components/schemas/NameString"
       responses:
         '200':
           description: the supply chain
@@ -115,7 +117,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: the supply chain item
@@ -136,7 +138,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -165,7 +167,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '204':
           description: supply chain deleted
@@ -186,12 +188,13 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
         - name: name
           in: query
           required: true
           schema:
             type: string
+            maxLength: 1024
         - name: accountType
           in: query
           required: false
@@ -222,18 +225,16 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
         - name: keyIds
           in: query
           required: false
           explode: false
           schema:
             type: array
+            maxItems: 256
             items:
-              type: string
-              minLength: 64
-              maxLength: 64
-              pattern: '^[0-9a-f]*$'
+              $ref: "#/components/schemas/SHA256Hash"
 
       responses:
         '200':
@@ -258,13 +259,13 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
         - name: hash
           in: query
           description: hash of product or material
           required: false
           schema:
-            type: string
+            $ref: "#/components/schemas/SHA256Hash"
       responses:
         '200':
           description: array of links
@@ -290,7 +291,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         content:
           application/json:
@@ -315,7 +316,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: layout
@@ -338,7 +339,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -374,7 +375,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -402,7 +403,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: release configuration
@@ -425,7 +426,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -458,7 +459,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: array of approval configurations
@@ -483,13 +484,14 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: array
+              maxItems: 20
               items:
                 $ref: "#/components/schemas/ApprovalConfiguration"
       responses:
@@ -519,7 +521,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: array of approvals
@@ -534,7 +536,7 @@ paths:
 
   /supplychain/verification:
     get:
-      summary: checks verification on a release artifact set
+      summary: checks verification on a release artifact set and possibly domains
       operationId: getVerification
       tags:
         - verification
@@ -547,13 +549,14 @@ paths:
           allowEmptyValue: false
           schema:
             type: array
+            maxItems: 4096
             items:
-              type: string
+              $ref: "#/components/schemas/SHA256Hash"
         - name: path
           in: query
           required: false
           schema:
-            type: string
+            $ref: "#/components/schemas/HostnameString"
       responses:
         '200':
           description: VerificationResult
@@ -580,7 +583,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
 
       requestBody:
         required: true
@@ -614,7 +617,7 @@ paths:
           description: supply chain id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -693,7 +696,7 @@ paths:
           required: true
           description: this will be the root id of the returned sub tree
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: ok
@@ -743,7 +746,7 @@ paths:
           description: label id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: label
@@ -764,7 +767,7 @@ paths:
           description: label id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -793,7 +796,7 @@ paths:
           description: label id
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '204':
           description: label deleted
@@ -894,40 +897,36 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: "#/components/schemas/NameString"
         - name: localPermissionsLabelId
           in: query
           required: false
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
         - name: name
           in: query
           required: false
           schema:
             type: string
+            maxLength: 1024
         - name: activeKeyIds
           in: query
           required: false
           explode: false
           schema:
             type: array
+            maxItems: 256
             items:
-              type: string
-              minLength: 64
-              maxLength: 64
-              pattern: '^[0-9a-f]*$'
+              $ref: "#/components/schemas/SHA256Hash"
         - name: inactiveKeyIds
           in: query
           required: false
           explode: false
           schema:
             type: array
+            maxItems: 256
             items:
-              type: string
-              minLength: 64
-              maxLength: 64
-              pattern: '^[0-9a-f]*$'
+              $ref: "#/components/schemas/SHA256Hash"
       responses:
         '200':
           description: list of personal accounts without roles property
@@ -948,8 +947,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: personal account
@@ -970,8 +968,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: key
@@ -994,8 +991,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -1003,8 +999,9 @@ paths:
             schema:
               description: role names
               type: array
+              maxItems: 20
               items:
-                type: string
+                $ref: "#/components/schemas/NameString"
       responses:
         '200':
           description: updated personal account
@@ -1025,14 +1022,12 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
         - name: labelId
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: local permissions
@@ -1052,14 +1047,12 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
         - name: labelId
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
@@ -1067,6 +1060,7 @@ paths:
             schema:
               description: local permission
               type: array
+              maxItems: 256
               items:
                 $ref: "#/components/schemas/Permission"
       responses:
@@ -1090,8 +1084,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: all local permissions
@@ -1161,7 +1154,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: service account
@@ -1183,7 +1176,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         content:
           application/json:
@@ -1212,7 +1205,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '204':
           description: deleted service account
@@ -1231,7 +1224,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       requestBody:
         content:
           application/json:
@@ -1266,7 +1259,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/UUID"
       responses:
         '200':
           description: created
@@ -1343,6 +1336,52 @@ components:
     Unauthorized:
       description: unauthorized
   schemas:
+    HexString:
+      type: string
+      maxLength: 1024
+      pattern: '^[0-9a-f]*$'
+
+    SHA256Hash:
+      type: string
+      minLength: 64
+      maxLength: 64
+      pattern: '^[0-9a-f]*$'
+
+    UUID:
+      type: string
+      description: an Argos Service identifier
+      minLength: 36
+      maxLength: 36
+      pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+
+    UnixPath:
+      type: string
+      maxLength: 1024
+      pattern: '^(?!.*\\).*$'
+
+    NameString:
+      type: string
+      minLength: 1
+      maxLength: 63
+      pattern: '^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$'
+      
+    ByteString:
+      type: string
+      maxLength: 4096
+      format: byte
+      
+    HostnameString:
+      type: string
+      minLength: 1
+      maxLength: 1024
+      pattern: '^(([a-z]|[a-z][a-z0-9\-]{0,61}[a-z0-9])\.)*([a-z]|[a-z][a-z0-9\-]{0,61}[a-z0-9])$'
+
+    ArtifactArray:
+      type: array
+      maxItems: 4096
+      items:
+        $ref: "#/components/schemas/Artifact"
+    
     VerifyCommand:
       type: object
       required:
@@ -1351,6 +1390,7 @@ components:
         expectedProducts:
           type: array
           minItems: 1
+          maxItems: 4096
           items:
             $ref: "#/components/schemas/Artifact"
 
@@ -1383,10 +1423,7 @@ components:
         keyId:
           $ref: '#/components/schemas/KeyId'
         signature:
-          type: string
-          minLength: 80
-          maxLength: 1024
-          pattern: '^[0-9a-f]*$'
+          $ref: "#/components/schemas/HexString"
         hashAlgorithm:
           $ref: '#/components/schemas/HashAlgorithm'
         keyAlgorithm:
@@ -1402,22 +1439,16 @@ components:
       properties:
         runId:
           type: string
+          maxLength: 1024
         stepName:
-          type: string
-          minLength: 1
-          pattern: '^([A-Za-z0-9_-]*)?$'
+          $ref: "#/components/schemas/NameString"
         layoutSegmentName:
-          type: string
-          minLength: 1
-          pattern: '^([A-Za-z0-9_-]*)?$'
+          $ref: "#/components/schemas/NameString"
         materials:
-          type: array
-          items:
-            $ref: "#/components/schemas/Artifact"
+          $ref: "#/components/schemas/ArtifactArray"
         products:
-          type: array
-          items:
-            $ref: "#/components/schemas/Artifact"
+          $ref: "#/components/schemas/ArtifactArray"
+
     Artifact:
       type: object
       required:
@@ -1425,14 +1456,9 @@ components:
         - hash
       properties:
         uri:
-          type: string
-          maxLength: 1024
-          pattern: '^(?!.*\\).*$'
+          $ref: "#/components/schemas/UnixPath"
         hash:
-          type: string
-          minLength: 64
-          maxLength: 64
-          pattern: '^[0-9a-f]*$'
+          $ref: "#/components/schemas/SHA256Hash"
     PublicKey:
       type: object
       required:
@@ -1442,8 +1468,7 @@ components:
         keyId:
           $ref: '#/components/schemas/KeyId'
         publicKey:
-          type: string
-          format: byte
+          $ref: '#/components/schemas/ByteString'
     KeyPair:
       type: object
       required:
@@ -1454,11 +1479,10 @@ components:
         keyId:
           $ref: '#/components/schemas/KeyId'
         publicKey:
-          type: string
-          format: byte
+          $ref: '#/components/schemas/ByteString'
         encryptedPrivateKey:
-          type: string
-          format: byte
+          $ref: '#/components/schemas/ByteString'
+
     ServiceAccountKeyPair:
       type: object
       required:
@@ -1470,13 +1494,11 @@ components:
         keyId:
           $ref: '#/components/schemas/KeyId'
         publicKey:
-          type: string
-          format: byte
+          $ref: '#/components/schemas/ByteString'
         encryptedPrivateKey:
-          type: string
-          format: byte
+          $ref: '#/components/schemas/ByteString'
         hashedKeyPassphrase:
-          type: string
+          $ref: "#/components/schemas/HexString"
           writeOnly: true
           description: used for authentication of a service account via http basic authentication
     SupplyChain:
@@ -1486,18 +1508,12 @@ components:
         - parentLabelId
       properties:
         id:
-          type: string
-          maxLength: 36
+          $ref: "#/components/schemas/UUID"
           readOnly: true
         name:
-          type: string
-          maxLength: 256
-          pattern: '^([a-z]{1}[a-z0-9-]*)?$'
+          $ref: "#/components/schemas/NameString"
         parentLabelId:
-          type: string
-          minLength: 36
-          maxLength: 36
-          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+          $ref: "#/components/schemas/UUID"
     LayoutMetaBlock:
       type: object
       required:
@@ -1506,6 +1522,7 @@ components:
       properties:
         signatures:
           minItems: 1
+          maxItems: 20
           type: array
           items:
             $ref: "#/components/schemas/Signature"
@@ -1522,25 +1539,25 @@ components:
         keys:
           type: array
           minItems: 1
+          maxItems: 256
           items:
             $ref: '#/components/schemas/PublicKey'
         authorizedKeyIds:
           type: array
           minItems: 1
+          maxItems: 256
           items:
-            type: string
-            description: key id is a hash of the public key
-            minLength: 64
-            maxLength: 64
-            pattern: '^[0-9a-f]*$'
+            $ref: "#/components/schemas/SHA256Hash"
         expectedEndProducts:
           type: array
           minItems: 1
+          maxItems: 4096
           items:
             $ref: '#/components/schemas/MatchRule'
         layoutSegments:
           type: array
           minItems: 1
+          maxItems: 256
           items:
             $ref: "#/components/schemas/LayoutSegment"
     LayoutSegment:
@@ -1550,12 +1567,11 @@ components:
         - steps
       properties:
         name:
-          type: string
-          minLength: 1
-          pattern: '^([A-Za-z0-9_-]*)?$'
+          $ref: "#/components/schemas/NameString"
         steps:
           type: array
           minItems: 1
+          maxItems: 256
           items:
             $ref: "#/components/schemas/Step"
     MatchRule:
@@ -1568,23 +1584,19 @@ components:
       properties:
         pattern:
           type: string
-        sourcePathPrefix:
-          type: string
           maxLength: 1024
-          pattern: '^(?!.*\\).*$'
+        sourcePathPrefix:
+          $ref: "#/components/schemas/UnixPath"
         destinationType:
-          type: string
           enum:
             - PRODUCTS
             - MATERIALS
         destinationPathPrefix:
-          type: string
-          maxLength: 1024
-          pattern: '^(?!.*\\).*$'
+          $ref: "#/components/schemas/UnixPath"
         destinationSegmentName:
-          type: string
+          $ref: "#/components/schemas/NameString"
         destinationStepName:
-          type: string
+          $ref: "#/components/schemas/NameString"
     Step:
       type: object
       required:
@@ -1595,35 +1607,36 @@ components:
         - expectedProducts
       properties:
         name:
-          type: string
-          minLength: 1
-          pattern: '^([A-Za-z0-9_-]*)?$'
+          $ref: "#/components/schemas/NameString"
         authorizedKeyIds:
           type: array
           minItems: 1
+          maxItems: 256
           items:
             $ref: '#/components/schemas/KeyId'
         requiredNumberOfLinks:
           type: integer
           format: int32
           minimum: 1
+          maximum: 20
         expectedMaterials:
           type: array
+          maxItems: 4096
           items:
             $ref: "#/components/schemas/Rule"
         expectedProducts:
           type: array
+          maxItems: 4096
           items:
             $ref: "#/components/schemas/Rule"
+
     KeyId:
-      type: string
-      description: key id is a hash of the public key
-      minLength: 64
-      maxLength: 64
-      pattern: '^[0-9a-f]*$'
+      $ref: "#/components/schemas/SHA256Hash"
+
     KeyAlgorithm:
       enum:
         - EC
+
     HashAlgorithm:
       enum:
         - SHA256
@@ -1636,7 +1649,6 @@ components:
         - pattern
       properties:
         ruleType:
-          type: string
           enum:
             - ALLOW
             - CREATE
@@ -1648,36 +1660,33 @@ components:
             - REQUIRE
         pattern:
           type: string
+          maxLength: 1024
         sourcePathPrefix:
-          type: string
+          $ref: "#/components/schemas/UnixPath"
         destinationPathPrefix:
-          type: string
+          $ref: "#/components/schemas/UnixPath"
         destinationSegmentName:
-          type: string
+          $ref: "#/components/schemas/NameString"
         destinationType:
-          type: string
           enum:
             - PRODUCTS
             - MATERIALS
         destinationStepName:
-          type: string
+          $ref: "#/components/schemas/NameString"
+
     Label:
       type: object
       required:
         - name
       properties:
         id:
-          type: string
+          $ref: "#/components/schemas/NameString"
           readOnly: true
         name:
-          type: string
-          minLength: 1
-          pattern: '^([a-z]{1}[a-z0-9_]*)?$'
+          $ref: "#/components/schemas/NameString"
         parentLabelId:
-          type: string
-          minLength: 36
-          maxLength: 36
-          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+          $ref: "#/components/schemas/UUID"
+
     TreeNode:
       type: object
       required:
@@ -1687,57 +1696,64 @@ components:
         - children
       properties:
         name:
-          type: string
+          $ref: "#/components/schemas/NameString"
         type:
-          type: string
           enum:
             - LABEL
             - SUPPLY_CHAIN
             - SERVICE_ACCOUNT
         referenceId:
-          type: string
+          $ref: "#/components/schemas/UUID"
         hasChildren:
           type: boolean
         children:
           type: array
+          maxItems: 256
           items:
             $ref: "#/components/schemas/TreeNode"
         permissions:
           type: array
+          maxItems: 256
           items:
             $ref: "#/components/schemas/Permission"
+
     HierarchyMode:
-      type: string
       enum:
         - ALL
         - NONE
         - MAX_DEPTH
       default: NONE
       description: The mode of the returned descendants in a tree node hierarchy. ALL returns all descendants, NONE returns nodes without any descendants , MAX_DEPTH returns descendants up to a specified depth
+
     PersonalAccount:
       type: object
       properties:
         id:
-          type: string
+          $ref: "#/components/schemas/UUID"
           readOnly: true
         name:
           type: string
+          maxLength: 1024
         roles:
           type: array
+          maxItems: 20
           items:
             $ref: "#/components/schemas/Role"
     Profile:
       type: object
       properties:
         id:
-          type: string
+          $ref: "#/components/schemas/UUID"
           readOnly: true
         name:
           type: string
+          maxLength: 1024
         email:
           type: string
+          maxLength: 1024
         roles:
           type: array
+          maxItems: 20
           items:
             $ref: "#/components/schemas/Role"
     ServiceAccount:
@@ -1747,35 +1763,29 @@ components:
         - parentLabelId
       properties:
         id:
-          type: string
+          $ref: "#/components/schemas/UUID"
           readOnly: true
         name:
-          type: string
+          $ref: "#/components/schemas/NameString"
         parentLabelId:
-          type: string
-          minLength: 36
-          maxLength: 36
-          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+          $ref: "#/components/schemas/UUID"
     Role:
       type: object
       required:
         - name
       properties:
         id:
-          type: string
+          $ref: "#/components/schemas/UUID"
           readOnly: true
-          maxLength: 36
         name:
-          type: string
-          minLength: 1
-          pattern: '^([a-z]{1}[a-z0-9_]*)?$'
+          $ref: "#/components/schemas/NameString"
         permissions:
           type: array
           minItems: 1
+          maxItems: 20
           items:
             $ref: "#/components/schemas/Permission"
     Permission:
-      type: string
       enum:
         - READ
         - TREE_EDIT
@@ -1794,10 +1804,10 @@ components:
         - permissions
       properties:
         labelId:
-          type: string
-          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$'
+          $ref: "#/components/schemas/UUID"
         permissions:
           type: array
+          maxItems: 20
           items:
             $ref: "#/components/schemas/Permission"
     ReleaseConfiguration:
@@ -1807,6 +1817,7 @@ components:
       properties:
         artifactCollectorSpecifications:
           type: array
+          maxItems: 20
           items:
             $ref: "#/components/schemas/ArtifactCollectorSpecification"
     ApprovalConfiguration:
@@ -1817,13 +1828,12 @@ components:
         - artifactCollectorSpecifications
       properties:
         stepName:
-          type: string
-          pattern: '^([A-Za-z0-9_-]*)?$'
+          $ref: "#/components/schemas/NameString"
         segmentName:
-          type: string
-          pattern: '^([A-Za-z0-9_-]*)?$'
+          $ref: "#/components/schemas/NameString"
         artifactCollectorSpecifications:
           type: array
+          maxItems: 20
           items:
             $ref: "#/components/schemas/ArtifactCollectorSpecification"
           minItems: 1
@@ -1836,10 +1846,8 @@ components:
         - context
       properties:
         name:
-          type: string
-          pattern: '^([A-Za-z0-9_-]*)?$'
+          $ref: "#/components/schemas/NameString"
         type:
-          type: string
           enum:
             - XLDEPLOY
             - GIT
@@ -1852,6 +1860,8 @@ components:
           type: object
           additionalProperties:
             type: string
+            maxLength: 1024
+
     Error:
       type: object
       required:
@@ -1877,7 +1887,6 @@ components:
         field:
           type: string
         type:
-          type: string
           enum:
             - DATA_INPUT
             - MODEL_CONSISTENCY
@@ -1885,7 +1894,6 @@ components:
           type: string
 
     AccountType:
-      type: string
       enum:
         - SERVICE_ACCOUNT
         - PERSONAL_ACCOUNT
@@ -1896,9 +1904,10 @@ components:
         - keyStatus
       properties:
         accountId:
-          type: string
+          $ref: "#/components/schemas/UUID"
         name:
           type: string
+          maxLength: 1024
         path:
           type: string
         accountType:
@@ -1906,31 +1915,35 @@ components:
         keyId:
           $ref: '#/components/schemas/KeyId'
         keyStatus:
-          type: string
           enum:
             - ACTIVE
             - INACTIVE
             - DELETED
+
     AccountInfo:
       type: object
       properties:
         accountId:
-          type: string
+          $ref: "#/components/schemas/UUID"
         name:
           type: string
+          maxLength: 1024
         path:
           type: string
         accountType:
           $ref: '#/components/schemas/AccountType'
+
     ReleaseArtifacts:
       type: object
       properties:
         releaseArtifacts:
           type: array
           minItems: 1
+          maxItems: 256
           items:
             type: array
             minItems: 1
+            maxItems: 4096
             items:
               $ref: '#/components/schemas/Artifact'
     ReleaseResult:
@@ -1945,20 +1958,24 @@ components:
       type: object
       properties:
         documentId:
-          type: string
+          $ref: "#/components/schemas/UUID"
         releaseDate:
           type: string
           format: date-time
         supplyChainPath:
           type: string
+          $ref: "#/components/schemas/HostnameString"
         releaseArtifacts:
           type: array
           minItems: 1
+          maxItems: 256
           items:
             type: array
             minItems: 1
+            maxItems: 4096
             items:
-              type: string
+              $ref: "#/components/schemas/SHA256Hash"
+
     OAuthProvider:
       type: object
       properties:
@@ -1968,7 +1985,6 @@ components:
           type: string
         iconUrl:
           type: string
-
 
     Token:
       type: object

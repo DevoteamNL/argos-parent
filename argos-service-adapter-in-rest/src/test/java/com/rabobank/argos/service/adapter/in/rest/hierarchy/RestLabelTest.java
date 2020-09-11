@@ -39,7 +39,7 @@ class RestLabelTest {
     @Test
     void invalidRestSupplyChain() {
         assertThat(validate(new RestLabel().name("Invalid").parentLabelId("wrong")), contains(expectedErrors(
-                "name", "must match \"^([a-z]{1}[a-z0-9_]*)?$\"",
+                "name", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
                 "parentLabelId", "must match \"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$\"",
                 "parentLabelId", "size must be between 36 and 36"
         )));
@@ -47,7 +47,8 @@ class RestLabelTest {
 
     @Test
     void validRestSupplyChain() {
-        assertThat(validate(new RestLabel().name("valid_1").parentLabelId(UUID.randomUUID().toString())), empty());
+        assertThat(validate(new RestLabel().name("valid_1").parentLabelId(UUID.randomUUID().toString())), contains(expectedErrors(
+                "name", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"")));
     }
 
 }

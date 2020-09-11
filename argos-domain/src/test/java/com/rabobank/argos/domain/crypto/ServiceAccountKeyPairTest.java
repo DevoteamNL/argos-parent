@@ -15,6 +15,8 @@
  */
 package com.rabobank.argos.domain.crypto;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,5 +37,39 @@ class ServiceAccountKeyPairTest {
         
         assertEquals(expected, actual);
     }
+	
+	@Test
+    void buildServiceAccountTest() {
+        ServiceAccountKeyPair account = ServiceAccountKeyPair.builder()
+            .encryptedHashedKeyPassphrase("test")
+            .encryptedPrivateKey("test".getBytes()).keyId("keyId").build();
+        
+        assertThat(account.getEncryptedHashedKeyPassphrase(), is("test") );
+        assertThat(account.getEncryptedPrivateKey(), is("test".getBytes()));
+        assertEquals("keyId", account.getKeyId());
+    }
+	
+	@Test
+    void noArgAndSetterTest() {
+        ServiceAccountKeyPair account = new ServiceAccountKeyPair();
+        account.setEncryptedHashedKeyPassphrase("test");
+        account.setEncryptedPrivateKey("test".getBytes());
+        account.setKeyId("keyId");
+        
+        assertThat(account.getEncryptedHashedKeyPassphrase(), is("test") );
+        assertThat(account.getEncryptedPrivateKey(), is("test".getBytes()));
+        assertEquals("keyId", account.getKeyId());
+    }
+	
+	@Test
+    void allArgsTest() {
+        ServiceAccountKeyPair account = new ServiceAccountKeyPair("keyId", "pubKey".getBytes(), "privateKey".getBytes(), "hashKey");
+        
+        assertThat(account.getEncryptedHashedKeyPassphrase(), is("hashKey") );
+        assertThat(account.getEncryptedPrivateKey(), is("privateKey".getBytes()));
+        assertEquals("keyId", account.getKeyId());
+    }
+	
+	
 
 }

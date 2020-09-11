@@ -16,9 +16,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<modules>
@@ -73,35 +72,44 @@
 		<connection>scm:git:https://github.com/argosnotary/argos.git</connection>
 		<developerConnection>scm:git:https://github.com/argosnotary/argos.git</developerConnection>
 		<url>https://github.com/argosnotary/argos-parent/tree/master</url>
-	</scm>
-
-	<properties>
-		<java.version>11</java.version>
-		<commons-codec.version>1.11</commons-codec.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring-boot.version>2.2.2.RELEASE</spring-boot.version>
-		<org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
-		<lombok.version>1.18.12</lombok.version>
-		<pitest.version>1.4.10</pitest.version>
-		<sonar.exclusions>file:**/generated-sources/**</sonar.exclusions>
-		<junit-jupiter.version>5.5.2</junit-jupiter.version>
-		<commons-io.version>2.6</commons-io.version>
-		<swagger-annotations.version>1.5.23</swagger-annotations.version>
-		<jsonassert.version>1.5.0</jsonassert.version>
-		<jackson-databind-nullable.version>0.1.0</jackson-databind-nullable.version>
-		<jackson-databind.version>2.10.0</jackson-databind.version>
-		<commons-collections4.version>4.0</commons-collections4.version>
-		<mongock-spring.version>3.2.3</mongock-spring.version>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
+	</scm>	
+	
+    <properties>
+        <bcpkix-jdk15on.version>1.66</bcpkix-jdk15on.version>        
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-io.version>2.8.0</commons-io.version>
+        <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+        <jjwt-api.version>0.11.2</jjwt-api.version>
+        <jjwt-impl.version>0.11.2</jjwt-impl.version>
+        <jjwt-jackson.version>0.11.2</jjwt-jackson.version>
+        <license-maven-plugin.version>3.0</license-maven-plugin.version>
+        <lombok.version>1.18.12</lombok.version>
+        <mapstruct-processor.version>1.3.1.Final</mapstruct-processor.version>
+        <mapstruct.version>1.3.1.Final</mapstruct.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
+        <mongock-bom.version>4.1.17</mongock-bom.version>
+        <openapi-generator-maven-plugin.version>4.2.3</openapi-generator-maven-plugin.version>
+        <pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
+        <pitest-maven.version>1.5.2</pitest-maven.version>
+        <protonpack.version>1.15</protonpack.version>
+        <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
+        <swagger-annotations.version>1.6.2</swagger-annotations.version>
+        <swagger-ui.version>3.32.5</swagger-ui.version>
+        <java.version>11</java.version>
+        <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <sonar.exclusions>file:**/generated-sources/**</sonar.exclusions>
+    </properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -112,30 +120,142 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${mapstruct.version}</version>
+			</dependency>
+	        <dependency>
+	            <groupId>org.bouncycastle</groupId>
+	            <artifactId>bcpkix-jdk15on</artifactId>
+	            <version>${bcpkix-jdk15on.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>commons-io</groupId>
+	            <artifactId>commons-io</artifactId>
+	            <version>${commons-io.version}</version>
+	        </dependency><dependency>
+	            <groupId>io.jsonwebtoken</groupId>
+	            <artifactId>jjwt-api</artifactId>
+	            <version>${jjwt-api.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>io.jsonwebtoken</groupId>
+	            <artifactId>jjwt-impl</artifactId>
+	            <version>${jjwt-impl.version}</version>
+	            <scope>runtime</scope>
+	        </dependency>
+	        <dependency>
+	            <groupId>io.jsonwebtoken</groupId>
+	            <artifactId>jjwt-jackson</artifactId>
+	            <version>${jjwt-jackson.version}</version>
+	            <scope>runtime</scope>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.openapitools</groupId>
+	            <artifactId>jackson-databind-nullable</artifactId>
+	            <version>${jackson-databind-nullable.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>io.swagger</groupId>
+	            <artifactId>swagger-annotations</artifactId>
+	            <version>${swagger-annotations.version}</version>
+	        </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-ui</artifactId>
+                <version>${swagger-ui.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cloudyrock.mongock</groupId>
+                <artifactId>mongock-bom</artifactId>
+                <version>${mongock-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+	        <dependency>
+	            <groupId>org.apache.commons</groupId>
+	            <artifactId>commons-collections4</artifactId>
+	            <version>${commons-collections4.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.codepoetics</groupId>
+	            <artifactId>protonpack</artifactId>
+	            <version>${protonpack.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>commons-beanutils</groupId>
+	            <artifactId>commons-beanutils</artifactId>
+	            <version>${commons-beanutils.version}</version>
+	        </dependency>
 		</dependencies>
 	</dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
-				<configuration>
-					<source>11</source>
-					<target>11</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
-			</plugin>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+	
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct-processor.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>${maven-toolchains-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                        <configuration>
+                            <toolchains>
+                                <jdk>
+                                    <version>${java.version}</version>
+                                </jdk>
+                            </toolchains>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>            
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
+				<version>${license-maven-plugin.version}</version>
 				<configuration>
 					<quiet>false</quiet>
 					<failIfMissing>true</failIfMissing>
@@ -171,19 +291,8 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
-	</build>
-
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
+        </plugins>
+    </build>
 
 	<profiles>
 		<profile>
@@ -193,7 +302,7 @@
 					<plugin>
 						<groupId>org.pitest</groupId>
 						<artifactId>pitest-maven</artifactId>
-						<version>${pitest.version}</version>
+						<version>${pitest-maven.version}</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -204,10 +313,10 @@
 						</executions>
 						<configuration>
 							<threads>4</threads>
-							<timeoutConstant>10000</timeoutConstant>
+							<timeoutConstant>15000</timeoutConstant>
 							<timestampedReports>false</timestampedReports>
 							<mutationThreshold>60</mutationThreshold>
-							<coverageThreshold>80</coverageThreshold>
+							<coverageThreshold>75</coverageThreshold>
 							<failWhenNoMutations>true</failWhenNoMutations>
 							<reportsDirectory>${project.build.directory}/pi-report</reportsDirectory>
 							<avoidCallsTo>
@@ -217,8 +326,6 @@
 								<excludedClasse>com.rabobank.argos.argos4j.rest.api.*</excludedClasse>
 								<excludedClasse>com.rabobank.argos.service.adapter.in.rest.api.*</excludedClasse>
 								<excludedClasse>*MapperImpl</excludedClasse>
-								<excludedClass>com.rabobank.argos.integrationtest.service.*</excludedClass>
-								<excludedClass>com.rabobank.argos.integrationtest.argos.service.api.*</excludedClass>
 							</excludedClasses>
 							<targetClasses>
 								<param>com.rabobank.argos.*</param>
@@ -232,7 +339,7 @@
 							<dependency>
 								<groupId>org.pitest</groupId>
 								<artifactId>pitest-junit5-plugin</artifactId>
-								<version>0.10</version>
+								<version>${pitest-junit5-plugin.version}</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -246,7 +353,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.4</version>
+						<version>${jacoco-maven-plugin.version}</version>
 						<executions>
 							<!--genereer report voor elke submodule -->
 							<execution>
@@ -268,7 +375,7 @@
 					<plugin>
 						<groupId>org.sonarsource.scanner.maven</groupId>
 						<artifactId>sonar-maven-plugin</artifactId>
-						<version>3.6.1.1688</version>
+						<version>${sonar-maven-plugin.version}</version>
 					</plugin>
 				</plugins>
 			</build>

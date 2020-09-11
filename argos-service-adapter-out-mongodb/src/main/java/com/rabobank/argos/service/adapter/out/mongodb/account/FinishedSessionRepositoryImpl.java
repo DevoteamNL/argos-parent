@@ -30,9 +30,9 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 @RequiredArgsConstructor
 public class FinishedSessionRepositoryImpl implements FinishedSessionRepository {
 
-    static final String COLLECTION = "finishedsession";
-    static final String SESSION_ID_FIELD = "sessionId";
-    static final String EXPIRATION_DATE_FIELD = "expirationDate";
+    public static final String COLLECTION = "finishedsession";
+    public static final String SESSION_ID_FIELD = "sessionId";
+    public static final String EXPIRATION_DATE_FIELD = "expirationDate";
 
     private final MongoTemplate template;
 

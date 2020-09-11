@@ -39,15 +39,15 @@ import static org.springframework.data.mongodb.core.query.MongoRegexCreator.Matc
 @RequiredArgsConstructor
 public class PersonalAccountRepositoryImpl implements PersonalAccountRepository {
 
-    static final String COLLECTION = "personalaccounts";
-    static final String ACCOUNT_ID = "accountId";
-    static final String ACTIVE_KEY_ID_FIELD = "activeKeyPair.keyId";
-    static final String IN_ACTIVE_KEY_ID_FIELD = "inactiveKeyPairs.keyId";
+    public static final String COLLECTION = "personalaccounts";
+    public static final String ACCOUNT_ID = "accountId";
+    public static final String ACTIVE_KEY_ID_FIELD = "activeKeyPair.keyId";
+    public static final String IN_ACTIVE_KEY_ID_FIELD = "inactiveKeyPairs.keyId";
 
-    static final String EMAIL = "email";
-    static final String NAME_FIELD = "name";
-    static final String ROLE_ID_FIELD = "roleIds";
-    static final String PERMISSIONS_LABEL_ID_FIELD = "localPermissions.labelId";
+    public static final String EMAIL = "email";
+    public static final String NAME_FIELD = "name";
+    public static final String ROLE_ID_FIELD = "roleIds";
+    public static final String PERMISSIONS_LABEL_ID_FIELD = "localPermissions.labelId";
     private static final String CASE_INSENSITIVE = "i";
     private final MongoTemplate template;
 

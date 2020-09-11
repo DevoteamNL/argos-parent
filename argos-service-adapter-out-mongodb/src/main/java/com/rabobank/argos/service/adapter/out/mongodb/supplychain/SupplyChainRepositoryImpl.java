@@ -34,10 +34,10 @@ import java.util.Optional;
 @Component
 public class SupplyChainRepositoryImpl implements SupplyChainRepository {
 
-    static final String COLLECTION = "supplyChains";
-    static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
-    static final String SUPPLY_CHAIN_NAME_FIELD = "name";
-    static final String PARENT_LABEL_ID_FIELD = "parentLabelId";
+    public static final String COLLECTION = "supplyChains";
+    public static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
+    public static final String SUPPLY_CHAIN_NAME_FIELD = "name";
+    public static final String PARENT_LABEL_ID_FIELD = "parentLabelId";
     private final MongoTemplate template;
 
     @Override

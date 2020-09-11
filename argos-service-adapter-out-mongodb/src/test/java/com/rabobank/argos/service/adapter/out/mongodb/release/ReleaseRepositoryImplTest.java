@@ -113,7 +113,7 @@ class ReleaseRepositoryImplTest {
         assertThat(retrievedReleaseDossierMetaData.get().getReleaseDate(), is(OffsetDateTime.parse(RELEASE_DATE_TIME)));
         verify(mongoTemplate).find(queryArgumentCaptor.capture(), any(), any());
         assertThat(queryArgumentCaptor.getValue().toString(), is(
-                "Query: { \"$and\" : [{ \"metadata.releaseArtifacts.artifactsHash\" : \"d8eab8000c5826fbf21e6340c96a911c7cf362c054695b73cb1a80ad0dac1cb0\"}, { \"metadata.releaseArtifacts.artifactsHash\" : \"d10886a0c2d5b4d18134239f1225f1ff014f6ec61dcdd8a4bd3c269b2e2f7c8b\"}], \"metadata.supplyChainPath\" : { \"$regex\" : \"^path\", \"$options\" : \"\"}}, Fields: {}, Sort: {}"));
+                "Query: { \"$and\" : [{ \"metadata.releaseArtifacts.artifactsHash\" : \"d8eab8000c5826fbf21e6340c96a911c7cf362c054695b73cb1a80ad0dac1cb0\"}, { \"metadata.releaseArtifacts.artifactsHash\" : \"d10886a0c2d5b4d18134239f1225f1ff014f6ec61dcdd8a4bd3c269b2e2f7c8b\"}], \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^path\", \"options\" : \"\"}}}, Fields: {}, Sort: {}"));
     }
 
 
@@ -143,6 +143,6 @@ class ReleaseRepositoryImplTest {
         when(mongoTemplate.exists(any(Query.class), any(String.class))).thenReturn(true);
         assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), PATH), is(true));
         verify(mongoTemplate).exists(queryArgumentCaptor.capture(), any(String.class));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\", \"metadata.supplyChainPath\" : { \"$regex\" : \"^path\", \"$options\" : \"\"}}, Fields: {}, Sort: {}"));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\", \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^path\", \"options\" : \"\"}}}, Fields: {}, Sort: {}"));
     }
 }

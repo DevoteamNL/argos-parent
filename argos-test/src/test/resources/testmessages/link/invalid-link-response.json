@@ -1,64 +1,59 @@
 {
-  "messages": [
-    {
-      "field": "link.materials[0].hash",
-      "type": "DATA_INPUT",
-      "message": "must match \"^[0-9a-f]*$\""
-    },
-    {
-      "field": "link.materials[0].hash",
-      "type": "DATA_INPUT",
-      "message": "size must be between 64 and 64"
-    },
-    {
-      "field": "link.materials[1].hash",
-      "type": "DATA_INPUT",
-      "message": "must match \"^[0-9a-f]*$\""
-    },
-    {
-      "field": "link.materials[1].hash",
-      "type": "DATA_INPUT",
-      "message": "size must be between 64 and 64"
-    },
-    {
-      "field": "link.products[0].hash",
-      "type": "DATA_INPUT",
-      "message": "must match \"^[0-9a-f]*$\""
-    },
-    {
-      "field": "link.products[0].hash",
-      "type": "DATA_INPUT",
-      "message": "size must be between 64 and 64"
-    },
-    {
-      "field": "link.products[1].hash",
-      "type": "DATA_INPUT",
-      "message": "must match \"^[0-9a-f]*$\""
-    },
-    {
-      "field": "link.products[1].hash",
-      "type": "DATA_INPUT",
-      "message": "size must be between 64 and 64"
-    },
-    {
-      "field": "signature.keyId",
-      "type": "DATA_INPUT",
-      "message": "must match \"^[0-9a-f]*$\""
-    },
-    {
-      "field": "signature.keyId",
-      "type": "DATA_INPUT",
-      "message": "size must be between 64 and 64"
-    },
-    {
-      "field": "signature.signature",
-      "type": "DATA_INPUT",
-      "message": "must match \"^[0-9a-f]*$\""
-    },
-    {
-      "field": "signature.signature",
-      "type": "DATA_INPUT",
-      "message": "size must be between 80 and 1024"
-    }
-  ]
+	"messages": [
+		{
+			"field": "link.materials[0].hash",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]*$\""
+		},
+		{
+			"field": "link.materials[0].hash",
+			"type": "DATA_INPUT",
+			"message": "size must be between 64 and 64"
+		},
+		{
+			"field": "link.materials[1].hash",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]*$\""
+		},
+		{
+			"field": "link.materials[1].hash",
+			"type": "DATA_INPUT",
+			"message": "size must be between 64 and 64"
+		},
+		{
+			"field": "link.products[0].hash",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]*$\""
+		},
+		{
+			"field": "link.products[0].hash",
+			"type": "DATA_INPUT",
+			"message": "size must be between 64 and 64"
+		},
+		{
+			"field": "link.products[1].hash",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]*$\""
+		},
+		{
+			"field": "link.products[1].hash",
+			"type": "DATA_INPUT",
+			"message": "size must be between 64 and 64"
+		},
+		{
+			"field": "signature.keyId",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]*$\""
+		},
+		{
+			"field": "signature.keyId",
+			"type": "DATA_INPUT",
+			"message": "size must be between 64 and 64"
+		},
+		{
+			"field": "signature.signature",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]*$\""
+		}
+	]
 }

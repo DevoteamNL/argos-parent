@@ -90,7 +90,7 @@ management:
       enabled: true
     health:
       enabled: true
-
+      
 jwt:
   token:
     expiration: PT12H

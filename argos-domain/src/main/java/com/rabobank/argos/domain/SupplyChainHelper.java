@@ -28,8 +28,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SupplyChainHelper {
 	
-	private static final Pattern SUPPLY_CHAIN_PATH_REGEX = Pattern.compile("([\\w.]+):([\\w\\-]+)");
-	private static final String NAME_NOT_CORRECT_MESSAGE = "[%s] not correct should be <label>.<label>:<supplyChainName> with Java package rules";
+	private static final Pattern SUPPLY_CHAIN_PATH_REGEX = Pattern.compile("^((([a-z]|[a-z][a-z0-9\\-]{0,61}[a-z0-9])\\.)*([a-z]|[a-z][a-z0-9\\-]{0,61}[a-z0-9]):([a-z]|[a-z][a-z0-9-]*[a-z0-9]))$");
+	private static final String NAME_NOT_CORRECT_MESSAGE = "[%s] not correct should be <label>.<label>:<supplyChainName> with hostname rules";
 
     public static List<String> reversePath(List<String> path) {
     	List<String> reversedPath = new ArrayList<>(path);
@@ -38,20 +38,21 @@ public class SupplyChainHelper {
     }
 
     public static String getSupplyChainName(String supplyChain) {
-        Matcher matcher = SUPPLY_CHAIN_PATH_REGEX.matcher(supplyChain);
-        if (matcher.matches()) {
-            return matcher.group(2);
-        } else {
+        if (!isCorrect(supplyChain)) {
             throw new ArgosError(String.format(NAME_NOT_CORRECT_MESSAGE, supplyChain));
         }
+        return supplyChain.split(":")[1];
     }
 
     public static List<String> getSupplyChainPath(String supplyChain) {
-        Matcher matcher = SUPPLY_CHAIN_PATH_REGEX.matcher(supplyChain);
-        if (matcher.matches()) {
-            return new ArrayList<>(Arrays.asList(matcher.group(1).split("\\.")));
-        } else {
-        	throw new ArgosError(String.format(NAME_NOT_CORRECT_MESSAGE, supplyChain));
+        if (!isCorrect(supplyChain)) {
+            throw new ArgosError(String.format(NAME_NOT_CORRECT_MESSAGE, supplyChain));
         }
+        return new ArrayList<>(Arrays.asList(supplyChain.split(":")[0].split("\\.")));
+    }
+    
+    private static boolean isCorrect(String supplyChain) {
+        Matcher matcher = SUPPLY_CHAIN_PATH_REGEX.matcher(supplyChain);
+        return matcher.matches();
     }
 }

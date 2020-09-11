@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM jenkins/jenkins:lts-alpine
+FROM jenkins/jenkins:2.235.5-lts-alpine
 
 USER root
 

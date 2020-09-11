@@ -20,6 +20,9 @@ import com.rabobank.argos.domain.crypto.Signature;
 import com.rabobank.argos.domain.layout.Layout;
 import com.rabobank.argos.domain.link.Link;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 
@@ -28,9 +31,9 @@ import java.security.PublicKey;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SignatureValidator {
-    
-    private SignatureValidator() {}
 
     public static boolean isValid(Link link, Signature signature, PublicKey publicKey) {
         return isValid(new JsonSigningSerializer().serialize(link), signature, publicKey);

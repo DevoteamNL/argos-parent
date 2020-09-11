@@ -20,6 +20,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.github.cloudyrock.spring.v5.EnableMongock;
+
 @SpringBootApplication
 @EnableAspectJAutoProxy
 @EnableScheduling

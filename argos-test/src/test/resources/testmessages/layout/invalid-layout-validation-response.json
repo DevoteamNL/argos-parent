@@ -1,49 +1,29 @@
 {
-  "messages": [
-    {
-      "field": "authorizedKeyIds",
-      "type": "MODEL_CONSISTENCY",
-      "message": "The defined Public keys are not equal to all defined Authorized keys"
-    },
-    {
-      "field": "expectedEndProducts",
-      "type": "MODEL_CONSISTENCY",
-      "message": "expected product destination step name not found"
-    },
-    {
-      "field": "keys",
-      "type": "MODEL_CONSISTENCY",
-      "message": "key with id 45c47ccc386678d0eb76efcdbc0720474586ff12e673d5d0f52534cca722438c does not match computed key id from public key"
-    },
-    {
-      "field": "keys",
-      "type": "MODEL_CONSISTENCY",
-      "message": "key with id dd39eed990878d0709b8878a2f2bcd784447d4d91e0feb53265334ddde8787bc does not match computed key id from public key"
-    },
-    {
-      "field": "keys",
-      "type": "MODEL_CONSISTENCY",
-      "message": "keyId authorizedKeyId1 not found"
-    },
-    {
-      "field": "keys",
-      "type": "MODEL_CONSISTENCY",
-      "message": "keyId authorizedKeyId2 not found"
-    },
-    {
-      "field": "keys",
-      "type": "MODEL_CONSISTENCY",
-      "message": "keyId stepName1 authorizedKeyId 1 not found"
-    },
-    {
-      "field": "keys",
-      "type": "MODEL_CONSISTENCY",
-      "message": "keyId stepName1 authorizedKeyId 2 not found"
-    },
-    {
-      "field": "keys",
-      "type": "MODEL_CONSISTENCY",
-      "message": "keyId stepName2 authorizedKeyId not found"
-    }
-  ]
+	"messages": [
+		{
+			"field": "layoutSegments[0].steps[0].expectedMaterials[0].destinationStepName",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[0].name",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[1].expectedMaterials[0].destinationStepName",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[1].name",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[1].requiredNumberOfLinks",
+			"type": "DATA_INPUT",
+			"message": "must be less than or equal to 20"
+		}
+	]
 }

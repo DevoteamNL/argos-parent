@@ -38,5 +38,18 @@ class MatchRuleTest {
         assertEquals("destinationType is marked non-null but is null", exception.getMessage());
         
     }
+    
+    @Test
+    void toStringTest() {
+        MatchRule rule = MatchRule.builder()
+                .destinationPathPrefix("destinationPathPrefix")
+                .destinationSegmentName("destinationSegmentName")
+                .destinationType(ArtifactType.MATERIALS)
+                .pattern("**")
+                .build();
+        
+        assertEquals("MatchRule(sourcePathPrefix=null, destinationType=MATERIALS, destinationPathPrefix=destinationPathPrefix, destinationSegmentName=destinationSegmentName, destinationStepName=null)", rule.toString());
+        
+    }
 
 }

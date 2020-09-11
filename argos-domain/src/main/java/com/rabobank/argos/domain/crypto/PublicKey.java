@@ -27,12 +27,16 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
+@AllArgsConstructor
 @NoArgsConstructor
 public class PublicKey {
     private String keyId;
@@ -40,11 +44,6 @@ public class PublicKey {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
-    }
-    
-    public PublicKey(String keyId, byte[] publicKey) {
-        this.keyId = keyId;
-        this.publicKey = publicKey;
     }
     
     @JsonIgnore

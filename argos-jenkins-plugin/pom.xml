@@ -68,10 +68,22 @@
     </scm>
     
     <properties>
+        <lombok.version>1.18.12</lombok.version>
+        <license-maven-plugin.version>3.0</license-maven-plugin.version>
+        <maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
+        <jenkins.version>2.235.5</jenkins.version>
+        <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+        <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        <bouncycastle-api.version>2.18</bouncycastle-api.version>
+        <credentials.version>2.3.12</credentials.version>
+        <plain-credentials.version>1.7</plain-credentials.version>
+        <workflow-step-api.version>2.22</workflow-step-api.version>
+        <workflow-api.version>2.40</workflow-api.version>
+        <wiremock-jre8-standalone.version>2.27.1</wiremock-jre8-standalone.version>
         <java.level>8</java.level>
-        <lombok.version>1.18.10</lombok.version>
-        <jenkins.version>2.222.4</jenkins.version>
+        <java.version>1.8</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.rabobank.argos</groupId>
@@ -91,27 +103,27 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>bouncycastle-api</artifactId>
-            <version>2.18</version>
+            <version>${bouncycastle-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>credentials</artifactId>
-            <version>2.3.12</version>
+            <version>${credentials.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>plain-credentials</artifactId>
-            <version>1.7</version>
+            <version>${plain-credentials.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-step-api</artifactId>
-            <version>2.22</version>
+            <version>${workflow-step-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-api</artifactId>
-            <version>2.40</version>
+            <version>${workflow-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -137,7 +149,7 @@
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock-jre8-standalone</artifactId>
-            <version>2.27.1</version>
+            <version>${wiremock-jre8-standalone.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -162,7 +174,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven-toolchains-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -171,7 +183,7 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>1.8</version>
+                                    <version>${java.version}</version>
                                 </jdk>
                             </toolchains>
                         </configuration>
@@ -189,7 +201,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M2</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
@@ -197,7 +208,7 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
+                <version>${license-maven-plugin.version}</version>
                 <configuration>
                     <quiet>false</quiet>
                     <failIfMissing>true</failIfMissing>
@@ -239,7 +250,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.4</version>
+                        <version>${jacoco-maven-plugin.version}</version>
                         <executions>
                             <!--genereer report voor elke submodule -->
                             <execution>
@@ -261,7 +272,7 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <version>3.6.1.1688</version>
+                        <version>${sonar-maven-plugin.version}</version>
                     </plugin>
                 </plugins>
             </build>

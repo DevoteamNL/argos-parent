@@ -31,8 +31,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LayoutMetaBlockRepositoryImpl implements LayoutMetaBlockRepository {
 
-    static final String COLLECTION = "layoutMetaBlocks";
-    static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
+    public static final String COLLECTION = "layoutMetaBlocks";
+    public static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
     private final MongoTemplate template;
 
     @Override

@@ -38,7 +38,7 @@
               "sourcePathPrefix": "sourcePathPrefix",
               "destinationPathPrefix": "destinationPathPrefix",
               "destinationType": "PRODUCTS",
-              "destinationStepName": "destinationStepName",
+              "destinationStepName": "destinationstepname",
               "destinationSegmentName": "segment1"
             },
             {
@@ -62,11 +62,11 @@
           ]
         },
         {
-          "name": "stepName2",
+          "name": "stepname2",
           "authorizedKeyIds": [
             "6a58de92fc02d7835faba93ee26d91d7e53f03eb8f86e2518632c34596c5ef3f"
           ],
-          "requiredNumberOfLinks": 45,
+          "requiredNumberOfLinks": 20,
           "expectedMaterials": [
             {
               "ruleType": "MATCH",
@@ -74,7 +74,7 @@
               "sourcePathPrefix": "sourcePathPrefix",
               "destinationPathPrefix": "destinationPathPrefix",
               "destinationType": "MATERIALS",
-              "destinationStepName": "destinationStepName",
+              "destinationStepName": "destinationstepname",
               "destinationSegmentName": "segment1"
             }
           ],

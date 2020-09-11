@@ -15,6 +15,9 @@
  */
 package com.rabobank.argos.service.domain;
 
+import com.rabobank.argos.domain.crypto.HashAlgorithm;
+import com.rabobank.argos.domain.crypto.KeyAlgorithm;
+import com.rabobank.argos.domain.crypto.signing.SignatureAlgorithm;
 import com.rabobank.argos.domain.hierarchy.HierarchyMode;
 import com.rabobank.argos.domain.hierarchy.TreeNode;
 import com.rabobank.argos.domain.hierarchy.TreeNodeVisitor;
@@ -32,8 +35,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
@@ -86,32 +97,58 @@ class DeleteServiceTest {
     void setUp() {
         service = new DeleteService(labelRepository, layoutRepository, linkMetaBlockRepository, approvalConfigurationRepository, supplyChainRepository, hierarchyService, accountService, releaseConfigurationRepository);
     }
-
+    
     @Test
-    void deleteLabel() {
-        when(labelTreeNode.getType()).thenReturn(TreeNode.Type.LABEL);
-        when(labelTreeNode.getReferenceId()).thenReturn("labelId");
-        when(supplyChainTreeNode.getType()).thenReturn(TreeNode.Type.SUPPLY_CHAIN);
-        when(supplyChainTreeNode.getReferenceId()).thenReturn("supplyChainId");
-        when(serviceAccountTreeNode.getType()).thenReturn(TreeNode.Type.SERVICE_ACCOUNT);
-        when(serviceAccountTreeNode.getReferenceId()).thenReturn("serviceAccountId");
-        doAnswer(invocation -> {
-            TreeNodeVisitor treeNodeVisitor = invocation.getArgument(0);
-            treeNodeVisitor.visitExit(labelTreeNode);
-            treeNodeVisitor.visitExit(supplyChainTreeNode);
-            treeNodeVisitor.visitExit(serviceAccountTreeNode);
-            return null;
-        }).when(treeNode).accept(any());
+    void deleteTree() {
+        TreeNode saNode = TreeNode.builder()
+                .name("servicaccount")
+                .referenceId("servicaccountId")
+                .type(TreeNode.Type.SERVICE_ACCOUNT)
+                .build();
+        
 
-        when(hierarchyService.getSubTree(ID, HierarchyMode.ALL, -1)).thenReturn(Optional.of(treeNode));
+        TreeNode scNode = TreeNode.builder()
+                .name("supplychain")
+                .referenceId("supplychainId")
+                .type(TreeNode.Type.SUPPLY_CHAIN)
+                .build();
+
+        TreeNode labelNode = TreeNode.builder()
+                .name("childLabel")
+                .hasChildren(true)
+                .referenceId("childLabelId")
+                .children(Collections.singletonList(saNode))
+                .type(TreeNode.Type.LABEL).build();
+        
+        TreeNode labelNode2 = TreeNode.builder()
+                .name("childLabel2")
+                .hasChildren(true)
+                .referenceId("childLabel2Id")
+                .children(Collections.singletonList(scNode))
+                .type(TreeNode.Type.LABEL).build();
+        
+        List<TreeNode> children = new ArrayList<>();
+        children.add(labelNode);
+        children.add(labelNode2);
+
+        TreeNode rootNode = TreeNode.builder()
+                .name("root")
+                .hasChildren(true)
+                .referenceId("rootId")
+                .children(children)
+                .type(TreeNode.Type.LABEL)
+                .build();
+        when(hierarchyService.getSubTree(ID, HierarchyMode.ALL, -1)).thenReturn(Optional.of(rootNode));
         service.deleteLabel(ID);
-        verify(labelRepository).deleteById("labelId");
-        verify(supplyChainRepository).delete("supplyChainId");
-        verify(layoutRepository).deleteBySupplyChainId("supplyChainId");
-        verify(linkMetaBlockRepository).deleteBySupplyChainId("supplyChainId");
-        verify(approvalConfigurationRepository).deleteBySupplyChainId("supplyChainId");
-        verify(accountService).deleteServiceAccount("serviceAccountId");
-        verify(releaseConfigurationRepository).deleteBySupplyChainId("supplyChainId");
+        verify(labelRepository).deleteById("rootId");
+        verify(labelRepository).deleteById("childLabelId");
+        verify(labelRepository).deleteById("childLabel2Id");
+        verify(supplyChainRepository).delete("supplychainId");
+        verify(layoutRepository).deleteBySupplyChainId("supplychainId");
+        verify(linkMetaBlockRepository).deleteBySupplyChainId("supplychainId");
+        verify(approvalConfigurationRepository).deleteBySupplyChainId("supplychainId");
+        verify(accountService).deleteServiceAccount("servicaccountId");
+        verify(releaseConfigurationRepository).deleteBySupplyChainId("supplychainId");
     }
 
     @Test
@@ -128,5 +165,39 @@ class DeleteServiceTest {
     void deleteServiceAccount() {
         service.deleteServiceAccount(ID);
         verify(accountService).deleteServiceAccount(ID);
+    }
+    
+    @Test
+    void vistorDeleteServiceTest() {
+        TreeNode labelNode = TreeNode.builder()
+                .name("childLabel")
+                .referenceId("childLabelId")
+                .type(TreeNode.Type.LABEL).build();
+        TreeNode saNode = TreeNode.builder()
+                .name("serviceaccount")
+                .referenceId("serviceaccountId")
+                .type(TreeNode.Type.SERVICE_ACCOUNT)
+                .build();
+        TreeNode scNode = TreeNode.builder()
+                .name("supplychain")
+                .referenceId("supplychainId")
+                .type(TreeNode.Type.SUPPLY_CHAIN)
+                .build();
+        assertThat(service.visitEnter(labelNode), is(true));
+        service.visitExit(labelNode);
+        verify(labelRepository).deleteById("childLabelId");
+        service.visitLeaf(saNode);
+        verify(accountService).deleteServiceAccount("serviceaccountId");
+        service.visitLeaf(scNode);
+        verify(supplyChainRepository).delete("supplychainId");
+        verify(layoutRepository).deleteBySupplyChainId("supplychainId");
+        verify(linkMetaBlockRepository).deleteBySupplyChainId("supplychainId");
+        verify(approvalConfigurationRepository).deleteBySupplyChainId("supplychainId");
+        verify(releaseConfigurationRepository).deleteBySupplyChainId("supplychainId");
+        
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.visitLeaf(labelNode);
+          });
+        assertEquals("LABEL not implemented", exception.getMessage());
     }
 }

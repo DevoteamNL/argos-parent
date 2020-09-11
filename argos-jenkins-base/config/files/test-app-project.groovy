@@ -80,7 +80,7 @@ argosConfig.setPrivateKeyCredentialId("default-sa2")
 
 FreeStyleProject fp = instance.createProject(FreeStyleProject.class, "argos-test-app-freestyle-recording")
 fp.setScm(new GitSCM("https://github.com/argosnotary/argos-test-app.git"))
-argosRecorder = new ArgosRecorder("root_label.child_label:argos-test-app", "default-sa2", "segment1", "build", '${BUILD_NUMBER}')
+argosRecorder = new ArgosRecorder("root-label.child-label:argos-test-app", "default-sa2", "segment1", "build", '${BUILD_NUMBER}')
 fp.getPublishersList().add(argosRecorder)
 fp.getBuildersList().add(new Shell("mvn clean install"))
 

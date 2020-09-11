@@ -32,7 +32,7 @@ class RestApprovalConfigurationTest {
     @Test
     void emptyRestLayoutMetaBlock() {
         assertThat(validate(new RestApprovalConfiguration()), contains(expectedErrors(
-                "artifactCollectorSpecifications", "size must be between 1 and 2147483647",
+                "artifactCollectorSpecifications", "size must be between 1 and 20",
                 "segmentName", "must not be null",
                 "stepName", "must not be null")));
     }
@@ -46,7 +46,7 @@ class RestApprovalConfigurationTest {
                                 .name("xldeploy").type(RestArtifactCollectorSpecification.TypeEnum.XLDEPLOY)
                                 .uri(new URI("http://xldeploy.nl"))))
         ), contains(expectedErrors(
-                "stepName", "must match \"^([A-Za-z0-9_-]*)?$\"")));
+                "stepName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"")));
 
     }
 
@@ -58,7 +58,7 @@ class RestApprovalConfigurationTest {
                         .type(RestArtifactCollectorSpecification.TypeEnum.XLDEPLOY)
                         .uri(new URI("http://xldeploy.nl"))))
         ), contains(expectedErrors(
-                "segmentName", "must match \"^([A-Za-z0-9_-]*)?$\"")));
+                "segmentName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"")));
 
     }
 }

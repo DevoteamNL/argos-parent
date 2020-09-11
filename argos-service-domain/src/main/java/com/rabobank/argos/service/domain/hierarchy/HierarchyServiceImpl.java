@@ -38,7 +38,7 @@ public class HierarchyServiceImpl implements HierarchyService {
         TreeNodeVisitor<Optional<TreeNode>> treeNodeVisitor = new AccountPermissionTreeNodeVisitor(accountSecurityContext);
         hierarchyRepository
                 .getSubTree(referenceId, hierarchyMode, maxDepth)
-                .ifPresent(treeNode -> treeNode.accept(treeNodeVisitor)
+                .ifPresent(treeNode -> treeNode.visit(treeNodeVisitor)
                 );
 
         return treeNodeVisitor.result();
@@ -51,7 +51,7 @@ public class HierarchyServiceImpl implements HierarchyService {
                 .stream()
                 .map(treeNode -> {
                     TreeNodeVisitor<Optional<TreeNode>> treeNodeVisitor = new AccountPermissionTreeNodeVisitor(accountSecurityContext);
-                            treeNode.accept(treeNodeVisitor);
+                            treeNode.visit(treeNodeVisitor);
                             return treeNodeVisitor.result();
                         }
                 ).filter(Optional::isPresent)
