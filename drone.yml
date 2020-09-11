@@ -80,15 +80,12 @@ steps:
   detach: true
   environment:
     JAVA_OPTS: -Djenkins.install.runSetupWizard=false
-    snapshotsUrl: http://nexus:8081/nexus/content/repositories/snapshots/
-    releasesUrl: http://nexus:8081/nexus/content/repositories/releases/
     argosServiceUrl: http://argos-service:8080
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
   depends_on:
   - build
-  - nexus
   - sonar
   
 - name: regression test
@@ -103,7 +100,6 @@ steps:
   - argos-jenkins
   - argos-service
   - argos-integration-test-service
-  - nexus
   - sonar
 
 - name: release argos service image
@@ -184,8 +180,6 @@ steps:
 services:
 - name: mongodb
   image: argosnotary/mongo:4.2.8
-- name: nexus
-  image: sonatype/nexus:2.14.15-01
 - name: argos-integration-test-stub
   image: argosnotary/oauth-stub:2.25.1
   

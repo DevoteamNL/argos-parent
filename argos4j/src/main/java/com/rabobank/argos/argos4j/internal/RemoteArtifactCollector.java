@@ -138,8 +138,7 @@ public class RemoteArtifactCollector implements ArtifactCollector {
                         new String(remoteCollector.getPassword())).apply(requestTemplate));
     }
     
-    private String appendToUrl(String url, Map<String, String> parameters) throws URISyntaxException
-    {
+    private String appendToUrl(String url, Map<String, String> parameters) throws URISyntaxException {
         URI uri = new URI(url);
         String query = uri.getQuery();
 

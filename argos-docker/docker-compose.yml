@@ -75,23 +75,12 @@ services:
     image: argosnotary/argos-jenkins-base:latest
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Xmx1g
-      - snapshotsUrl=http://nexus:8081/nexus/content/repositories/snapshots/
-      - releasesUrl=http://nexus:8081/nexus/content/repositories/releases/
       - argosServiceUrl=http://argos-service:8080
     volumes:
       - maven_cache:/root/.m2/repository
       - ../argos-jenkins-plugin/target/argos.hpi:/usr/share/jenkins/ref/plugins/argos.hpi
     ports:
       - 9080:8080
-    depends_on:
-      - nexus
-
-  nexus:
-    image: sonatype/nexus:2.14.15-01
-    environment:
-      JAVA_OPTS: '-Xmx500m'
-    ports:
-      - 8081:8081
 
 volumes:
   maven_cache:
