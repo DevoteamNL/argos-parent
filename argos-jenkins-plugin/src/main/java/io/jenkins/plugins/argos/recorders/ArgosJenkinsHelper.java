@@ -75,15 +75,17 @@ public class ArgosJenkinsHelper {
         String supplyChainName = SupplyChainHelper.getSupplyChainName(supplyChainIdentifier);
         List<String> path = SupplyChainHelper.getSupplyChainPath(supplyChainIdentifier);
 
-        return new Argos4j(Argos4jSettings.builder()
-                .path(path)
-                .argosServerBaseUrl(argosServiceBaseUrl)
-                .keyId(getCredentials(privateKeyCredentialId).getUsername())
-                .supplyChainName(supplyChainName).build())
-                .getLinkBuilder(LinkBuilderSettings.builder()
-                        .layoutSegmentName(layoutSegmentName)
-                        .stepName(stepName)
-                        .runId(runId).build());
+        return new Argos4j(
+                Argos4jSettings.builder()
+                    .path(path)
+                    .argosServerBaseUrl(argosServiceBaseUrl)
+                    .keyId(getCredentials(privateKeyCredentialId).getUsername())
+                    .supplyChainName(supplyChainName).build())
+                    .getLinkBuilder(
+                            LinkBuilderSettings.builder()
+                                .layoutSegmentName(layoutSegmentName)
+                                .stepName(stepName)
+                                .runId(runId).build());
     }
 
     public static char[] getPrivateKeyPassword(String privateKeyCredentialId) {

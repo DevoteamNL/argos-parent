@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.1</version>
+        <version>4.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.jenkins.plugins</groupId>
@@ -70,7 +70,7 @@
     <properties>
         <java.level>8</java.level>
         <lombok.version>1.18.10</lombok.version>
-        <jenkins.version>2.190.2</jenkins.version>
+        <jenkins.version>2.222.4</jenkins.version>
     </properties>
     <dependencies>
         <dependency>
@@ -120,18 +120,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.4.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.4.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jenkins-ci.main</groupId>
             <artifactId>jenkins-test-harness</artifactId>
             <scope>test</scope>
@@ -145,6 +133,12 @@
                     <artifactId>org-netbeans-insane</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8-standalone</artifactId>
+            <version>2.27.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

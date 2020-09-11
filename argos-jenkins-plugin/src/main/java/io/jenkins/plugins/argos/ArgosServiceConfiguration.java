@@ -22,7 +22,6 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -46,13 +45,14 @@ public class ArgosServiceConfiguration extends GlobalConfiguration {
         return GlobalConfiguration.all().get(ArgosServiceConfiguration.class);
     }
 
-    private String url;
+    private String argosBaseUrl;
     
     private String privateKeyCredentialId;
 
     @DataBoundConstructor
-    public ArgosServiceConfiguration(String url) {
-        this.url = url;
+    public ArgosServiceConfiguration(String argosBaseUrl, String privateKeyCredentialId) {
+        this.argosBaseUrl = argosBaseUrl;
+        this.privateKeyCredentialId = privateKeyCredentialId;
     }
 
     public ArgosServiceConfiguration() {
@@ -60,12 +60,12 @@ public class ArgosServiceConfiguration extends GlobalConfiguration {
         load();
     }
 
-    public String getUrl() {
-        return url;
+    public String getArgosBaseUrl() {
+        return argosBaseUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setArgosBaseUrl(String argosBaseUrl) {
+        this.argosBaseUrl = argosBaseUrl;
         save();
     }
     
@@ -128,26 +128,7 @@ public class ArgosServiceConfiguration extends GlobalConfiguration {
                 .includeCurrentValue(privateKeyCredentialId);
     }
 
-    /**
-     * validating the credentialId
-     */
-    public FormValidation doCheckprivateKeyCredentialId(@AncestorInPath Item item, @QueryParameter String value) {
-        if (item == null) {
-            if (!Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
-                return FormValidation.ok();
-            }
-        } else {
-            if (!item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
-                return FormValidation.ok();
-            }
-        }
-        if (StringUtils.isBlank(value)) {
-            return FormValidation.ok();
-        }
-        return FormValidation.ok();
-    }
-
     public String getArgosServiceBaseUrl() {
-        return this.url;
+        return this.argosBaseUrl;
     }
 }

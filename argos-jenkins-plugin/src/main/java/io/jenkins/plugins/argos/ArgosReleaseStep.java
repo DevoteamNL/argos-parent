@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 
@@ -28,7 +26,6 @@ import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
-import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.SynchronousStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -60,7 +57,7 @@ public class ArgosReleaseStep extends Step implements Serializable {
     @DataBoundConstructor
     public ArgosReleaseStep(String argosSettingsFile) {
         super();
-        this.credentialId = ArgosServiceConfiguration.get().getPrivateKeyCredentialId();;
+        this.credentialId = ArgosServiceConfiguration.get().getPrivateKeyCredentialId();
         this.argosSettingsFile = argosSettingsFile;
     }
 
