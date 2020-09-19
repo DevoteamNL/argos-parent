@@ -27,14 +27,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.rabobank.argos.domain.ArgosError;
-import com.rabobank.argos.domain.PathHelper;
-import com.rabobank.argos.domain.SupplyChainHelper;
 
 class HashUtilTest {
     private String EXPECTED_NORMALIZED_HASH = "16ef5bb126378df2f98d6a742df6ff0f7cad8cc81bfe7ce742615c7d7919024f";
@@ -103,7 +100,7 @@ class HashUtilTest {
     }
     
     @Test
-    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
       Constructor<HashUtil> constructor = HashUtil.class.getDeclaredConstructor();
       assertThat(Modifier.isPrivate(constructor.getModifiers()), is(true));
       constructor.setAccessible(true);

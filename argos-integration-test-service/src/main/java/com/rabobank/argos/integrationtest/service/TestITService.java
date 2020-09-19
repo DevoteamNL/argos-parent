@@ -114,7 +114,7 @@ public class TestITService implements IntegrationTestServiceApi {
         KeyPair keyPair = null;
 		try {
 			keyPair = KeyPair.createKeyPair(password.toCharArray());
-		} catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | OperatorCreationException
+		} catch (NoSuchAlgorithmException | OperatorCreationException
 				| PemGenerationException e) {
 			log.error(e.getMessage());
 		}

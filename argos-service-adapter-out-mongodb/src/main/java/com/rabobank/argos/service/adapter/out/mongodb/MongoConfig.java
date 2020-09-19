@@ -49,7 +49,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     
     public static final String CHANGELOG_SCAN_PACKAGE = "com.rabobank.argos.service.adapter.out.mongodb.changelogs";
     
-    private final List<Converter<?, ?>> converterList = new ArrayList<Converter<?, ?>>();
+    private final List<Converter<?, ?>> converterList = new ArrayList<>();
     
     @Bean
     @Override
@@ -77,7 +77,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     }
 
     @Bean
-    public GridFsTemplate gridFsTemplate() throws Exception {
+    public GridFsTemplate gridFsTemplate() {
         return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(mongoDbFactory(),
                 customConversions(), null));
     }

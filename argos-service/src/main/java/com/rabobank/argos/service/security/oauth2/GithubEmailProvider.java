@@ -17,7 +17,6 @@ package com.rabobank.argos.service.security.oauth2;
 
 import com.rabobank.argos.domain.ArgosError;
 import com.rabobank.argos.service.domain.security.oauth.EmailAddressHandler;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +32,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component("com.rabobank.argos.service.security.oauth2.GithubEmailProvider")
-@Slf4j
 public class GithubEmailProvider implements EmailAddressHandler {
     @Override
     public String getEmailAddress(String token, String emailUri) {

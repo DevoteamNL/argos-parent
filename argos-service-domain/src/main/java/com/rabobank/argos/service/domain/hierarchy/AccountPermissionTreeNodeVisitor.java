@@ -101,7 +101,9 @@ public class AccountPermissionTreeNodeVisitor implements TreeNodeVisitor<Optiona
     }
 
     @Override
-    public void visitExit(TreeNode treeNode) {}
+    public void visitExit(TreeNode treeNode) {
+        // do nothing on exit of node
+    }
 
     @Override
     public void visitLeaf(TreeNode treeNode) {

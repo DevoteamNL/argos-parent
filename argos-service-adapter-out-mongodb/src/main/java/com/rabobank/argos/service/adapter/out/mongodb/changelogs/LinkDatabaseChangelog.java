@@ -23,7 +23,6 @@ import org.bson.Document;
 import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
 import org.springframework.data.mongodb.core.index.HashedIndex;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 

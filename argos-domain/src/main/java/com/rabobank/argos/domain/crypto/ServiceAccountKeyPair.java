@@ -22,7 +22,6 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.rabobank.argos.domain.ArgosError;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -112,8 +112,9 @@ public class TokenProviderImpl implements TokenProvider {
     }
 
     public TokenInfo getTokenInfo(String token) {
-        Claims claims = Jwts.parser()
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
         return TokenInfo.builder().accountId(claims.getSubject()).sessionId(claims.getId()).expiration(claims.getExpiration()).issuedAt(claims.getIssuedAt()).build();
@@ -121,7 +122,9 @@ public class TokenProviderImpl implements TokenProvider {
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
+            Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build().parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");

@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -115,9 +116,11 @@ public class RemoteArtifactCollector implements ArtifactCollector {
         if (remoteCollector.getClass() == RemoteCollectorCollector.class) {
             requestTemplate.method(Request.HttpMethod.POST);
             try {
-                requestTemplate.body(new ObjectMapper()
-                        .writeValueAsString(
-                                ((RemoteCollectorCollector) remoteCollector).getParameterMap()));
+                requestTemplate.body(
+                        Request.Body.bodyTemplate((new ObjectMapper()
+                                .writeValueAsString(
+                                        ((RemoteCollectorCollector) remoteCollector).getParameterMap())), 
+                                    Charset.defaultCharset()));
             } catch (JsonProcessingException e) {
                 throw new Argos4jError(e.getMessage());
             }

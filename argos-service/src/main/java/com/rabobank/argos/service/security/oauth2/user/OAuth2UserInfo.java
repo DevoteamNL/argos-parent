@@ -21,7 +21,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Map;
-import java.util.Optional;
 
 
 public class OAuth2UserInfo {
@@ -43,9 +42,9 @@ public class OAuth2UserInfo {
     @NotNull
     @Size(min = 1)
     public String getId() {
-        return Optional.ofNullable(attributes
+        return (String) attributes
                 .getOrDefault(oauth2Provider
-                        .getUserIdAttribute(), null)).map(Object::toString).orElse(null);
+                        .getUserIdAttribute(), null);
     }
 
     @NotNull

@@ -76,7 +76,7 @@ class SignerTest {
     }
     
     @Test
-    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
       Constructor<Signer> constructor = Signer.class.getDeclaredConstructor();
       assertThat(Modifier.isPrivate(constructor.getModifiers()), is(true));
       constructor.setAccessible(true);

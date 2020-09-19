@@ -74,6 +74,7 @@
         <jenkins.version>2.235.5</jenkins.version>
         <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <bouncycastle-api.version>2.18</bouncycastle-api.version>
         <credentials.version>2.3.12</credentials.version>
         <plain-credentials.version>1.7</plain-credentials.version>
@@ -171,6 +172,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>

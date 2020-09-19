@@ -67,7 +67,7 @@ public class KeyPair extends PublicKey implements Serializable {
         }
     }
     
-	public static KeyPair createKeyPair(char[] passphrase) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, OperatorCreationException, PemGenerationException {
+	public static KeyPair createKeyPair(char[] passphrase) throws NoSuchAlgorithmException, OperatorCreationException, PemGenerationException {
 		KeyPairGenerator generator = KeyPairGenerator.getInstance(KeyAlgorithm.EC.name());
 		java.security.KeyPair keyPair = generator.generateKeyPair();
         JceOpenSSLPKCS8EncryptorBuilder encryptorBuilder = new JceOpenSSLPKCS8EncryptorBuilder(PKCS8Generator.AES_256_CBC).setProvider("BC");  

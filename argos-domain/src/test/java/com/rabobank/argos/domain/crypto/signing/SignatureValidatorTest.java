@@ -17,7 +17,6 @@ package com.rabobank.argos.domain.crypto.signing;
 
 import com.rabobank.argos.domain.ArgosError;
 import com.rabobank.argos.domain.crypto.HashAlgorithm;
-import com.rabobank.argos.domain.crypto.HashUtil;
 import com.rabobank.argos.domain.crypto.KeyAlgorithm;
 import com.rabobank.argos.domain.layout.Layout;
 import com.rabobank.argos.domain.layout.LayoutMetaBlock;
@@ -190,7 +189,7 @@ class SignatureValidatorTest {
     }
     
     @Test
-    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
       Constructor<SignatureValidator> constructor = SignatureValidator.class.getDeclaredConstructor();
       assertThat(Modifier.isPrivate(constructor.getModifiers()), is(true));
       constructor.setAccessible(true);

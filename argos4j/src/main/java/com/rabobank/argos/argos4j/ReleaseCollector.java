@@ -15,6 +15,8 @@
  */
 package com.rabobank.argos.argos4j;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -34,7 +36,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonDeserialize(builder = ReleaseCollector.ReleaseCollectorBuilder.class)
-public class ReleaseCollector {
+public class ReleaseCollector  implements Serializable {
+    private static final long serialVersionUID = -3437437685195360384L;
     @JsonProperty("name")
     private String name;
     @JsonProperty("collector")

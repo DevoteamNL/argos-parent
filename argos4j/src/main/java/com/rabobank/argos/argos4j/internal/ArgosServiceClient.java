@@ -41,8 +41,6 @@ import feign.FeignException;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
-import java.util.Optional;
-
 
 public class ArgosServiceClient {
 
