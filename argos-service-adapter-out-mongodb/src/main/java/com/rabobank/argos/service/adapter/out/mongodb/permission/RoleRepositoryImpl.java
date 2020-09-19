@@ -32,9 +32,9 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @Component
 @RequiredArgsConstructor
 public class RoleRepositoryImpl implements RoleRepository {
-    static final String COLLECTION = "roles";
-    static final String ROLE_ID_FIELD = "roleId";
-    static final String ROLE_NAME_FIELD = "name";
+    public static final String COLLECTION = "roles";
+    public static final String ROLE_ID_FIELD = "roleId";
+    public static final String ROLE_NAME_FIELD = "name";
     private final MongoTemplate template;
 
     @Override

@@ -1,0 +1,14 @@
+{
+	"messages": [
+		{
+			"field": "getSupplyChain.supplyChainId",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$\""
+		},
+		{
+			"field": "getSupplyChain.supplyChainId",
+			"type": "DATA_INPUT",
+			"message": "size must be between 36 and 36"
+		}
+	]
+}

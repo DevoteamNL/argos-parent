@@ -18,8 +18,13 @@ package com.rabobank.argos.domain.hierarchy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.rabobank.argos.domain.permission.Permission;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.rabobank.argos.domain.hierarchy.TreeNodeTest.TestVisitor.VISIT_ENTER;
@@ -30,35 +35,61 @@ import static org.hamcrest.Matchers.is;
 
 class TreeNodeTest {
     private TreeNode treeNode;
+    private TreeNode leafNode;
+    private TreeNode childNode;
+    private TreeNode childNode2;
+    
+    private Permission permission = Permission.LAYOUT_ADD;
+    private Permission permission2 = Permission.LINK_ADD;
 
     @BeforeEach
     void setUp() {
 
-        TreeNode leafNode = TreeNode.builder()
+        leafNode = TreeNode.builder()
                 .name("servicaccount")
                 .type(TreeNode.Type.SERVICE_ACCOUNT)
                 .build();
 
-        TreeNode childNode = TreeNode.builder()
+        childNode = TreeNode.builder()
                 .name("childLabel")
+                .permissions(Collections.singletonList(permission))
                 .children(Collections.singletonList(leafNode))
                 .type(TreeNode.Type.LABEL).build();
+        
+        childNode2 = TreeNode.builder()
+                .name("childLabel2")
+                .permissions(Collections.singletonList(permission))
+                .type(TreeNode.Type.LABEL).build();
+        
+        List<TreeNode> children = new ArrayList<>();
+        children.add(childNode);
 
         treeNode = TreeNode.builder()
                 .name("root")
-                .children(Collections.singletonList(childNode))
+                .children(children)
                 .type(TreeNode.Type.LABEL)
                 .build();
 
     }
 
     @Test
-    void accept() {
+    void visit() {
         TreeNodeVisitor<Map<String, Integer>> treeNodeVisitor = new TestVisitor();
-        treeNode.accept(treeNodeVisitor);
+        treeNode.visit(treeNodeVisitor);
         assertThat(treeNodeVisitor.result().get(VISIT_ENTER), is(2));
         assertThat(treeNodeVisitor.result().get(VISIT_EXIT), is(2));
         assertThat(treeNodeVisitor.result().get(VISIT_LEAF), is(1));
+    }
+    
+    @Test
+    void typeTest() {
+        assertThat(treeNode.isLeafNode(), is(false));
+        assertThat(childNode.isLeafNode(), is(false));
+        assertThat(leafNode.isLeafNode(), is(true));
+        
+        treeNode.addChild(childNode2);
+        assertThat(treeNode.getChildren().size(), is(2));
+        
     }
 
     static class TestVisitor implements TreeNodeVisitor<Map<String, Integer>> {
@@ -80,20 +111,67 @@ class TreeNodeTest {
         }
 
         @Override
-        public boolean visitExit(TreeNode treeNode) {
+        public void visitExit(TreeNode treeNode) {
             visits.put(VISIT_EXIT, visits.get(VISIT_EXIT) + 1);
-            return true;
         }
 
         @Override
-        public boolean visitLeaf(TreeNode treeNode) {
+        public void visitLeaf(TreeNode treeNode) {
             visits.put(VISIT_LEAF, visits.get(VISIT_LEAF) + 1);
-            return true;
         }
 
         @Override
         public Map<String, Integer> result() {
             return visits;
         }
+    }
+    
+    @Test
+    void withsTest() {        
+        TreeNode childNodeClone = childNode.withPermissions(Collections.singletonList(permission2));
+        assertThat(childNodeClone.getPermissions(), is(Collections.singletonList(permission2)));
+        assertThat(childNodeClone.getChildren(), is(childNode.getChildren()));
+        assertThat(childNodeClone.getName(), is(childNode.getName()));
+        assertThat(childNodeClone.getType(), is(childNode.getType()));
+        
+        
+        TreeNode rootNodeClone = treeNode.withChildren(Collections.singletonList(leafNode));
+        assertThat(rootNodeClone.getChildren(), is(Collections.singletonList(leafNode)));
+        assertThat(rootNodeClone.getPermissions(), is(treeNode.getPermissions()));
+        assertThat(rootNodeClone.getName(), is(treeNode.getName()));
+        assertThat(rootNodeClone.getType(), is(treeNode.getType()));
+        
+    }
+    
+    @Test
+    void attributeTest() {
+        treeNode.addChild(childNode2);
+        assertThat(treeNode.getChildren(), is(Arrays.asList(childNode, childNode2)));
+        
+        TreeNode theNode = TreeNode.builder().build();
+        theNode.setName("childLabel");
+        theNode.setPermissions(Collections.singletonList(permission));
+        theNode.setChildren(Collections.singletonList(leafNode));
+        theNode.setType(TreeNode.Type.LABEL);
+        theNode.setReferenceId("referenceId");
+        theNode.setParentLabelId("parentLabelId");
+        theNode.setPathToRoot(Arrays.asList("path", "to", "root"));
+        theNode.setIdPathToRoot(Arrays.asList("id1", "id2"));
+        theNode.setIdsOfDescendantLabels(Arrays.asList("labels"));
+        theNode.setHasChildren(true);
+        
+
+        assertThat(theNode.getChildren(), is(Collections.singletonList(leafNode)));
+        assertThat(theNode.getPermissions(), is(Collections.singletonList(permission)));
+        assertThat(theNode.getName(), is("childLabel"));
+        assertThat(theNode.getType(), is(TreeNode.Type.LABEL));
+        assertThat(theNode.getReferenceId(), is("referenceId"));
+        assertThat(theNode.getParentLabelId(), is("parentLabelId"));
+        assertThat(theNode.getPathToRoot(), is(Arrays.asList("path", "to", "root")));
+        assertThat(theNode.getIdPathToRoot(), is(Arrays.asList("id1", "id2")));
+        assertThat(theNode.getIdsOfDescendantLabels(), is(Arrays.asList("labels")));
+        assertThat(theNode.isHasChildren(), is(true));
+        
+        
     }
 }

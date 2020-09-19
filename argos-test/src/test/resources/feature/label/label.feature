@@ -43,7 +43,7 @@ Feature: Label
     And request { name: '1label'}
     When method POST
     Then status 400
-    And match response.messages[0].message == 'must match "^([a-z]{1}[a-z0-9_]*)?$"'
+    And match response.messages[0].message == 'must match "^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$"'
 
   Scenario: store a label without authorization should return a 401 error
     * configure headers = null

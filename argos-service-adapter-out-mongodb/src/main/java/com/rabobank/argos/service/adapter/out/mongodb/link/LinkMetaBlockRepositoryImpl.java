@@ -36,15 +36,15 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 @RequiredArgsConstructor
 public class LinkMetaBlockRepositoryImpl implements LinkMetaBlockRepository {
 
-    static final String COLLECTION = "linkMetaBlocks";
-    static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
-    static final String SEGMENT_NAME_FIELD = "link.layoutSegmentName";
-    static final String STEP_NAME_FIELD = "link.stepName";
-    static final String RUN_ID_FIELD = "link.runId";
-    static final String LINK_MATERIALS_HASH_FIELD = "link.materials.hash";
-    static final String LINK_PRODUCTS_HASH_FIELD = "link.products.hash";
-    static final String LINK_MATERIALS_URI_FIELD = "link.materials.uri";
-    static final String LINK_PRODUCTS_URI_FIELD = "link.products.uri";
+    public static final String COLLECTION = "linkMetaBlocks";
+    public static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
+    public static final String SEGMENT_NAME_FIELD = "link.layoutSegmentName";
+    public static final String STEP_NAME_FIELD = "link.stepName";
+    public static final String RUN_ID_FIELD = "link.runId";
+    public static final String LINK_MATERIALS_HASH_FIELD = "link.materials.hash";
+    public static final String LINK_PRODUCTS_HASH_FIELD = "link.products.hash";
+    public static final String LINK_MATERIALS_URI_FIELD = "link.materials.uri";
+    public static final String LINK_PRODUCTS_URI_FIELD = "link.products.uri";
 
     private final MongoTemplate template;
 

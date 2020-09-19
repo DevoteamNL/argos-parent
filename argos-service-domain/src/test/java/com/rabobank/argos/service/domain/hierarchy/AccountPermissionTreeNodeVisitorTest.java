@@ -137,17 +137,17 @@ class AccountPermissionTreeNodeVisitorTest {
         assertThat(optionalTreeNode.isPresent(), is(false));
     }
 
-    @Test
-    void visitExit() {
-        assertThat(accountPermissionTreeNodeVisitor.visitExit(child1_3), is(true));
-    }
+    /*
+     * @Test void visitExit() {
+     * assertThat(accountPermissionTreeNodeVisitor.visitExit(child1_3), is(true)); }
+     */
 
     @Test
     void visitLeaf() {
         when(accountSecurityContext.allLocalPermissions(any())).thenReturn(Set.of(Permission.READ));
         when(accountSecurityContext.getGlobalPermission()).thenReturn(Set.of(Permission.TREE_EDIT));
         assertThat(accountPermissionTreeNodeVisitor.visitEnter(child1_2), is(true));
-        assertThat(accountPermissionTreeNodeVisitor.visitLeaf(child1_3), is(true));
+        accountPermissionTreeNodeVisitor.visitLeaf(child1_3);
         Optional<TreeNode> optionalTreeNode = accountPermissionTreeNodeVisitor.result();
         assertThat(optionalTreeNode.isPresent(), is(true));
         assertThat(optionalTreeNode.get().getName(), is(CHILD_1_2));
@@ -160,7 +160,7 @@ class AccountPermissionTreeNodeVisitorTest {
     void visitLeafWithoutVisitEnterShouldReturnLeaf() {
         when(accountSecurityContext.allLocalPermissions(any())).thenReturn(Set.of(Permission.READ));
         when(accountSecurityContext.getGlobalPermission()).thenReturn(Set.of(Permission.TREE_EDIT));
-        assertThat(accountPermissionTreeNodeVisitor.visitLeaf(child1_3), is(true));
+        accountPermissionTreeNodeVisitor.visitLeaf(child1_3);
         Optional<TreeNode> optionalTreeNode = accountPermissionTreeNodeVisitor.result();
         assertThat(optionalTreeNode.isPresent(), is(true));
         assertThat(optionalTreeNode.get().getName(), is(SUPPLY_CHAIN));
@@ -170,7 +170,7 @@ class AccountPermissionTreeNodeVisitorTest {
     void visitLeafWithoutPermissionsShouldReturnFalseAndEmptyResult() {
         when(accountSecurityContext.allLocalPermissions(any())).thenReturn(emptySet());
         when(accountSecurityContext.getGlobalPermission()).thenReturn(emptySet());
-        assertThat(accountPermissionTreeNodeVisitor.visitLeaf(child1_3), is(false));
+        accountPermissionTreeNodeVisitor.visitLeaf(child1_3);
         Optional<TreeNode> optionalTreeNode = accountPermissionTreeNodeVisitor.result();
         assertThat(optionalTreeNode.isPresent(), is(false));
     }

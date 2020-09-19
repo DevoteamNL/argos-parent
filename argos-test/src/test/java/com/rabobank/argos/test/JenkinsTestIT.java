@@ -86,8 +86,8 @@ class JenkinsTestIT {
     void setUp() throws URISyntaxException {
         DefaultTestData defaultTestData = createDefaultTestData();
         String adminAccountToken = defaultTestData.getAdminToken();
-        getHierarchyApi(adminAccountToken).updateLabelById(defaultTestData.getDefaultRootLabel().getId(), new RestLabel().name("root_label"));
-        RestLabel childLabel = getHierarchyApi(adminAccountToken).createLabel(new RestLabel().name("child_label").parentLabelId(defaultTestData.getDefaultRootLabel().getId()));
+        getHierarchyApi(adminAccountToken).updateLabelById(defaultTestData.getDefaultRootLabel().getId(), new RestLabel().name("root-label"));
+        RestLabel childLabel = getHierarchyApi(adminAccountToken).createLabel(new RestLabel().name("child-label").parentLabelId(defaultTestData.getDefaultRootLabel().getId()));
 
         RestSupplyChain restSupplyChainItem = getSupplychainApi(adminAccountToken).createSupplyChain(new RestSupplyChain().name("argos-test-app").parentLabelId(childLabel.getId()));
         supplyChainId = restSupplyChainItem.getId();

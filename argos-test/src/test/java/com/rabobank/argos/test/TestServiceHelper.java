@@ -78,7 +78,7 @@ class TestServiceHelper {
     }
 
     private static void createDefaultRootLabel(DefaultTestData hierarchy) {
-        hierarchy.setDefaultRootLabel(getHierarchyApi(hierarchy.getAdminToken()).createLabel(new RestLabel().name("default_root_label")));
+        hierarchy.setDefaultRootLabel(getHierarchyApi(hierarchy.getAdminToken()).createLabel(new RestLabel().name("default-root-label")));
     }
 
     private static void createDefaultPersonalAccount(DefaultTestData defaultTestData) {

@@ -56,21 +56,20 @@ public class AccountPermissionTreeNodeVisitor implements TreeNodeVisitor<Optiona
                 .withChildren(new ArrayList<>())
                 .withPermissions(determineAggregatedPermissions(treeNode));
 
-        if (copyOfTreeNode.getPermissions().isEmpty() && nodeHasNoPermissionsUpTree(treeNode.getIdsOfDescendantLabels())) {
-            return false;
+        if (!copyOfTreeNode.getPermissions().isEmpty() || !nodeHasNoPermissionsUpTree(treeNode.getIdsOfDescendantLabels())) {
+            if (treeNodeWithUserPermissions == null) {
+                treeNodeWithUserPermissions = copyOfTreeNode;
+    
+            } else {
+    
+                TreeNode parent = parentRegistry.get(copyOfTreeNode.getParentLabelId());
+                parent.addChild(copyOfTreeNode);
+            }
+    
+            parentRegistry.put(copyOfTreeNode.getReferenceId(), copyOfTreeNode);
+            return true;
         }
-
-        if (treeNodeWithUserPermissions == null) {
-            treeNodeWithUserPermissions = copyOfTreeNode;
-
-        } else {
-
-            TreeNode parent = parentRegistry.get(copyOfTreeNode.getParentLabelId());
-            parent.addChild(copyOfTreeNode);
-        }
-
-        parentRegistry.put(copyOfTreeNode.getReferenceId(), copyOfTreeNode);
-        return true;
+        return false;
     }
 
     private boolean nodeHasNoPermissionsUpTree(List<String> idsOfDescendantLabels) {
@@ -102,29 +101,22 @@ public class AccountPermissionTreeNodeVisitor implements TreeNodeVisitor<Optiona
     }
 
     @Override
-    public boolean visitExit(TreeNode treeNode) {
-        return true;
-    }
+    public void visitExit(TreeNode treeNode) {}
 
     @Override
-    public boolean visitLeaf(TreeNode treeNode) {
+    public void visitLeaf(TreeNode treeNode) {
 
         TreeNode copyOfTreeNode = treeNode.withPermissions(determineAggregatedPermissions(treeNode));
-
-        if (copyOfTreeNode.getPermissions().isEmpty()) {
-            return false;
+        if (!copyOfTreeNode.getPermissions().isEmpty()) {
+            if (treeNodeWithUserPermissions == null) {
+                treeNodeWithUserPermissions = copyOfTreeNode;
+            }
+    
+            if (parentRegistry.containsKey(copyOfTreeNode.getParentLabelId())) {
+                TreeNode parent = parentRegistry.get(copyOfTreeNode.getParentLabelId());
+                parent.addChild(copyOfTreeNode);
+            }
         }
-
-        if (treeNodeWithUserPermissions == null) {
-            treeNodeWithUserPermissions = copyOfTreeNode;
-        }
-
-        if (parentRegistry.containsKey(copyOfTreeNode.getParentLabelId())) {
-            TreeNode parent = parentRegistry.get(copyOfTreeNode.getParentLabelId());
-            parent.addChild(copyOfTreeNode);
-        }
-
-        return true;
     }
 
     @Override

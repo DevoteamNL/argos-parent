@@ -26,6 +26,9 @@ import com.rabobank.argos.domain.permission.Permission;
 import com.rabobank.argos.domain.permission.Role;
 import com.rabobank.argos.service.domain.permission.RoleRepository;
 import com.rabobank.argos.service.domain.security.AccountSecurityContext;
+
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.util.io.pem.PemGenerationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +38,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -67,9 +72,9 @@ class AccountServiceImplTest {
     private static final String ADMIN_ACCOUNT_ID = "adminAccountId";
 
 
-    private KeyPair activeKeyPair = new KeyPair();
-    private KeyPair inactiveKeyPair = new KeyPair();
-    private KeyPair newKeyPair = new KeyPair();
+    private KeyPair activeKeyPair;
+    private KeyPair inactiveKeyPair;
+    private KeyPair newKeyPair;
 
     private AccountServiceImpl accountService;
 
@@ -122,7 +127,10 @@ class AccountServiceImplTest {
     private Account adminAccount;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, OperatorCreationException, PemGenerationException {
+        activeKeyPair = KeyPair.createKeyPair("test".toCharArray());
+        inactiveKeyPair = KeyPair.createKeyPair("test".toCharArray());
+        newKeyPair = KeyPair.createKeyPair("test".toCharArray());
         accountService = new AccountServiceImpl(serviceAccountRepository, personalAccountRepository, roleRepository, accountSecurityContext);
     }
 

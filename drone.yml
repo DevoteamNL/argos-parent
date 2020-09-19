@@ -15,11 +15,20 @@ steps:
   image: argosnotary/argos-build:3.6.3
   commands:
   - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
-  - mvn -q install
-  - mvn -q verify -Ppitest
+  - mvn install -DskipTests
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
+    
+- name: pitest
+  image: argosnotary/argos-build:3.6.3
+  commands:
+  - mvn verify -Ppitest
+  volumes:
+  - name: mvn_cache
+    path: /root/.m2/repository
+  depends_on:
+  - build
 
 - name: sonar
   image: argosnotary/argos-build:3.6.3
@@ -32,7 +41,7 @@ steps:
   - name: mvn_cache
     path: /root/.m2/repository
   depends_on:
-  - build
+  - pitest
   when:
     event:
     - tag
@@ -56,7 +65,7 @@ steps:
     RUNNABLE_JAR: '/drone/src/argos-service/target/argos-service.jar'
   depends_on:
   - mongodb
-  - build
+  - pitest
   - argos-integration-test-stub
   - sonar
   
@@ -70,7 +79,7 @@ steps:
     RUNNABLE_JAR: '/drone/src/argos-integration-test-service/target/argos-integration-test-service.jar'
   depends_on:
   - mongodb
-  - build
+  - pitest
   - argos-integration-test-stub
   - sonar
   
@@ -85,7 +94,7 @@ steps:
   - name: mvn_cache
     path: /root/.m2/repository
   depends_on:
-  - build
+  - pitest
   - sonar
   
 - name: regression test
@@ -109,14 +118,19 @@ steps:
     - VERSION=${DRONE_TAG}
     context: argos-docker
     dockerfile: argos-docker/ServiceDockerfile
-    auto_tag: true
+    tags: ${DRONE_TAG:-${DRONE_BRANCH//\//_-beta}}
     password:
       from_secret: docker_login_token
     repo: argosnotary/argos-service
     username:
       from_secret: docker_login_user
   when:
+    ref:
+      include:
+      - "refs/heads/master"
+      - "refs/heads/release/*"
     event:
+    - push
     - tag
   depends_on:
   - regression test

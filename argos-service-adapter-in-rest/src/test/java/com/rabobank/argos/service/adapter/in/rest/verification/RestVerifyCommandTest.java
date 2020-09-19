@@ -31,7 +31,7 @@ class RestVerifyCommandTest {
     @Test
     void emptyRestVerifyCommand() {
         assertThat(validate(new RestVerifyCommand()), contains(expectedErrors(
-                "expectedProducts", "size must be between 1 and 2147483647"
+                "expectedProducts", "size must be between 1 and 4096"
         )));
     }
 

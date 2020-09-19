@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -68,7 +69,8 @@ class JsonSigningSerializerTest {
                         .destinationType(ArtifactType.PRODUCTS)
                         .destinationStepName("destinationStepName")
                         .pattern("MatchFiler").build()))
-                .layoutSegments(singletonList(LayoutSegment.builder().name("segment1")
+                .layoutSegments(Arrays.asList(LayoutSegment.builder().name("segment2").steps(new ArrayList<>()).build(), 
+                        LayoutSegment.builder().name("segment1")
                         .steps(Arrays.asList(
                                 Step.builder()
                                         .name("stepb")

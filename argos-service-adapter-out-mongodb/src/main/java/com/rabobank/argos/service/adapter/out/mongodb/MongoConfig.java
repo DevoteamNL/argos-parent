@@ -15,8 +15,11 @@
  */
 package com.rabobank.argos.service.adapter.out.mongodb;
 
-import com.github.cloudyrock.mongock.SpringBootMongock;
-import com.github.cloudyrock.mongock.SpringBootMongockBuilder;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
+import com.github.cloudyrock.spring.v5.MongockSpring5;
+import com.github.cloudyrock.spring.v5.MongockSpring5.MongockApplicationRunner;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.rabobank.argos.service.adapter.out.mongodb.release.DateToOffsetTimeConverter;
@@ -29,7 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,17 +40,20 @@ import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
 public class MongoConfig extends AbstractMongoClientConfiguration {
     
+    public static final String CHANGELOG_SCAN_PACKAGE = "com.rabobank.argos.service.adapter.out.mongodb.changelogs";
+    
+    private final List<Converter<?, ?>> converterList = new ArrayList<Converter<?, ?>>();
+    
     @Bean
     @Override
     public MongoCustomConversions customConversions() {
-        List<Converter<?, ?>> converterList = new ArrayList<>();
         converterList.add(new DateToOffsetTimeConverter());
         converterList.add(new OffsetTimeToDateConverter());
         converterList.add(new ReleaseDossierMetaDataToDocumentConverter());
@@ -61,27 +67,32 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Value("${spring.data.mongodb.database}")
     private String mongoDatabaseName;
 
-
     @Bean
-    public SpringBootMongock mongogock(MongoTemplate mongoTemplate, ApplicationContext springContext) {
-        return new SpringBootMongockBuilder(mongoTemplate, "com.rabobank.argos.service.adapter.out.mongodb")
-                .setApplicationContext(springContext)
-                .build();
+    public MongockApplicationRunner mongogock(MongoTemplate mongoTemplate, ApplicationContext springContext) {
+        return MongockSpring5.builder()
+            .setDriver(SpringDataMongo3Driver.withDefaultLock(mongoTemplate))
+            .addChangeLogsScanPackage(CHANGELOG_SCAN_PACKAGE)
+            .setSpringContext(springContext)
+            .buildApplicationRunner();
     }
 
     @Bean
     public GridFsTemplate gridFsTemplate() throws Exception {
-        return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
+        return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(mongoDbFactory(),
+                customConversions(), null));
     }
 
     @Bean
-    public MongoTransactionManager transactionManager(MongoDbFactory dbFactory) {
+    public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
         return new MongoTransactionManager(dbFactory);
     }
-
+    
     @Override
     public MongoClient mongoClient() {
-        return MongoClients.create(mongoURI);
+        final MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+            .applyConnectionString(new ConnectionString(mongoURI))
+            .build();
+        return MongoClients.create(mongoClientSettings);
     }
 
     @Override
@@ -91,6 +102,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     
     @Override
     public Collection<String> getMappingBasePackages() {
-        return Arrays.asList("com.rabobank.argos.service.domain");
+        return Collections.singleton("com.rabobank.argos.service.domain");
     }
 }

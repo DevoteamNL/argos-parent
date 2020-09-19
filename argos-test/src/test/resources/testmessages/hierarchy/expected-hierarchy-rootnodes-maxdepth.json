@@ -1,6 +1,6 @@
 [
   {
-    "name": "default_root_label",
+    "name": "default-root-label",
     "type": "LABEL",
     "referenceId": "#uuid",
     "hasChildren": true,

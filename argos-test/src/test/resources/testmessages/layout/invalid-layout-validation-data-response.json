@@ -1,14 +1,39 @@
 {
-  "messages": [
-    {
-      "field": "keys[0].keyId",
-      "type": "DATA_INPUT",
-      "message": "must match \"^[0-9a-f]*$\""
-    },
-    {
-      "field": "keys[0].keyId",
-      "type": "DATA_INPUT",
-      "message": "size must be between 64 and 64"
-    }
-  ]
+	"messages": [
+		{
+			"field": "keys[0].keyId",
+			"type": "DATA_INPUT",
+			"message": "must match \"^[0-9a-f]*$\""
+		},
+		{
+			"field": "keys[0].keyId",
+			"type": "DATA_INPUT",
+			"message": "size must be between 64 and 64"
+		},
+		{
+			"field": "layoutSegments[0].steps[0].expectedMaterials[0].destinationStepName",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[0].name",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[1].expectedMaterials[0].destinationStepName",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[1].name",
+			"type": "DATA_INPUT",
+			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
+		},
+		{
+			"field": "layoutSegments[0].steps[1].requiredNumberOfLinks",
+			"type": "DATA_INPUT",
+			"message": "must be less than or equal to 20"
+		}
+	]
 }

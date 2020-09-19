@@ -71,6 +71,6 @@ class AccountInfoRepositoryImplTest {
         when(template.find(any(), eq(AccountInfo.class), eq(ACCOUNTS_INFO_VIEW))).thenReturn(Collections.singletonList(accountInfo));
         accountInfoRepository.findByNameIdPathToRootAndAccountType("name", Collections.singletonList("id"), AccountType.SERVICE_ACCOUNT);
         verify(template).find(queryArgumentCaptor.capture(), eq(AccountInfo.class), eq(ACCOUNTS_INFO_VIEW));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"name\" : { \"$regex\" : \".*name.*\", \"$options\" : \"i\"}, \"$or\" : [{ \"parentLabelId\" : null}, { \"parentLabelId\" : { \"$in\" : [\"id\"]}}], \"accountType\" : \"SERVICE_ACCOUNT\"}, Fields: {}, Sort: {}"));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"name\" : { \"$regularExpression\" : { \"pattern\" : \".*name.*\", \"options\" : \"i\"}}, \"$or\" : [{ \"parentLabelId\" : null}, { \"parentLabelId\" : { \"$in\" : [\"id\"]}}], \"accountType\" : \"SERVICE_ACCOUNT\"}, Fields: {}, Sort: {}"));
     }
 }

@@ -19,18 +19,21 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.util.io.pem.PemGenerationException;
 import org.junit.jupiter.api.Test;
 
 import com.rabobank.argos.domain.crypto.signing.Signer;
 
 class KeyPairTest {
-	
-
-	
 	@Test
 	void createKeyPairAndSignature() throws OperatorCreationException, GeneralSecurityException, IOException {
 		String passphrase = "test";
@@ -56,5 +59,25 @@ class KeyPairTest {
 		assertThat(signature.getKeyAlgorithm(), is(KeyAlgorithm.valueOf(keyPair.getJavaPublicKey().getAlgorithm())));
 		
 	}
+	
+	@Test
+    void toStringTest() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, OperatorCreationException, PemGenerationException {
+        KeyPair keyPair = new KeyPair("keyId", "publicKey".getBytes(), "encryptedPrivateKey".getBytes());
+        assertThat(keyPair.toString(), is("KeyPair(super=PublicKey(keyId=keyId, publicKey=[112, 117, 98, 108, 105, 99, 75, 101, 121]), encryptedPrivateKey=[101, 110, 99, 114, 121, 112, 116, 101, 100, 80, 114, 105, 118, 97, 116, 101, 75, 101, 121])"));
+        
+    }
+	
+	@Test
+    void setterAndConstructorTest() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, OperatorCreationException, PemGenerationException {
+        KeyPair keyPair = new KeyPair();
+        keyPair.setKeyId("keyId");
+        keyPair.setPublicKey("publicKey".getBytes());
+        keyPair.setEncryptedPrivateKey("encryptedPrivateKey".getBytes());
+        assertThat(keyPair.getKeyId(), is("keyId"));
+        assertThat(new String(keyPair.getEncryptedPrivateKey()), is("encryptedPrivateKey"));
+        assertThat(new String(keyPair.getPublicKey()), is("publicKey"));
+        
+        
+    }
 
 }

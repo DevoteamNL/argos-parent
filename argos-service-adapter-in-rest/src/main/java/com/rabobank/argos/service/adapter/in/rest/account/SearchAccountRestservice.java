@@ -34,8 +34,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +57,9 @@ public class SearchAccountRestservice implements SearchAccountApi {
     private final AccountInfoMapper accountInfoMapper;
     @PermissionCheck(permissions = Permission.READ)
     @Override
-    public ResponseEntity<List<RestAccountInfo>> searchAccounts(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, @NotNull @Valid String name, @Valid RestAccountType restAccountType) {
+    public ResponseEntity<List<RestAccountInfo>> searchAccounts(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, 
+            String name, 
+            RestAccountType restAccountType) {
         Optional<TreeNode> supplyChainTreeNode = hierarchyRepository.getSubTree(supplyChainId, HierarchyMode.NONE, 0);
         List<String> idPathToRoot = supplyChainTreeNode.map(TreeNode::getIdPathToRoot)
                 .orElse(Collections.emptyList());
@@ -75,7 +75,8 @@ public class SearchAccountRestservice implements SearchAccountApi {
 
     @PermissionCheck(permissions = Permission.READ)
     @Override
-    public ResponseEntity<List<RestAccountKeyInfo>> searchKeysFromAccount(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, @Valid List<String> keyIds) {
+    public ResponseEntity<List<RestAccountKeyInfo>> searchKeysFromAccount(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, 
+            List<String> keyIds) {
         List<RestAccountKeyInfo> restAccountKeyInfos = accountInfoRepository.findByKeyIds(keyIds)
                 .stream()
                 .map(accountKeyInfoMapper::convertToRestAccountKeyInfo)
@@ -84,7 +85,8 @@ public class SearchAccountRestservice implements SearchAccountApi {
         return ResponseEntity.ok(restAccountKeyInfos);
     }
 
-    private List<RestAccountKeyInfo> createRemovedAccountKeyInfos(@Valid List<String> keyIds, List<RestAccountKeyInfo> restAccountKeyInfos) {
+    private List<RestAccountKeyInfo> createRemovedAccountKeyInfos(List<String> keyIds, 
+            List<RestAccountKeyInfo> restAccountKeyInfos) {
         List<String> returnedKeyIds = restAccountKeyInfos
                 .stream()
                 .map(RestAccountKeyInfo::getKeyId)

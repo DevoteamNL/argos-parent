@@ -16,15 +16,11 @@
 package com.rabobank.argos.domain.hierarchy;
 
 public interface TreeNodeVisitor<R> {
-    default boolean visitEnter(TreeNode treeNode) {
-        return true;
-    }
+    boolean visitEnter(TreeNode treeNode);
 
-    boolean visitExit(TreeNode treeNode);
+    void visitExit(TreeNode treeNode);
 
-    default boolean visitLeaf(TreeNode treeNode) {
-        return true;
-    }
+    void visitLeaf(TreeNode treeNode);
 
     default R result() {
         return null;

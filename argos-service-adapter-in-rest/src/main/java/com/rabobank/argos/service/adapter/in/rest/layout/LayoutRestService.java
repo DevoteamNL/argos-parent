@@ -112,7 +112,8 @@ public class LayoutRestService implements LayoutApi {
     @Override
     @Transactional
     @PermissionCheck(permissions = Permission.LAYOUT_ADD)
-    public ResponseEntity<List<RestApprovalConfiguration>> createApprovalConfigurations(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, List<RestApprovalConfiguration> restApprovalConfigurations) {
+    public ResponseEntity<List<RestApprovalConfiguration>> createApprovalConfigurations(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, 
+            List<RestApprovalConfiguration> restApprovalConfigurations) {
         List<ApprovalConfiguration> approvalConfigurations = restApprovalConfigurations.stream()
                 .map(restApprovalConfiguration -> convertAndValidate(supplyChainId, restApprovalConfiguration))
                 .collect(Collectors.toList());
@@ -155,7 +156,8 @@ public class LayoutRestService implements LayoutApi {
     @Override
     @Transactional
     @PermissionCheck(permissions = Permission.LAYOUT_ADD)
-    public ResponseEntity<RestReleaseConfiguration> createReleaseConfiguration(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, RestReleaseConfiguration restReleaseConfiguration) {
+    public ResponseEntity<RestReleaseConfiguration> createReleaseConfiguration(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, 
+            RestReleaseConfiguration restReleaseConfiguration) {
         validateContextFieldsForCollectorSpecification(restReleaseConfiguration);
         ReleaseConfiguration releaseConfiguration = configurationConverter.convertFromRestReleaseConfiguration(restReleaseConfiguration);
         releaseConfiguration.setSupplyChainId(supplyChainId);

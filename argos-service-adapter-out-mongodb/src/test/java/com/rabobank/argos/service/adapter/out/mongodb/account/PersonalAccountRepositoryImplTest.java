@@ -158,7 +158,7 @@ class PersonalAccountRepositoryImplTest {
         when(template.find(any(Query.class), eq(PersonalAccount.class), eq(COLLECTION))).thenReturn(List.of(personalAccount));
         assertThat(repository.search(AccountSearchParams.builder().name(NAME).build()), contains(personalAccount));
         verify(template).find(queryArgumentCaptor.capture(), eq(PersonalAccount.class), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), Matchers.is("Query: { \"name\" : { \"$regex\" : \".*name.*\", \"$options\" : \"i\"}}, Fields: { \"accountId\" : 1, \"name\" : 1, \"email\" : 1}, Sort: { \"name\" : 1}"));
+        assertThat(queryArgumentCaptor.getValue().toString(), Matchers.is("Query: { \"name\" : { \"$regularExpression\" : { \"pattern\" : \".*name.*\", \"options\" : \"i\"}}}, Fields: { \"accountId\" : 1, \"name\" : 1, \"email\" : 1}, Sort: { \"name\" : 1}"));
     }
 
     @Test

@@ -19,6 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+
 import org.junit.jupiter.api.Test;
 
 class PathHelperTest {
@@ -31,6 +35,14 @@ class PathHelperTest {
     @Test
     void normalizePathWithNotNullShouldReturnNormalized() {
         assertThat(PathHelper.normalizePath("\\\\path"), is("/path"));
+    }
+    
+    @Test
+    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+      Constructor<PathHelper> constructor = PathHelper.class.getDeclaredConstructor();
+      assertThat(Modifier.isPrivate(constructor.getModifiers()), is(true));
+      constructor.setAccessible(true);
+      constructor.newInstance();
     }
     
 }

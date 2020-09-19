@@ -26,8 +26,8 @@ Feature: Non Personal Account
 
 
   Scenario: store a service account with valid name should return a 201 and commit to audit log
-    * def result = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
-    * match result.response == { name: 'sa 1', id: '#uuid', parentLabelId: '#uuid' }
+    * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
+    * match result.response == { name: 'sa1', id: '#uuid', parentLabelId: '#uuid' }
 
     * def auditlog = call read('classpath:feature/auditlog.feature')
     * string stringResponse = auditlog.response
@@ -36,7 +36,7 @@ Feature: Non Personal Account
 
 
   Scenario: delete service account should return a 200 and get should return a 403 and commit to audit log
-    * def result = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def restPath = '/api/serviceaccount/'+result.response.id
     Given path restPath
     When method DELETE
@@ -50,7 +50,7 @@ Feature: Non Personal Account
     And match stringResponse contains 'serviceAccountId'
 
   Scenario: delete service account without SERVICE_ACCOUNT_EDIT permission should return a 403 error
-    * def result = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def restPath = '/api/serviceaccount/'+result.response.id
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     Given path restPath
@@ -60,14 +60,14 @@ Feature: Non Personal Account
   Scenario: store a service account without SERVICE_ACCOUNT_EDIT permission should return a 403 error
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     Given path '/api/serviceaccount'
-    And request { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    And request { name: 'sa1', parentLabelId: #(rootLabelId)}
     When method POST
     Then status 403
 
   Scenario: store a service account without authorization should return a 401 error
     * configure headers = null
     Given path '/api/serviceaccount'
-    And request { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    And request { name: 'sa1', parentLabelId: #(rootLabelId)}
     When method POST
     Then status 401
 
@@ -79,23 +79,23 @@ Feature: Non Personal Account
     And match response.message == 'Access denied'
 
   Scenario: store two service accounts with the same name should return a 400
-    * call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     Given path '/api/serviceaccount'
-    And request { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    And request { name: 'sa1', parentLabelId: #(rootLabelId)}
     When method POST
     Then status 400
-    And match response.messages[0].message contains "service account with name: sa 1 and parentLabelId:"
+    And match response.messages[0].message contains "service account with name: sa1 and parentLabelId:"
 
   Scenario: retrieve service account should return a 200
-    * def result = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def restPath = '/api/serviceaccount/'+result.response.id
     Given path restPath
     When method GET
     Then status 200
-    And match response == { name: 'sa 1', id: '#(result.response.id)', parentLabelId: #(rootLabelId)}
+    And match response == { name: 'sa1', id: '#(result.response.id)', parentLabelId: #(rootLabelId)}
 
   Scenario: retrieve service account without READ permission should return a 403 error
-    * def result = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accounWithNoReadPermission = call read('classpath:feature/account/create-personal-account.feature') {name: 'unauthorized person',email: 'local.unauthorized@extra.nogo'}
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["LAYOUT_ADD"]}
@@ -109,22 +109,22 @@ Feature: Non Personal Account
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["SERVICE_ACCOUNT_EDIT"]}
     * configure headers = call read('classpath:headers.js') { token: #(info.token)}
-    * def result = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(info.labelId)}
+    * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(info.labelId)}
     * def restPath = '/api/serviceaccount/'+result.response.id
     Given path restPath
     When method GET
     Then status 200
-    And match response == { name: 'sa 1', id: '#(result.response.id)', parentLabelId: #(info.labelId)}
+    And match response == { name: 'sa1', id: '#(result.response.id)', parentLabelId: #(info.labelId)}
 
   Scenario: update a service account should return a 200 and commit to audit log
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def restPath = '/api/serviceaccount/'+accountId
     Given path restPath
-    And request { name: 'sa 2', parentLabelId: #(rootLabelId)}
+    And request { name: 'sa2', parentLabelId: #(rootLabelId)}
     When method PUT
     Then status 200
-    And match response == { name: 'sa 2', id: '#(accountId)', parentLabelId: #(rootLabelId)}
+    And match response == { name: 'sa2', id: '#(accountId)', parentLabelId: #(rootLabelId)}
     * def auditlog = call read('classpath:feature/auditlog.feature')
     * string stringResponse = auditlog.response
     And match stringResponse contains 'updateServiceAccountById'
@@ -132,17 +132,17 @@ Feature: Non Personal Account
     And match stringResponse contains 'serviceAccount'
 
   Scenario: update a service account without SERVICE_ACCOUNT_EDIT permission should return a 403 error
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     * def accountId = createResult.response.id
     * def restPath = '/api/serviceaccount/'+accountId
     Given path restPath
-    And request { name: 'sa 2', parentLabelId: #(rootLabelId)}
+    And request { name: 'sa2', parentLabelId: #(rootLabelId)}
     When method PUT
     Then status 403
 
   Scenario: create a service account key should return a 200 and commit to audit log
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * def result = call read('create-service-account-key.feature') {accountId: #(accountId), key: #(keyPair)}
@@ -154,7 +154,7 @@ Feature: Non Personal Account
     And match stringResponse contains 'keyPair'
 
   Scenario: create a service account key without SERVICE_ACCOUNT_EDIT permission should return a 403 error
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
@@ -164,7 +164,7 @@ Feature: Non Personal Account
     Then status 403
 
   Scenario: create a service account key without authorization should return a 401 error
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * configure headers = null
@@ -174,7 +174,7 @@ Feature: Non Personal Account
     Then status 401
 
   Scenario: get a active service account key should return a 200
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * call read('create-service-account-key.feature') {accountId: #(accountId), key: #(keyPair)}
@@ -189,7 +189,7 @@ Feature: Non Personal Account
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["SERVICE_ACCOUNT_EDIT"]}
     * configure headers = call read('classpath:headers.js') { token: #(info.token)}
-    * def result = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(info.labelId)}
+    * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(info.labelId)}
     * def accountId = result.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * call read('create-service-account-key.feature') {accountId: #(accountId), key: #(keyPair)}
@@ -200,7 +200,7 @@ Feature: Non Personal Account
     And match response == {keyId: #(keyPair.keyId), publicKey: #(keyPair.publicKey), encryptedPrivateKey: #(keyPair.encryptedPrivateKey)}
 
   Scenario: get a active service account key without READ permission should return a 403 error
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * call read('create-service-account-key.feature') {accountId: #(accountId), key: #(keyPair)}
@@ -213,7 +213,7 @@ Feature: Non Personal Account
     Then status 403
 
   Scenario: get a active service account key without authorization should return a 401 error
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * call read('create-service-account-key.feature') {accountId: #(accountId), key: #(keyPair)}
@@ -241,14 +241,14 @@ Feature: Non Personal Account
     Then status 401
 
   Scenario: get an active service account key after update should return a 200
-    * def createResult = call read('create-service-account.feature') { name: 'sa 1', parentLabelId: #(rootLabelId)}
+    * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * call read('create-service-account-key.feature') {accountId: #(accountId), key: #(keyPair)}
     * def restPathKey = '/api/serviceaccount/'+accountId+'/key'
     * def restPathUpdate = '/api/serviceaccount/'+ accountId
     Given path restPathUpdate
-    And request { name: 'sa 2', parentLabelId: #(rootLabelId)}
+    And request { name: 'sa2', parentLabelId: #(rootLabelId)}
     When method PUT
     Then status 200
     Given path restPathKey

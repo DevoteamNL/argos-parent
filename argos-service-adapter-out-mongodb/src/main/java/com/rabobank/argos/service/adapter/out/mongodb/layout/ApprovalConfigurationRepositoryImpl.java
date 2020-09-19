@@ -30,10 +30,10 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ApprovalConfigurationRepositoryImpl implements ApprovalConfigurationRepository {
-    static final String COLLECTION = "approvalConfigurations";
-    static final String SUPPLYCHAIN_ID_FIELD = "supplyChainId";
-    static final String SEGMENT_NAME_FIELD = "segmentName";
-    static final String STEP_NAME_FIELD = "stepName";
+    public static final String COLLECTION = "approvalConfigurations";
+    public static final String SUPPLYCHAIN_ID_FIELD = "supplyChainId";
+    public static final String SEGMENT_NAME_FIELD = "segmentName";
+    public static final String STEP_NAME_FIELD = "stepName";
     private final MongoTemplate template;
 
     @Override

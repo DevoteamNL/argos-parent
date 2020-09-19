@@ -40,7 +40,7 @@ class RestLayoutMetaBlockTest {
     void emptyRestLayoutMetaBlock() {
         assertThat(validate(new RestLayoutMetaBlock()), contains(expectedErrors(
                 "layout", "must not be null",
-                "signatures", "size must be between 1 and 2147483647")));
+                "signatures", "size must be between 1 and 20")));
     }
 
     @Test
@@ -48,10 +48,10 @@ class RestLayoutMetaBlockTest {
         assertThat(validate(new RestLayoutMetaBlock()
                 .addSignaturesItem(new RestSignature())
                 .layout(new RestLayout())), contains(expectedErrors(
-                "layout.authorizedKeyIds", "size must be between 1 and 2147483647",
-                "layout.expectedEndProducts", "size must be between 1 and 2147483647",
-                "layout.keys", "size must be between 1 and 2147483647",
-                "layout.layoutSegments", "size must be between 1 and 2147483647",
+                "layout.authorizedKeyIds", "size must be between 1 and 256",
+                "layout.expectedEndProducts", "size must be between 1 and 4096",
+                "layout.keys", "size must be between 1 and 256",
+                "layout.layoutSegments", "size must be between 1 and 256",
                 "signatures[0].hashAlgorithm", "must not be null",
                 "signatures[0].keyAlgorithm", "must not be null",
                 "signatures[0].keyId", "must not be null",
@@ -77,11 +77,11 @@ class RestLayoutMetaBlockTest {
                 "layout.keys[0].keyId", "must not be null",
                 "layout.keys[0].publicKey", "must not be null",
                 "layout.layoutSegments[0].name", "must not be null",
-                "layout.layoutSegments[0].steps", "size must be between 1 and 2147483647",
+                "layout.layoutSegments[0].steps", "size must be between 1 and 256",
                 "signatures[0].keyId", "must match \"^[0-9a-f]*$\"",
                 "signatures[0].keyId", "size must be between 64 and 64",
-                "signatures[0].signature", "must match \"^[0-9a-f]*$\"",
-                "signatures[0].signature", "size must be between 80 and 1024")));
+                "signatures[0].signature", "must match \"^[0-9a-f]*$\""
+                )));
     }
 
     @Test
@@ -102,12 +102,13 @@ class RestLayoutMetaBlockTest {
                                 .name("segment1")
                                 .addStepsItem(new RestStep())
                         ))), contains(expectedErrors(
-                "layout.keys[0].keyId", "must match \"^[0-9a-f]*$\"",
-                "layout.keys[0].keyId", "size must be between 64 and 64",
-                "layout.layoutSegments[0].steps[0].authorizedKeyIds", "size must be between 1 and 2147483647",
-                "layout.layoutSegments[0].steps[0].name", "must not be null",
-                "layout.layoutSegments[0].steps[0].requiredNumberOfLinks", "must not be null"
-        )));
+                                "layout.expectedEndProducts[0].destinationSegmentName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
+                                "layout.expectedEndProducts[0].destinationStepName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
+                                "layout.keys[0].keyId", "must match \"^[0-9a-f]*$\"",
+                                "layout.keys[0].keyId", "size must be between 64 and 64",
+                                "layout.layoutSegments[0].steps[0].authorizedKeyIds", "size must be between 1 and 256",
+                                "layout.layoutSegments[0].steps[0].name", "must not be null",
+                                "layout.layoutSegments[0].steps[0].requiredNumberOfLinks", "must not be null")));
     }
 
     @Test
@@ -132,12 +133,12 @@ class RestLayoutMetaBlockTest {
                                         .name("step 1")
                                         .addAuthorizedKeyIdsItem("authorizedKeyId"))
                         ))), contains(expectedErrors(
-                "layout.layoutSegments[0].name", "must match \"^([A-Za-z0-9_-]*)?$\"",
+                "layout.layoutSegments[0].name", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
                 "layout.layoutSegments[0].steps[0].expectedMaterials[0].pattern", "must not be null",
                 "layout.layoutSegments[0].steps[0].expectedMaterials[0].ruleType", "must not be null",
                 "layout.layoutSegments[0].steps[0].expectedProducts[0].pattern", "must not be null",
                 "layout.layoutSegments[0].steps[0].expectedProducts[0].ruleType", "must not be null",
-                "layout.layoutSegments[0].steps[0].name", "must match \"^([A-Za-z0-9_-]*)?$\"",
+                "layout.layoutSegments[0].steps[0].name", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
                 "layout.layoutSegments[0].steps[0].requiredNumberOfLinks", "must not be null"
         )));
     }

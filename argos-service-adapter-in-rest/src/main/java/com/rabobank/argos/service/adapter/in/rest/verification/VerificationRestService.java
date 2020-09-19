@@ -71,7 +71,7 @@ public class VerificationRestService implements VerificationApi {
     @AuditLog
     public ResponseEntity<RestVerificationResult> performVerification(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR)
                                                                       @AuditParam("supplyChainId") String supplyChainId,
-                                                                      @AuditParam("verifyCommand") @Valid RestVerifyCommand restVerifyCommand) {
+                                                                      @AuditParam("verifyCommand") RestVerifyCommand restVerifyCommand) {
 
         LayoutMetaBlock layoutMetaBlock = repository.findBySupplyChainId(supplyChainId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "no active layout could be found for supplychain:" + supplyChainId));

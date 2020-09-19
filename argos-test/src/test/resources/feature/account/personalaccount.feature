@@ -254,13 +254,13 @@ Feature: Personal Account
 
   Scenario: a user with local permission LOCAL_PERMISSION_EDIT can manage local permissions
     * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email:'local.permissions@extra.go'}
-    * def rootLabel = call read('classpath:feature/label/create-label.feature') { name: 'root_label'}
+    * def rootLabel = call read('classpath:feature/label/create-label.feature') { name: 'root-label'}
     Given path '/api/personalaccount/'+extraAccount.response.id+'/localpermission/'+rootLabel.response.id
     And request ["LOCAL_PERMISSION_EDIT"]
     When method PUT
     Then status 200
 
-    * def childLabel = call read('classpath:feature/label/create-label.feature') { name: 'child_label', parentLabelId: #(rootLabel.response.id)}
+    * def childLabel = call read('classpath:feature/label/create-label.feature') { name: 'child-label', parentLabelId: #(rootLabel.response.id)}
     * configure headers = call read('classpath:headers.js') { token: #(extraAccount.response.token)}
     * def anotherAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Another Person', email: 'another@extra.go'}
 
@@ -281,14 +281,14 @@ Feature: Personal Account
 
   Scenario: a user without local permission LOCAL_PERMISSION_EDIT can not manage local permissions
     * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email: 'local.permissions@extra.go'}
-    * def rootLabel = call read('classpath:feature/label/create-label.feature') { name: 'root_label'}
+    * def rootLabel = call read('classpath:feature/label/create-label.feature') { name: 'root-label'}
 
     Given path '/api/personalaccount/'+extraAccount.response.id+'/localpermission/'+rootLabel.response.id
     And request ["READ"]
     When method PUT
     Then status 200
 
-    * def childLabel = call read('classpath:feature/label/create-label.feature') { name: 'child_label', parentLabelId: #(rootLabel.response.id)}
+    * def childLabel = call read('classpath:feature/label/create-label.feature') { name: 'child-label', parentLabelId: #(rootLabel.response.id)}
     * configure headers = call read('classpath:headers.js') { token: #(extraAccount.response.token)}
     * def anotherAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Another Person', email: 'another@extra.go'}
 

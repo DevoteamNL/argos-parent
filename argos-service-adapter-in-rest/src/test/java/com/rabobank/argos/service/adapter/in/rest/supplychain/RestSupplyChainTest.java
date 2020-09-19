@@ -39,8 +39,7 @@ class RestSupplyChainTest {
 
     @Test
     void invalidRestSupplyChain() {
-        assertThat(validate(new RestSupplyChain().name("Invalid").parentLabelId("wrong")), contains(expectedErrors(
-                "name", "must match \"^([a-z]{1}[a-z0-9-]*)?$\"",
+        assertThat(validate(new RestSupplyChain().name("invalid").parentLabelId("wrong")), contains(expectedErrors(
                 "parentLabelId", "must match \"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}?$\"",
                 "parentLabelId", "size must be between 36 and 36"
         )));

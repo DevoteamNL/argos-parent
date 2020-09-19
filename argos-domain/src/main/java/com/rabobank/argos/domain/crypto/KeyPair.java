@@ -15,7 +15,6 @@
  */
 package com.rabobank.argos.domain.crypto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +27,6 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
-import java.security.spec.ECGenParameterSpec;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PKCS8Generator;
@@ -48,9 +46,8 @@ import com.rabobank.argos.domain.ArgosError;
 
 @Getter
 @Setter
-@ToString
+@ToString(callSuper=true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class KeyPair extends PublicKey implements Serializable {
     private byte[] encryptedPrivateKey;
     
@@ -70,20 +67,8 @@ public class KeyPair extends PublicKey implements Serializable {
         }
     }
     
-    public PrivateKey encryptPrivateKey(char[] keyPassphrase) {
-        try {
-            PKCS8EncryptedPrivateKeyInfo encPKInfo = new PKCS8EncryptedPrivateKeyInfo(this.encryptedPrivateKey);
-            InputDecryptorProvider decProv = new JceOpenSSLPKCS8DecryptorProviderBuilder().setProvider("BC").build(keyPassphrase);
-            PrivateKeyInfo pkInfo = encPKInfo.decryptPrivateKeyInfo(decProv);
-            return new JcaPEMKeyConverter().setProvider("BC").getPrivateKey(pkInfo);
-        } catch (IOException | PKCSException | OperatorCreationException e) {
-            throw new ArgosError(e.getMessage(), e);
-        }
-    }
-    
 	public static KeyPair createKeyPair(char[] passphrase) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, OperatorCreationException, PemGenerationException {
 		KeyPairGenerator generator = KeyPairGenerator.getInstance(KeyAlgorithm.EC.name());
-        generator.initialize(new ECGenParameterSpec("secp256r1"));
 		java.security.KeyPair keyPair = generator.generateKeyPair();
         JceOpenSSLPKCS8EncryptorBuilder encryptorBuilder = new JceOpenSSLPKCS8EncryptorBuilder(PKCS8Generator.AES_256_CBC).setProvider("BC");  
         OutputEncryptor encryptor = encryptorBuilder

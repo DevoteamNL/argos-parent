@@ -2,7 +2,7 @@
   {
     "accountId": "#uuid",
     "name": "default-sa1",
-    "path": "default_root_label",
+    "path": "default-root-label",
     "accountType": "SERVICE_ACCOUNT"
   }
 ]

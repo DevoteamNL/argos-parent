@@ -16,6 +16,8 @@
 package com.rabobank.argos.service.domain;
 
 import com.rabobank.argos.domain.hierarchy.HierarchyMode;
+import com.rabobank.argos.domain.hierarchy.TreeNode;
+import com.rabobank.argos.domain.hierarchy.TreeNodeVisitor;
 import com.rabobank.argos.service.domain.account.AccountService;
 import com.rabobank.argos.service.domain.hierarchy.HierarchyService;
 import com.rabobank.argos.service.domain.hierarchy.LabelRepository;
@@ -25,11 +27,14 @@ import com.rabobank.argos.service.domain.layout.ReleaseConfigurationRepository;
 import com.rabobank.argos.service.domain.link.LinkMetaBlockRepository;
 import com.rabobank.argos.service.domain.supplychain.SupplyChainRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class DeleteService {
+public class DeleteService implements TreeNodeVisitor<Optional<TreeNode>>{
 
     private final LabelRepository labelRepository;
     private final LayoutMetaBlockRepository layoutRepository;
@@ -42,22 +47,7 @@ public class DeleteService {
 
     public void deleteLabel(String labelId) {
         hierarchyService.getSubTree(labelId, HierarchyMode.ALL, -1).ifPresent(
-                treeNode -> treeNode.accept(child -> {
-                    switch (child.getType()) {
-                        case LABEL:
-                            labelRepository.deleteById(child.getReferenceId());
-                            break;
-                        case SUPPLY_CHAIN:
-                            deleteSupplyChain(child.getReferenceId());
-                            break;
-                        case SERVICE_ACCOUNT:
-                            deleteServiceAccount(child.getReferenceId());
-                            break;
-                        default:
-                            throw new IllegalArgumentException(child.getType() + "not implemented");
-                    }
-                    return true;
-                })
+                treeNode -> treeNode.visit(this)
         );
     }
 
@@ -71,5 +61,30 @@ public class DeleteService {
 
     public void deleteServiceAccount(String serviceAccountId) {
         accountService.deleteServiceAccount(serviceAccountId);
+    }
+
+    @Override
+    public boolean visitEnter(TreeNode treeNode) {
+        return true;
+    }
+
+    @Override
+    public void visitExit(TreeNode treeNode) {
+        labelRepository.deleteById(treeNode.getReferenceId());
+    }
+
+    @Override
+    public void visitLeaf(TreeNode treeNode) {
+        switch (treeNode.getType()) {
+        case SUPPLY_CHAIN:
+            deleteSupplyChain(treeNode.getReferenceId());
+            break;
+        case SERVICE_ACCOUNT:
+            deleteServiceAccount(treeNode.getReferenceId());
+            break;
+        default:
+            throw new IllegalArgumentException(treeNode.getType() + " not implemented");
+    }
+        
     }
 }

@@ -33,11 +33,11 @@ import java.util.Optional;
 @Component
 public class ServiceAccountRepositoryImpl implements ServiceAccountRepository {
 
-    static final String COLLECTION = "serviceAccounts";
-    static final String ACCOUNT_ID_FIELD = "accountId";
-    static final String ACCOUNT_NAME_FIELD = "name";
-    static final String ACTIVE_KEY_ID_FIELD = "activeKeyPair.keyId";
-    static final String PARENT_LABEL_ID_FIELD = "parentLabelId";
+    public static final String COLLECTION = "serviceAccounts";
+    public static final String ACCOUNT_ID_FIELD = "accountId";
+    public static final String ACCOUNT_NAME_FIELD = "name";
+    public static final String ACTIVE_KEY_ID_FIELD = "activeKeyPair.keyId";
+    public static final String PARENT_LABEL_ID_FIELD = "parentLabelId";
     private final MongoTemplate template;
 
     @Override

@@ -115,13 +115,12 @@ class MatchRuleVerificationTest {
         when(destinationLink.getMaterials()).thenReturn(List.of(artifactWithoutPrfx));
 
         when(context.getFilteredArtifacts(null)).thenReturn(Set.of(sourceArtifactWithPrfx));
-        matchRule.setDestinationType(ArtifactType.MATERIALS);
+        matchRule = new MatchRule(URI2, null, ArtifactType.MATERIALS, null, null, DESTINATION_STEP_NAME);
         assertThat(verification.verify(context), is(false));
         verify(context, times(0)).consume(anySet());
         
         when(context.getFilteredArtifacts(null)).thenReturn(Set.of(sourceArtifactWithPrfx));
-        when(destinationLink.getProducts()).thenReturn(List.of(artifactWithoutPrfx));
-        matchRule.setDestinationType(ArtifactType.PRODUCTS);
+        matchRule = new MatchRule(URI2, null, ArtifactType.PRODUCTS, null, null, DESTINATION_STEP_NAME);
         assertThat(verification.verify(context), is(false));
         verify(context, times(0)).consume(anySet());
         

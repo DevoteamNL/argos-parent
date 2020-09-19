@@ -114,6 +114,8 @@ class CustomOAuth2UserServiceTest {
 
     @Test
     void loadUserNewUserWithEmptyAttributesShouldThrowError() {
+        when(oAuth2User.getAttributes()).thenReturn(Map.of());
+        when(defaultOAuth2UserService.loadUser(oAuth2UserRequest)).thenReturn(oAuth2User);
         assertThrows(InternalAuthenticationServiceException.class, () -> userService.loadUser(oAuth2UserRequest));
 
     }

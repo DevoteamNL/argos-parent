@@ -18,38 +18,62 @@ package com.rabobank.argos.domain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 class SupplyChainHelperTest {
 
     @Test
     void getSupplyChainNameShouldGiveName() {
-        assertThat(SupplyChainHelper.getSupplyChainName("label1.label2:name"), is("name"));
+        assertThat(SupplyChainHelper.getSupplyChainName("label-1.label-2:name"), is("name"));
     }
     
     @Test
     void getSupplyChainNameShouldGiveException() {
     	Throwable exception = assertThrows(ArgosError.class, () -> {
-    		SupplyChainHelper.getSupplyChainName("label-1.label-2:name"); 
+    		SupplyChainHelper.getSupplyChainName("label_1.label_2:name");
           });
-    	assertEquals("[label-1.label-2:name] not correct should be <label>.<label>:<supplyChainName> with Java package rules", exception.getMessage());
+    	assertEquals("[label_1.label_2:name] not correct should be <label>.<label>:<supplyChainName> with hostname rules", exception.getMessage());
     }
     
     @Test
     void getSupplyChainPathShouldReturnPath() {
-        assertThat(SupplyChainHelper.getSupplyChainPath("label1.label2:name"), is(Arrays.asList("label1", "label2")));
+        assertThat(SupplyChainHelper.getSupplyChainPath("label-1.label-2:name"), is(Arrays.asList("label-1", "label-2")));
     }
     
     @Test
     void getSupplyChainPathShouldGiveException() {
-    	Throwable exception = assertThrows(ArgosError.class, () -> {
-    		SupplyChainHelper.getSupplyChainPath("label-1.label-2:name"); 
+        Throwable exception = assertThrows(ArgosError.class, () -> {
+            SupplyChainHelper.getSupplyChainPath("label_1.label_2:name");
           });
-    	assertEquals("[label-1.label-2:name] not correct should be <label>.<label>:<supplyChainName> with Java package rules", exception.getMessage());
+        assertEquals("[label_1.label_2:name] not correct should be <label>.<label>:<supplyChainName> with hostname rules", exception.getMessage());
+    }
+    
+    @Test
+    void getSupplyChainNameShouldGiveLabelToLongException() {
+        Throwable exception = assertThrows(ArgosError.class, () -> {
+            SupplyChainHelper.getSupplyChainName("l0123456789012345678901234567890123456789012345678901234567890123456789.label2:name");
+          });
+        assertEquals("[l0123456789012345678901234567890123456789012345678901234567890123456789.label2:name] not correct should be <label>.<label>:<supplyChainName> with hostname rules", exception.getMessage());
+    }
+    
+    @Test
+    void getSupplyChainReversePathShouldReturnReversePath() {
+        assertThat(SupplyChainHelper.reversePath(SupplyChainHelper.getSupplyChainPath("label-1.label-2:name")), is(Arrays.asList("label-2", "label-1")));
+    }
+    
+    @Test
+    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+      Constructor<SupplyChainHelper> constructor = SupplyChainHelper.class.getDeclaredConstructor();
+      assertThat(Modifier.isPrivate(constructor.getModifiers()), is(true));
+      constructor.setAccessible(true);
+      constructor.newInstance();
     }
 }

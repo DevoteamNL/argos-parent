@@ -19,15 +19,17 @@ import com.rabobank.argos.domain.ArgosError;
 import com.rabobank.argos.domain.crypto.KeyPair;
 import com.rabobank.argos.domain.crypto.Signature;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import org.apache.commons.codec.binary.Hex;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Signer {
-    
-    private Signer() {}
 
     public static Signature sign(KeyPair keyPair, char[] keyPassphrase, String jsonRepresentation) {
     	Signature sig = Signature.builder().keyId(keyPair.getKeyId()).build();

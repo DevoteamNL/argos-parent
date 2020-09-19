@@ -35,7 +35,7 @@ class RestArtifactCollectorSpecificationTest {
                 .uri(new URI("http://uri.com"))
                 .type(RestArtifactCollectorSpecification.TypeEnum.XLDEPLOY)
         ), contains(expectedErrors(
-                "name", "must match \"^([A-Za-z0-9_-]*)?$\"")));
+                "name", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"")));
 
     }
 

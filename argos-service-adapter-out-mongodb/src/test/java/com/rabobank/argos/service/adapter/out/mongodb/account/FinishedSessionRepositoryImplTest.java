@@ -77,6 +77,6 @@ class FinishedSessionRepositoryImplTest {
         Date date = Date.from(ZonedDateTime.of(2020, 1, 15, 14, 12, 1, 0, ZoneId.of("Z")).toInstant());
         repository.deleteExpiredSessions(date);
         verify(template).remove(queryArgumentCaptor.capture(), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"expirationDate\" : { \"$lt\" : { \"$date\" : 1579097521000}}}, Fields: {}, Sort: {}"));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"expirationDate\" : { \"$lt\" : { \"$date\" : \"2020-01-15T14:12:01Z\"}}}, Fields: {}, Sort: {}"));
     }
 }

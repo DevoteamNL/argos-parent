@@ -67,16 +67,15 @@ class RestLinkMetaBlockTest {
                         .hashAlgorithm(RestHashAlgorithm.SHA384)
                         .keyAlgorithm(RestKeyAlgorithm.EC)
                 )), contains(expectedErrors(
-                "link.layoutSegmentName", "must match \"^([A-Za-z0-9_-]*)?$\"",
+                "link.layoutSegmentName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
                 "link.materials[0].hash", "must not be null",
                 "link.materials[0].uri", "must not be null",
                 "link.products[0].hash", "must not be null",
                 "link.products[0].uri", "must not be null",
-                "link.stepName", "must match \"^([A-Za-z0-9_-]*)?$\"",
+                "link.stepName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
                 "signature.keyId", "must match \"^[0-9a-f]*$\"",
                 "signature.keyId", "size must be between 64 and 64",
-                "signature.signature", "must match \"^[0-9a-f]*$\"",
-                "signature.signature", "size must be between 80 and 1024")));
+                "signature.signature", "must match \"^[0-9a-f]*$\"")));
     }
 
     @Test
@@ -89,19 +88,21 @@ class RestLinkMetaBlockTest {
                 .addMaterialsItem(new RestArtifact().hash(" ").uri("\\\\")))
                 .signature(createSignature()
                 )), contains(expectedErrors(
-                "link.materials[0].hash", "must match \"^[0-9a-f]*$\"",
-                "link.materials[0].hash", "size must be between 64 and 64",
-                "link.materials[0].uri", "must match \"^(?!.*\\\\).*$\"",
-                "link.products[0].hash", "must match \"^[0-9a-f]*$\"",
-                "link.products[0].hash", "size must be between 64 and 64")));
+                        "link.layoutSegmentName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"",
+                        "link.materials[0].hash", "must match \"^[0-9a-f]*$\"",
+                        "link.materials[0].hash", "size must be between 64 and 64",
+                        "link.materials[0].uri", "must match \"^(?!.*\\\\).*$\"",
+                        "link.products[0].hash", "must match \"^[0-9a-f]*$\"",
+                        "link.products[0].hash", "size must be between 64 and 64",
+                        "link.stepName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"")));
     }
 
     @Test
     void validRestLinkMetaBlock() {
         assertThat(validate(new RestLinkMetaBlock().link(new RestLink()
-                .layoutSegmentName("segmentName")
+                .layoutSegmentName("segment-name")
                 .runId("runId")
-                .stepName("stepName")
+                .stepName("step-name")
                 .addProductsItem(new RestArtifact().hash("c8df0a497ab0df7136c4f97892f17914e6e5e021fdc039f0ea7c27d5a95c1254").uri("/test.jar"))
                 .addMaterialsItem(new RestArtifact().hash("c8df0a497ab0df7136c4f97892f17914e6e5e021fdc039f0ea7c27d5a95c1254").uri("other.html")))
                 .signature(createSignature()

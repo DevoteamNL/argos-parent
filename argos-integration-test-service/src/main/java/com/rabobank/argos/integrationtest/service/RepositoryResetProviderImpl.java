@@ -55,7 +55,7 @@ public class RepositoryResetProviderImpl implements RepositoryResetProvider {
                 .filter(name -> !IGNORED_COLLECTIONS.contains(name))
                 .forEach(name -> template.remove(new Query(), name));
         template.remove(new Query(Criteria.where("email").nin("luke@skywalker.imp", "default@nl.nl", "default2@nl.nl")), PERSONALACCOUNTS);
-        template.remove(new Query(Criteria.where("name").nin("default_root_label")), "labels");
+        template.remove(new Query(Criteria.where("name").nin("default-root-label")), "labels");
         template.remove(new Query(Criteria.where("name").nin("default-sa1", "default-sa2", "default-sa3", "default-sa4", "default-sa5")), "serviceAccounts");
     }
 

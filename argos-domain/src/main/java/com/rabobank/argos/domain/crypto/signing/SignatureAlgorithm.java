@@ -34,14 +34,10 @@ public enum SignatureAlgorithm {
 	}
 	
 	public static SignatureAlgorithm getAlgorithm(KeyAlgorithm keyAlgorithm, HashAlgorithm hashAlgorithm) throws GeneralSecurityException {
-    	if (KeyAlgorithm.EC.equals(keyAlgorithm)) {
-    		if (HashAlgorithm.SHA384 == hashAlgorithm) {
-    			return SHA_384_WITH_ECDSA;
-    		} else {
-    			throw new GeneralSecurityException(hashAlgorithm+" not supported");
-    		}
+    	if (KeyAlgorithm.EC == keyAlgorithm && HashAlgorithm.SHA384 == hashAlgorithm) {
+    		return SHA_384_WITH_ECDSA;
     	} else {
-    		return SHA_256_WITH_RSA;
+    	    throw new GeneralSecurityException(String.format("Combination of algorithms [%s] and [%s] not supported", keyAlgorithm, hashAlgorithm));
     	}
 	}
 

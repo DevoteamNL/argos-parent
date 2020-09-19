@@ -31,7 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -49,9 +48,10 @@ public class ReleaseRestService implements ReleaseApi {
     @Override
     @PermissionCheck(permissions = Permission.RELEASE)
     @AuditLog
-    public ResponseEntity<RestReleaseResult> createRelease(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR)
-                                                           @AuditParam("supplyChainId") String supplyChainId,
-                                                           @AuditParam("releaseArtifacts") @Valid RestReleaseArtifacts restReleaseArtifacts) {
+    public ResponseEntity<RestReleaseResult> createRelease(
+            @LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR)
+            @AuditParam("supplyChainId") String supplyChainId,
+            @AuditParam("releaseArtifacts") RestReleaseArtifacts restReleaseArtifacts) {
         List<Set<Artifact>> artifacts = artifactMapper.mapToArtifacts(restReleaseArtifacts.getReleaseArtifacts());
         ReleaseResult releaseResult = releaseService.createRelease(supplyChainId, artifacts);
         return ResponseEntity.ok(releaseResultMapper.maptoRestReleaseResult(releaseResult));

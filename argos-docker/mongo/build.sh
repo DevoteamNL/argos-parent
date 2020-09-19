@@ -16,7 +16,7 @@
 #
 
 set -x
-MONGO_VERSION="4.2.8"
+MONGO_VERSION="ff"
 REGISTRY="argosnotary"
 IMAGE_NAME="mongo"
 build_image=${REGISTRY}/${IMAGE_NAME}:${MONGO_VERSION}

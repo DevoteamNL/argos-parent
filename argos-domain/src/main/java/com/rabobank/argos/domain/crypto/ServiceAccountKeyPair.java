@@ -31,7 +31,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ServiceAccountKeyPair extends KeyPair {
     private String encryptedHashedKeyPassphrase;
     

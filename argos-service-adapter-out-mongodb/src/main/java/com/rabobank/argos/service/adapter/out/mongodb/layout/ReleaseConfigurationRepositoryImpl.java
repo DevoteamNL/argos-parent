@@ -28,8 +28,8 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ReleaseConfigurationRepositoryImpl implements ReleaseConfigurationRepository {
-    static final String COLLECTION = "releaseConfiguration";
-    static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
+    public static final String COLLECTION = "releaseConfiguration";
+    public static final String SUPPLY_CHAIN_ID_FIELD = "supplyChainId";
     private final MongoTemplate template;
 
     @Override
