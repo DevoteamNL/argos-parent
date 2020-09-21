@@ -71,11 +71,11 @@ public class ArgosServiceClient {
         }
     }
 
-    public VerificationResult verify(List<String> hashes, String path) {
+    public VerificationResult verify(List<String> hashes, List<String> paths) {
         try {
             VerificationApi verificationApi = apiClient.buildClient(VerificationApi.class);
             return VerificationResult.builder()
-                    .runIsValid(verificationApi.getVerification(hashes, path).getRunIsValid())
+                    .runIsValid(verificationApi.getVerification(hashes, paths).getRunIsValid())
                     .build();
         } catch (FeignException e) {
             throw convertToArgos4jError(e);

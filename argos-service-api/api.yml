@@ -552,11 +552,14 @@ paths:
             maxItems: 4096
             items:
               $ref: "#/components/schemas/SHA256Hash"
-        - name: path
+        - name: paths
           in: query
           required: false
           schema:
-            $ref: "#/components/schemas/HostnameString"
+            type: array
+            maxItems: 20
+            items:
+              $ref: "#/components/schemas/HostnameString"
       responses:
         '200':
           description: VerificationResult

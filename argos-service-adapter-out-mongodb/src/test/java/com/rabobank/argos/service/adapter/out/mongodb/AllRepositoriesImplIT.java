@@ -391,7 +391,7 @@ class AllRepositoriesImplIT {
     void artifactsAreReleased() {
         storeReleaseDossier();
         boolean artifactsAreReleased = releaseRepository
-                .artifactsAreReleased(RELEASE_ARTIFACTS.get(0), "path.to");
+                .artifactsAreReleased(RELEASE_ARTIFACTS.get(0), List.of("path.to"));
         assertThat(artifactsAreReleased, is(true));
         gridFsTemplate.delete(new Query());
     }

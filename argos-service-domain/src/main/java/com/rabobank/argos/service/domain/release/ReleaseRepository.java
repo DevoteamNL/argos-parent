@@ -28,5 +28,5 @@ public interface ReleaseRepository {
 
     Optional<String> getRawReleaseFileById(String id);
 
-    boolean artifactsAreReleased(List<String> releasedArtifacts, String path);
+    boolean artifactsAreReleased(List<String> releasedArtifacts, List<String> paths);
 }

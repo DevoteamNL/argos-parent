@@ -29,7 +29,7 @@ Feature: Verification2.0
     * configure headers = {'Content-Type': 'application/json'}
     Given path '/api/supplychain/verification'
     And param artifactHashes = '49e73a11c5e689db448d866ce08848ac5886cac8aa31156ea4de37427aca6162'
-    And param path = 'default-root-label'
+    And param path = 'default-root-label,other-root-label'
     When method GET
     Then status 200
     And match response == {"runIsValid":true}
