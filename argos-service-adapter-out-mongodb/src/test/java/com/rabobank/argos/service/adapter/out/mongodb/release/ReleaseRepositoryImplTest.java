@@ -42,6 +42,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -140,9 +141,64 @@ class ReleaseRepositoryImplTest {
 
     @Test
     void artifactsAreReleasedShouldReturnTrue() {
-        when(mongoTemplate.exists(any(Query.class), any(String.class))).thenReturn(true);
-        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), PATH), is(true));
-        verify(mongoTemplate).exists(queryArgumentCaptor.capture(), any(String.class));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\", \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^path\", \"options\" : \"\"}}}, Fields: {}, Sort: {}"));
+        when(mongoTemplate.count(any(Query.class), eq(ReleaseDossierMetaData.class), any(String.class))).thenReturn(2L);
+        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), List.of(PATH)), is(true));
+        verify(mongoTemplate).count(queryArgumentCaptor.capture(), eq(ReleaseDossierMetaData.class), any(String.class));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\", \"$and\" : [{ \"$or\" : [{ \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^path\", \"options\" : \"\"}}}]}]}, Fields: {}, Sort: {}"));
+                                                                 
     }
+    
+    @Test
+    void artifactsMorePathsShouldReturnTrue() {
+        when(mongoTemplate.count(any(Query.class), eq(ReleaseDossierMetaData.class), any(String.class))).thenReturn(2L);
+        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), List.of(PATH, LONG_PATH)), is(true));
+        verify(mongoTemplate).count(queryArgumentCaptor.capture(), eq(ReleaseDossierMetaData.class), any(String.class));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\", \"$and\" : [{ \"$or\" : [{ \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^path\", \"options\" : \"\"}}}, { \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^\\\\Qpath.to\\\\E\", \"options\" : \"\"}}}]}]}, Fields: {}, Sort: {}"));
+                                                                 
+    }
+    
+    @Test
+    void artifactsAreReleased1ResultShouldReturnTrue() {
+        when(mongoTemplate.count(any(Query.class), eq(ReleaseDossierMetaData.class), any(String.class))).thenReturn(1L);
+        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), List.of(PATH)), is(true));
+        verify(mongoTemplate).count(queryArgumentCaptor.capture(), eq(ReleaseDossierMetaData.class), any(String.class));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\", \"$and\" : [{ \"$or\" : [{ \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^path\", \"options\" : \"\"}}}]}]}, Fields: {}, Sort: {}"));
+                                                                 
+    }
+    
+    @Test
+    void artifactsEmptyPathsReturnTrue() {
+        when(mongoTemplate.count(any(Query.class), eq(ReleaseDossierMetaData.class), any(String.class))).thenReturn(1L);
+        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), List.of()), is(true));
+        verify(mongoTemplate).count(queryArgumentCaptor.capture(), eq(ReleaseDossierMetaData.class), any(String.class));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\"}, Fields: {}, Sort: {}"));
+                                                                 
+    }
+    
+    @Test
+    void artifactsAreReleasedShouldReturnFalse() {
+        when(mongoTemplate.count(any(Query.class), eq(ReleaseDossierMetaData.class), any(String.class))).thenReturn(2L);
+        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), null), is(false));
+        verify(mongoTemplate).count(queryArgumentCaptor.capture(), eq(ReleaseDossierMetaData.class), any(String.class));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\"}, Fields: {}, Sort: {}"));
+    }
+    
+    @Test
+    void artifactsAreReleasedEmptyPathsShouldReturnFalse() {
+        when(mongoTemplate.count(any(Query.class), eq(ReleaseDossierMetaData.class), any(String.class))).thenReturn(2L);
+        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), List.of()), is(false));
+        verify(mongoTemplate).count(queryArgumentCaptor.capture(), eq(ReleaseDossierMetaData.class), any(String.class));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\"}, Fields: {}, Sort: {}"));
+    }
+    
+    @Test
+    void artifactsNoResultShouldReturnFalse() {    
+        when(mongoTemplate.count(any(Query.class), eq(ReleaseDossierMetaData.class), any(String.class))).thenReturn(0L);
+        assertThat(releaseRepository.artifactsAreReleased(List.of("hash1"), List.of(PATH)), is(false));
+        verify(mongoTemplate).count(queryArgumentCaptor.capture(), eq(ReleaseDossierMetaData.class), any(String.class));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"metadata.releaseArtifacts.artifactsHash\" : \"af316ecb91a8ee7ae99210702b2d4758f30cdde3bf61e3d8e787d74681f90a6e\", \"$and\" : [{ \"$or\" : [{ \"metadata.supplyChainPath\" : { \"$regularExpression\" : { \"pattern\" : \"^path\", \"options\" : \"\"}}}]}]}, Fields: {}, Sort: {}"));
+        
+                                                                 
+    }
+    
 }

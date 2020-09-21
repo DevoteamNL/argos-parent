@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode
@@ -37,8 +38,8 @@ public class Argos4j implements Serializable {
         return new LinkBuilderImpl(settings, linkBuilderSettings);
     }
 
-    public VerifyBuilder getVerifyBuilder(String path) {
-        return new VerifyBuilderImpl(settings, getArtifactListBuilder(), path);
+    public VerifyBuilder getVerifyBuilder(List<String> paths) {
+        return new VerifyBuilderImpl(settings, getArtifactListBuilder(), paths);
     }
     
     public VerifyBuilder getVerifyBuilder() {

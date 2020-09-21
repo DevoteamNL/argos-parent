@@ -58,10 +58,10 @@ public class VerificationRestService implements VerificationApi {
     private final VerificationResultMapper verificationResultMapper;
 
     @Override
-    public ResponseEntity<RestVerificationResult> getVerification(List<String> artifactHashes, String path) {
-        log.info("Verification request for path [{}] and hashes [{}].", path, artifactHashes);
-        boolean isvalid = releaseRepository.artifactsAreReleased(artifactHashes, path);
-        log.info("Verify result [{}] for path [{}] and hashes [{}].", isvalid, path, artifactHashes);
+    public ResponseEntity<RestVerificationResult> getVerification(List<String> artifactHashes, List<String> paths) {
+        log.info("Verification request for paths [{}] and hashes [{}].", paths, artifactHashes);
+        boolean isvalid = releaseRepository.artifactsAreReleased(artifactHashes, paths);
+        log.info("Verify result [{}] for paths [{}] and hashes [{}].", isvalid, paths, artifactHashes);
         return ResponseEntity.ok(new RestVerificationResult().runIsValid(isvalid));
     }
 

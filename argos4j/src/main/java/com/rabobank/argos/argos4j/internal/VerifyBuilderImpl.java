@@ -35,7 +35,7 @@ public class VerifyBuilderImpl implements VerifyBuilder {
 
     private final ArtifactListBuilder artifactListBuilder;
     
-    private final String path;
+    private final List<String> paths;
 
     @Override
     public VerifyBuilder addFileCollector(FileCollector collector) {
@@ -48,7 +48,7 @@ public class VerifyBuilderImpl implements VerifyBuilder {
         List<Artifact> artifacts = artifactListBuilder.collect();
 
         log.info("verify artifacts {}", artifacts);
-        return new ArgosServiceClient(settings).verify(artifacts.stream().map(Artifact::getHash).collect(Collectors.toList()), path);
+        return new ArgosServiceClient(settings).verify(artifacts.stream().map(Artifact::getHash).collect(Collectors.toList()), paths);
     }
 
 }

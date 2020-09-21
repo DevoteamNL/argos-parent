@@ -116,7 +116,7 @@ class VerificationRestServiceTest {
     @Test
     void getVerification() {
         when(releaseRepository.artifactsAreReleased(any(), any())).thenReturn(true);
-        ResponseEntity<RestVerificationResult> result = verificationRestService.getVerification(List.of("hash"), "path");
+        ResponseEntity<RestVerificationResult> result = verificationRestService.getVerification(List.of("hash"), List.of("path"));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
         assertThat(result.getBody().getRunIsValid(), is(true));
     }

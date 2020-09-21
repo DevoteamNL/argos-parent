@@ -112,12 +112,26 @@ public class ReleaseRepositoryImpl implements ReleaseRepository {
             throw new ArgosError("releasedArtifacts cannot be empty", ArgosError.Level.WARNING);
         }
     }
-
+    
     private void addOptionalPathCriteria(String path, Criteria criteria) {
         if (path != null) {
             criteria.and(METADATA_SUPPLY_CHAIN_PATH_FIELD)
                     .regex(Objects.requireNonNull(MongoRegexCreator.INSTANCE
                             .toRegularExpression(path, STARTING_WITH)));
+        }
+    }
+    
+    private void addOptionalPathListCriteria(List<String> paths, Criteria criteria) {
+        if (paths != null && !paths.isEmpty()) {
+            List<Criteria> pathListCriteria = new ArrayList<>();
+            paths.forEach(p -> pathListCriteria.add(Criteria.where(METADATA_SUPPLY_CHAIN_PATH_FIELD)
+            .regex(Objects.requireNonNull(MongoRegexCreator.INSTANCE
+                    .toRegularExpression(p, STARTING_WITH)))));
+            
+            Criteria pathCriteria = new Criteria();
+            pathCriteria.orOperator(pathListCriteria.toArray(new Criteria[0]));
+            
+            criteria.andOperator(pathCriteria);
         }
     }
 
@@ -145,12 +159,13 @@ public class ReleaseRepositoryImpl implements ReleaseRepository {
     }
 
     @Override
-    public boolean artifactsAreReleased(List<String> releasedArtifacts, String path) {
+    public boolean artifactsAreReleased(List<String> releasedArtifacts, List<String> paths) {
         Criteria criteria = createListHashCriteria(releasedArtifacts);
-        addOptionalPathCriteria(path, criteria);
+        addOptionalPathListCriteria(paths, criteria);
         Query query = new Query(criteria);
         log.info("artifactsAreReleased: {}", query);
-        return mongoTemplate.exists(query, COLLECTION_NAME);
+        long noOfReleases = mongoTemplate.count(query, ReleaseDossierMetaData.class, COLLECTION_NAME);
+        return (noOfReleases == 1) || (noOfReleases > 1 && (paths != null && !paths.isEmpty()));
     }
 
 }
