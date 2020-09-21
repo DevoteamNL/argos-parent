@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,7 +43,7 @@ import java.util.Optional;
 @Getter
 @EqualsAndHashCode
 @ToString
-public abstract class FileCollector {
+public abstract class FileCollector implements Serializable {
 
     public static final String DEFAULT_EXCLUDE_PATTERNS = "{**.git/**,**.git\\**}";
     

@@ -18,6 +18,7 @@ package com.rabobank.argos.domain.account;
 import com.rabobank.argos.domain.crypto.KeyPair;
 import com.rabobank.argos.domain.permission.LocalPermissions;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +29,7 @@ import static java.util.UUID.randomUUID;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper=true)
 public class PersonalAccount extends Account {
     @Builder
     public PersonalAccount(

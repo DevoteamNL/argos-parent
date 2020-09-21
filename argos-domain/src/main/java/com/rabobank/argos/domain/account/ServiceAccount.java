@@ -19,6 +19,7 @@ import com.rabobank.argos.domain.crypto.ServiceAccountKeyPair;
 import com.rabobank.argos.domain.permission.LocalPermissions;
 import com.rabobank.argos.domain.permission.Permission;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +32,7 @@ import static java.util.Collections.singletonList;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper=true)
 public class ServiceAccount extends Account {
     private String parentLabelId;
 

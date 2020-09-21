@@ -36,7 +36,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonDeserialize(builder = ReleaseCollector.ReleaseCollectorBuilder.class)
-public class ReleaseCollector  implements Serializable {
+public class ReleaseCollector implements Serializable {
     private static final long serialVersionUID = -3437437685195360384L;
     @JsonProperty("name")
     private String name;

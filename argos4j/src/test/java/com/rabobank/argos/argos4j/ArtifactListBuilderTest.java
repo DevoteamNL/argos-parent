@@ -77,11 +77,11 @@ class ArtifactListBuilderTest {
 		assertThat(artifacts, is(emptyList()));
 		artifactListBuilder.addFileCollector(collector1);
 		artifacts = artifactListBuilder.collect();
-		assertTrue(artifacts.size() == 1);
+		assertEquals(1, artifacts.size());
 		assertThat(artifacts, is(Arrays.asList(artifact1)));
 		artifactListBuilder.addFileCollector(collector2);
 		artifacts = artifactListBuilder.collect();
-		assertTrue(artifacts.size() == 2);
+		assertEquals(2, artifacts.size());
 		assertThat(artifacts, is(Arrays.asList(artifact1, artifact2)));
 		
 	}
