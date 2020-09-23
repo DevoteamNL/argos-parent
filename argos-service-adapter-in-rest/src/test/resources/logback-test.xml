@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) 2019 - 2020 Rabobank Nederland
+    Copyright (C) 2020 Argos Notary Cooperative
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@
             </pattern>
         </encoder>
     </appender>
-    <logger name="com.rabobank.argos.service.adapter.in.rest.RestServiceDefaultExceptionHandler" level="OFF"/>
-    <logger name="com.rabobank.argos.service" level="error">
+    <logger name="com.argosnotary.argos.service.adapter.in.rest.RestServiceDefaultExceptionHandler" level="OFF"/>
+    <logger name="com.argosnotary.argos.service" level="error">
         <appender-ref ref="STDOUT"/>
     </logger>
 </configuration>

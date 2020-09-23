@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2019 - 2020 Rabobank Nederland
+    Copyright (C) 2020 Argos Notary Cooperative
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.rabobank.argos</groupId>
+	<groupId>com.argosnotary.argos</groupId>
 	<artifactId>argos-service</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>Argos Service</name>
@@ -36,27 +36,27 @@
     <developers>
         <developer>
             <name>Gerard Borst</name>
-            <email>gerard.borst@rabobank.nl</email>
-            <organization>Rabobank</organization>
-            <organizationUrl>https://www.rabobank.com</organizationUrl>
+            <email>gerard.borst@argosnotary.com</email>
+            <organization>Argos Notary Coöperatie</organization>
+            <organizationUrl>https://argosnotary.github.io</organizationUrl>
         </developer>
         <developer>
             <name>Bart Kors</name>
-            <email>bart.kors@rabobank.nl</email>
-            <organization>Rabobank</organization>
-            <organizationUrl>https://www.rabobank.com</organizationUrl>
+            <email>bart.kors@argosnotary.com</email>
+            <organization>Argos Notary Coöperatie</organization>
+            <organizationUrl>https://argosnotary.github.io</organizationUrl>
         </developer>
         <developer>
             <name>Michel Durieux</name>
-            <email>michel.durieux@rabobank.nl</email>
-            <organization>Rabobank</organization>
-            <organizationUrl>https://www.rabobank.com</organizationUrl>
+            <email>michel.durieux@argosnotary.com</email>
+            <organization>Argos Notary Coöperatie</organization>
+            <organizationUrl>https://argosnotary.github.io</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/argosnotary/argos.git</connection>
-        <developerConnection>scm:git:https://github.com/argosnotary/argos.git</developerConnection>
+        <connection>scm:git:https://github.com/argosnotary/argos-parent.git</connection>
+        <developerConnection>scm:git:https://github.com/argosnotary/argos-parent.git</developerConnection>
         <url>https://github.com/argosnotary/argos-parent/tree/master</url>
     </scm>
 
@@ -368,7 +368,7 @@
                         </goals>
                         <configuration>
                             <quiet>true</quiet>
-                            <excludePackageNames>com.rabobank.argos.service.adapter.in.rest.api.*</excludePackageNames>
+                            <excludePackageNames>com.argosnotary.argos.service.adapter.in.rest.api.*</excludePackageNames>
                         </configuration>
                     </execution>
                 </executions>
@@ -473,9 +473,9 @@
                             <avoidCallsTo>
                                 <avoidCallsTo>org.slf4j</avoidCallsTo>
                             </avoidCallsTo>
-                            <excludedClasses>com.rabobank.argos.service.security.SecurityConfig</excludedClasses>
+                            <excludedClasses>com.argosnotary.argos.service.security.SecurityConfig</excludedClasses>
                             <targetClasses>
-                                <param>com.rabobank.argos.*</param>
+                                <param>com.argosnotary.argos.*</param>
                             </targetClasses>
                             <outputFormats>
                                 <format>XML</format>

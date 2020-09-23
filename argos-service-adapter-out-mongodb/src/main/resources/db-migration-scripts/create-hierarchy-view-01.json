@@ -77,7 +77,7 @@
                   0.0
                 ]
               },
-              "_class": "com.rabobank.argos.service.adapter.out.mongodb.hierarchy.HierarchyRepositoryImpl.HierarchyItem"
+              "_class": "com.argosnotary.argos.service.adapter.out.mongodb.hierarchy.HierarchyRepositoryImpl.HierarchyItem"
             }
           }
         ],
@@ -117,7 +117,7 @@
                   0.0
                 ]
               },
-              "_class": "com.rabobank.argos.service.adapter.out.mongodb.hierarchy.HierarchyRepositoryImpl.HierarchyItem"
+              "_class": "com.argosnotary.argos.service.adapter.out.mongodb.hierarchy.HierarchyRepositoryImpl.HierarchyItem"
             }
           }
         ]

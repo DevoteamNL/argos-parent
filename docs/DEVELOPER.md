@@ -115,8 +115,8 @@ merged if the code is formatted properly and all tests are passing.
 
 A release creates the following artifacts:
 * docker.io/argosnotary/argos-service:[version]
-* com.rabobank.argos.argos4j in Maven Central
-* com.rabobank.argos.argos-service in Maven Central
+* com.argosnotary.argos.argos4j in Maven Central
+* com.argosnotary.argos.argos-service in Maven Central
 
 A release can only be made of the master branch.
 

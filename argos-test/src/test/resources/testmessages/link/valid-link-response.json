@@ -11,14 +11,14 @@
       "layoutSegmentName": "segment1",
       "materials": [
         {
-          "uri": "src/test/java/com/rabobank/argos/test/ArgosServiceTestIT.java",
+          "uri": "src/test/java/com/argosnotary/argos/test/ArgosServiceTestIT.java",
           "hash": "61a0af2b177f02a14bab478e68d4907cda4dc3f642ade0432da8350ca199302b"
         }
       ],
       "stepName": "build",
       "products": [
         {
-          "uri": "src/test/java/com/rabobank/argos/test/ArgosServiceTestIT.java",
+          "uri": "src/test/java/com/argosnotary/argos/test/ArgosServiceTestIT.java",
           "hash": "61a0af2b177f02a14bab478e68d4907cda4dc3f642ade0432da8350ca199302b"
         }
       ]

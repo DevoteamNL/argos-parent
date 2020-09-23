@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 - 2020 Rabobank Nederland
+ * Copyright (C) 2020 Argos Notary Cooperative
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,10 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.google.common.collect.ImmutableSet;
-import com.rabobank.argos.argos4j.Argos4j;
-import com.rabobank.argos.argos4j.Argos4jSettings;
-import com.rabobank.argos.argos4j.ReleaseBuilder;
-import com.rabobank.argos.domain.release.ReleaseResult;
+import com.argosnotary.argos.argos4j.Argos4j;
+import com.argosnotary.argos.argos4j.Argos4jSettings;
+import com.argosnotary.argos.argos4j.ReleaseBuilder;
+import com.argosnotary.argos.domain.release.ReleaseResult;
 
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 

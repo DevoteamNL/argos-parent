@@ -5,7 +5,7 @@
     "stepName": "build",
     "materials": [
       {
-        "uri": "src/test/java/com/rabobank/argos/test/Argos4jIT.java",
+        "uri": "src/test/java/com/argosnotary/argos/test/Argos4jIT.java",
         "hash": "ec792b16cd2b2446011acd992f6d8224862367373b0a85b1fc3bea890587f646"
       },
       {
