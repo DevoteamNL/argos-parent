@@ -3,7 +3,7 @@
   "segmentName": "segmentName",
   "artifactCollectorSpecifications": [
     {
-      "name": "xl deploy rabobank",
+      "name": "xl deploy",
       "type": "XLDEPLOY",
       "uri": "http://xldeploy.nl",
       "context": {

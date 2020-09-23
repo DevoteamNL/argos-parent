@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2019 - 2020 Rabobank Nederland
+# Copyright (C) 2020 Argos Notary Cooperative
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@
 
 set -e
 
-if [ -z $1 ]
+if [ -z "$@" ]
 then
-  echo "Usage: $0 [namespace/]<image>[:version]"
+  echo "Usage: $0 <destination registry> [namespace/]<image>[:version]"
   exit 1
 fi
 
-image=$1
+image=$2
 shift
 
 registry_src="hub.docker.com"
-registry_dst="nexus3.rabobank.nl:8086"
+registry_dst=$1
 
 echo "Processing ${image}"
 

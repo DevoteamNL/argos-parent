@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2019 - 2020 Rabobank Nederland
+    Copyright (C) 2020 Argos Notary Cooperative
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -43,27 +43,27 @@
     <developers>
         <developer>
             <name>Gerard Borst</name>
-            <email>gerard.borst@rabobank.nl</email>
-            <organization>Rabobank</organization>
-            <organizationUrl>https://www.rabobank.com</organizationUrl>
+            <email>gerard.borst@argosnotary.com</email>
+            <organization>Argos Notary Coöperatie</organization>
+            <organizationUrl>https://argosnotary.github.io</organizationUrl>
         </developer>
         <developer>
             <name>Bart Kors</name>
-            <email>bart.kors@rabobank.nl</email>
-            <organization>Rabobank</organization>
-            <organizationUrl>https://www.rabobank.com</organizationUrl>
+            <email>bart.kors@argosnotary.com</email>
+            <organization>Argos Notary Coöperatie</organization>
+            <organizationUrl>https://argosnotary.github.io</organizationUrl>
         </developer>
         <developer>
             <name>Michel Durieux</name>
-            <email>michel.durieux@rabobank.nl</email>
-            <organization>Rabobank</organization>
-            <organizationUrl>https://www.rabobank.com</organizationUrl>
+            <email>michel.durieux@argosnotary.com</email>
+            <organization>Argos Notary Coöperatie</organization>
+            <organizationUrl>https://argosnotary.github.io</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/argosnotary/argos.git</connection>
-        <developerConnection>scm:git:https://github.com/argosnotary/argos.git</developerConnection>
+        <connection>scm:git:https://github.com/argosnotary/argos-parent.git</connection>
+        <developerConnection>scm:git:https://github.com/argosnotary/argos-parent.git</developerConnection>
         <url>https://github.com/argosnotary/argos-parent/tree/master</url>
     </scm>
     
@@ -87,7 +87,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.rabobank.argos</groupId>
+            <groupId>com.argosnotary.argos</groupId>
             <artifactId>argos4j</artifactId>
             <version>${project.version}</version>
             <exclusions>

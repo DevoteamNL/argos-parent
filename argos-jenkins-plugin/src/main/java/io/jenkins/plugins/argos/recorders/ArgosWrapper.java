@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 - 2020 Rabobank Nederland
+ * Copyright (C) 2020 Argos Notary Cooperative
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package io.jenkins.plugins.argos.recorders;
 
-import com.rabobank.argos.argos4j.FileCollector;
-import com.rabobank.argos.argos4j.LinkBuilder;
-import com.rabobank.argos.argos4j.LocalFileCollector;
+import com.argosnotary.argos.argos4j.FileCollector;
+import com.argosnotary.argos.argos4j.LinkBuilder;
+import com.argosnotary.argos.argos4j.LocalFileCollector;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 - 2020 Rabobank Nederland
+# Copyright (C) 2020 Argos Notary Cooperative
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ spring:
             iconUrl: /images/auth_icons/github.svg
             displayName: Github
             emailAddressHandler:
-              className: com.rabobank.argos.service.security.oauth2.GithubEmailProvider
+              className: com.argosnotary.argos.service.security.oauth2.GithubEmailProvider
               uri: https://api.github.com/user/emails
           google:
             authorizationUri: https://accounts.google.com/o/oauth2/v2/auth
@@ -97,7 +97,7 @@ jwt:
     refreshInterval: PT15M
     sessionTimout: PT5M
 
-    # replace with the result of com.rabobank.argos.service.security.TokenProvider.main
+    # replace with the result of com.argosnotary.argos.service.security.TokenProvider.main
     secret: Z2LcVpgCuGtpb5rBDNIIWGe8RXqYGWDpWFjWhYQUS2Z8rjE2/GTJlu0s6BRYG0Mn0kV8StC9cFE83Jkl68RCkw==
 
   # After successfully authenticating with the OAuth2 Provider,

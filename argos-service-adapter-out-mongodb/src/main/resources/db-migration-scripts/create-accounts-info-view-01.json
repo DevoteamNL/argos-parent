@@ -64,7 +64,7 @@
               "accountType": "PERSONAL_ACCOUNT",
               "pathToRoot": [
               ],
-              "_class": "com.rabobank.argos.domain.account.AccountInfo"
+              "_class": "com.argosnotary.argos.domain.account.AccountInfo"
             }
           }
         ]
