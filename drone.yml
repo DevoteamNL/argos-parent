@@ -111,14 +111,15 @@ steps:
   - argos-integration-test-service
   - sonar
 
-- name: release argos service image
+- name: release argos service beta image
   image: plugins/docker
   settings:
     build_args:
-    - VERSION=${DRONE_TAG}
+    - VERSION=${DRONE_BRANCH}
     context: argos-docker
     dockerfile: argos-docker/ServiceDockerfile
-    tags: ${DRONE_TAG:-${DRONE_BRANCH//\//_-beta}}
+    tags:
+    - ${DRONE_BRANCH}-beta
     password:
       from_secret: docker_login_token
     repo: argosnotary/argos-service
@@ -131,6 +132,25 @@ steps:
       - "refs/heads/release/*"
     event:
     - push
+  depends_on:
+  - regression test
+
+- name: release argos service image
+  image: plugins/docker
+  settings:
+    build_args:
+    - VERSION=${DRONE_TAG}
+    context: argos-docker
+    dockerfile: argos-docker/ServiceDockerfile
+    tags:
+    - ${DRONE_TAG}
+    password:
+      from_secret: docker_login_token
+    repo: argosnotary/argos-service
+    username:
+      from_secret: docker_login_user
+  when:
+    event:
     - tag
   depends_on:
   - regression test
@@ -189,6 +209,7 @@ steps:
   depends_on:
   - regression test
   - release argos service image
+  - release argos service beta image
   - deploy release to sonatype
   
 services:
