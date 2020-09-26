@@ -163,9 +163,7 @@ steps:
     - argos4j/target/*.jar
     - argos4j/dependency-reduced-pom.xml
     - argos-service/target/*.jar
-    - argos-service/target/pom.xml
-    - argos-jenkins-plugin/target/*.hpi
-    - argos-jenkins-plugin/pom.xml
+    - argos-service/pom.xml
     key:
       from_secret: argos-signing-private-key
     passphrase:
