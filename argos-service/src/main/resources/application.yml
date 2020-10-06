@@ -23,15 +23,6 @@ spring:
     oauth2:
       client:
         registration:
-          azure:
-            client-name: azure
-            clientId: <replace>
-            clientSecret: <replace>
-            redirectUri: "{baseUrl}/api/oauth2/callback/{registrationId}"
-            client-authentication-method: basic
-            authorization-grant-type: authorization_code
-            scope:
-              - https://graph.microsoft.com/User.Read
           github:
             clientId: <replace>
             clientSecret: <replace>
@@ -46,16 +37,16 @@ spring:
             scope:
               - email
               - profile
-        provider:
           azure:
-            authorizationUri: http://localhost:8087/oauth2/v2.0/authorize
-            tokenUri: http://localhost:8087/oauth2/v2.0/token
-            userInfoUri: http://localhost:8087/v1.0/me
-            userNameAttribute: displayName
-            userIdAttribute: id
-            userEmailAttribute: userPrincipalName
-            iconUrl: /images/auth_icons/microsoft.svg
-            displayName: Azure
+            client-name: azure
+            clientId: <replace>
+            clientSecret: <replace>
+            redirectUri: "{baseUrl}/api/oauth2/callback/{registrationId}"
+            client-authentication-method: basic
+            authorization-grant-type: authorization_code
+            scope:
+              - https://graph.microsoft.com/User.Read
+        provider:
           github:
             authorizationUri: https://github.com/login/oauth/authorize
             tokenUri: https://github.com/login/oauth/access_token
@@ -77,6 +68,15 @@ spring:
             userEmailAttribute: email
             iconUrl: /images/auth_icons/google.svg
             displayName: Google
+          azure:
+            authorizationUri: http://localhost:8087/oauth2/v2.0/authorize
+            tokenUri: http://localhost:8087/oauth2/v2.0/token
+            userInfoUri: http://localhost:8087/v1.0/me
+            userNameAttribute: displayName
+            userIdAttribute: id
+            userEmailAttribute: userPrincipalName
+            iconUrl: /images/auth_icons/microsoft.svg
+            displayName: Azure
   application:
     name: argos-service
 management:
