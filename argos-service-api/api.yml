@@ -1381,7 +1381,7 @@ components:
 
     ArtifactArray:
       type: array
-      maxItems: 4096
+      maxItems: 12288
       items:
         $ref: "#/components/schemas/Artifact"
     

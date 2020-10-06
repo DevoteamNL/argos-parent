@@ -11,15 +11,34 @@ workspace:
   path: /drone/src
 
 steps:
+- name: pre-argos
+  image: argosnotary/argos4j-cli:1.0-beta
+  commands:
+  - argos-cli --config-file argos-settings.json postLink --phase PRE -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
+  environment:  
+    WORKSPACE: /home/argos
+    CREDENTIALS_PASSPHRASE:
+      from_secret: drone_sa_password
+    CREDENTIALS_KEY_ID:
+      from_secret: drone_sa_keyid
+  volumes:
+  - name: argos_workspace
+    path: /home/argos
+  when:
+    event:
+    - tag
+
 - name: build
   image: argosnotary/argos-build:3.6.3
   commands:
   - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
-  - mvn install -DskipTests
+  - mvn -q install -DskipTests
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
-    
+  depends_on:
+  - pre-argos
+  
 - name: pitest
   image: argosnotary/argos-build:3.6.3
   commands:
@@ -40,13 +59,33 @@ steps:
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
-  depends_on:
-  - pitest
   when:
     event:
     - tag
     - push
-  
+  depends_on:
+  - pitest
+
+- name: post-argos
+  image: argosnotary/argos4j-cli:1.0-beta
+  commands:
+  - argos-cli --config-file argos-settings.json postLink --phase POST -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
+  environment:  
+    WORKSPACE: /home/argos
+    CREDENTIALS_PASSPHRASE:
+      from_secret: drone_sa_password
+    CREDENTIALS_KEY_ID:
+      from_secret: drone_sa_keyid
+  volumes:
+  - name: argos_workspace
+    path: /home/argos
+  when:
+    event:
+    - tag
+  depends_on:
+  - pitest
+  - sonar
+    
 - name: argos-service
   image: argosnotary/argos-docker-base:11.0.8
   pull: always
@@ -66,8 +105,9 @@ steps:
   depends_on:
   - mongodb
   - pitest
-  - argos-integration-test-stub
   - sonar
+  - post-argos
+  - argos-integration-test-stub
   
 - name: argos-integration-test-service
   image: argosnotary/argos-docker-base:11.0.8
@@ -80,8 +120,9 @@ steps:
   depends_on:
   - mongodb
   - pitest
-  - argos-integration-test-stub
   - sonar
+  - post-argos
+  - argos-integration-test-stub
   
 - name: argos-jenkins
   image: argosnotary/argos-jenkins-base:latest
@@ -96,6 +137,7 @@ steps:
   depends_on:
   - pitest
   - sonar
+  - post-argos
   
 - name: regression test
   image: argosnotary/argos-build:3.6.3
@@ -109,7 +151,9 @@ steps:
   - argos-jenkins
   - argos-service
   - argos-integration-test-service
+  - pitest
   - sonar
+  - post-argos
 
 - name: release argos service beta image
   image: plugins/docker
@@ -179,8 +223,8 @@ steps:
   commands:
   - cp argos4j/dependency-reduced-pom.xml argos4j/pom.xml
   - cp argos4j/dependency-reduced-pom.xml.asc argos4j/pom.xml.asc
-  - mvn -q -f argos4j/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
-  - mvn -q -f argos-service/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+  - mvn -f argos4j/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+  - mvn -f argos-service/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
   environment:
     ossrh_password:
       from_secret: ossrh_login_password
@@ -194,6 +238,24 @@ steps:
     - tag
   depends_on:
   - sign artifacts
+  
+- name: argos-release
+  image: argosnotary/argos4j-cli:1.0-beta
+  commands:
+  - argos-cli --config-file argos-settings.json release
+  environment:  
+    CREDENTIALS_PASSPHRASE:
+      from_secret: drone_sa_password
+    CREDENTIALS_KEY_ID:
+      from_secret: drone_sa_keyid
+  volumes:
+  - name: argos_workspace
+    path: /home/argos/workspace
+  when:
+    event:
+    - tag
+  depends_on:
+  - deploy release to sonatype
 
 - name: slack on success
   image: plugins/slack
@@ -208,7 +270,7 @@ steps:
   - regression test
   - release argos service image
   - release argos service beta image
-  - deploy release to sonatype
+  - argos-release
   
 services:
 - name: mongodb
@@ -219,7 +281,7 @@ services:
 volumes:
 - name: mvn_cache
   temp: {}
-- name: mvn_cache
+- name: argos_workspace
   temp: {}
 
 trigger:

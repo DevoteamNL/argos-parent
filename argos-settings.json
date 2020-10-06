@@ -1,0 +1,25 @@
+{
+    "argosServerBaseUrl": "https://cloud.argosnotary.com/api",
+    "supplyChainName": "argos",
+	"path": [
+		"com",
+        "argosnotary",
+		"argos"
+	],
+	"releaseCollectors": [
+        {
+            "name": "local-collector",
+            "collector": {
+                "type": "LocalFileCollector",
+                "path": "argos4j/target/argos4j.jar"
+            }
+        },
+        {
+            "name": "local-collector",
+            "collector": {
+                "type": "LocalFileCollector",
+                "path": "argos-service/target/argos-service.jar"
+            }
+        }
+	]
+}
