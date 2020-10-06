@@ -174,26 +174,26 @@ steps:
   depends_on:
   - regression test
 
-# - name: deploy release to sonatype
-#   image: argosnotary/argos-build:3.6.3
-#   commands:
-#   - cp argos4j/dependency-reduced-pom.xml argos4j/target/pom.xml
-#   - cp argos4j/dependency-reduced-pom.xml.asc argos4j/target/pom.xml.asc
-#   - mvn -q -f argos4j/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
-#   - mvn -q -f argos-service/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
-#   environment:
-#     ossrh_password:
-#       from_secret: ossrh_login_password
-#     ossrh_username:
-#       from_secret: ossrh_login_user
-#   volumes:
-#   - name: mvn_cache
-#     path: /root/.m2/repository
-#   when:
-#     event:
-#     - tag
-#   depends_on:
-#   - sign artifacts
+- name: deploy release to sonatype
+  image: argosnotary/argos-build:3.6.3
+  commands:
+  - cp argos4j/dependency-reduced-pom.xml argos4j/pom.xml
+  - cp argos4j/dependency-reduced-pom.xml.asc argos4j/pom.xml.asc
+  - mvn -q -f argos4j/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+  - mvn -q -f argos-service/pom.xml deploy:deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+  environment:
+    ossrh_password:
+      from_secret: ossrh_login_password
+    ossrh_username:
+      from_secret: ossrh_login_user
+  volumes:
+  - name: mvn_cache
+    path: /root/.m2/repository
+  when:
+    event:
+    - tag
+  depends_on:
+  - sign artifacts
 
 - name: slack on success
   image: plugins/slack
@@ -208,7 +208,7 @@ steps:
   - regression test
   - release argos service image
   - release argos service beta image
-#  - deploy release to sonatype
+  - deploy release to sonatype
   
 services:
 - name: mongodb
