@@ -119,7 +119,7 @@ steps:
     context: argos-docker
     dockerfile: argos-docker/ServiceDockerfile
     tags:
-    - ${DRONE_BRANCH}-beta
+    - ${DRONE_BRANCH//\//_}-beta
     password:
       from_secret: docker_login_token
     repo: argosnotary/argos-service
