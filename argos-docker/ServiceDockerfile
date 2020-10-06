@@ -16,4 +16,8 @@
 
 FROM argosnotary/argos-docker-base:11.0.8
 
+ARG VERSION
+
+ENV ARGOS_VERSION ${VERSION}
+
 ADD target/lib/argos-service.jar /argos.jar

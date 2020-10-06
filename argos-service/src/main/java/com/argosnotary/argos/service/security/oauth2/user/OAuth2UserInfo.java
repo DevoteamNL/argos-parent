@@ -42,17 +42,21 @@ public class OAuth2UserInfo {
     @NotNull
     @Size(min = 1)
     public String getId() {
-        return (String) attributes
-                .getOrDefault(oauth2Provider
-                        .getUserIdAttribute(), null);
+        Object id = attributes
+                .get(oauth2Provider
+                        .getUserIdAttribute());
+        if (id instanceof Integer) {
+            return id.toString();
+        }
+        return (String) id;
     }
 
     @NotNull
     @Size(min = 1)
     public String getName() {
         return (String) attributes
-                .getOrDefault(oauth2Provider
-                        .getUserNameAttribute(), null);
+                .get(oauth2Provider
+                        .getUserNameAttribute());
 
     }
 
@@ -60,8 +64,8 @@ public class OAuth2UserInfo {
     @NotNull
     public String getEmail() {
         return (String) attributes
-                .getOrDefault(oauth2Provider
-                        .getUserEmailAttribute(), null);
+                .get(oauth2Provider
+                        .getUserEmailAttribute());
 
     }
 }
