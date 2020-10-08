@@ -9,7 +9,7 @@ platform:
 
 steps:
 - name: pre-argos
-  image: argosnotary/argos4j-cli:1.0-beta
+  image: argosnotary/argos4j-cli:1.0.0
   commands:
   - argos-cli --config-file argos-settings.json postLink --phase PRE -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
   environment:  
@@ -64,7 +64,7 @@ steps:
   - pitest
 
 - name: post-argos
-  image: argosnotary/argos4j-cli:1.0-beta
+  image: argosnotary/argos4j-cli:1.0.0
   commands:
   - argos-cli --config-file argos-settings.json postLink --phase POST -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
   environment:  
@@ -237,7 +237,7 @@ steps:
   - sign artifacts
   
 - name: argos-release
-  image: argosnotary/argos4j-cli:1.0-beta
+  image: argosnotary/argos4j-cli:1.0.0
   commands:
   - argos-cli --config-file argos-settings.json release
   environment:  
