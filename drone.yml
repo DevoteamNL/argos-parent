@@ -8,6 +8,23 @@ platform:
   arch: amd64
 
 steps:
+- name: pre-argos
+  image: argosnotary/argos4j-cli:1.0-beta
+  commands:
+  - argos-cli --config-file argos-settings.json postLink --phase PRE -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
+  environment:  
+    WORKSPACE: /home/argos
+    CREDENTIALS_PASSPHRASE:
+      from_secret: drone_sa_password
+    CREDENTIALS_KEY_ID:
+      from_secret: drone_sa_keyid
+  volumes:
+  - name: argos_workspace
+    path: /home/argos
+  when:
+    event:
+    - tag
+
 - name: build
   image: argosnotary/argos-build:3.6.3
   commands:
@@ -16,6 +33,8 @@ steps:
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
+  depends_on:
+  - pre-argos
   
 - name: pitest
   image: argosnotary/argos-build:3.6.3
@@ -44,6 +63,26 @@ steps:
   depends_on:
   - pitest
 
+- name: post-argos
+  image: argosnotary/argos4j-cli:1.0-beta
+  commands:
+  - argos-cli --config-file argos-settings.json postLink --phase POST -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
+  environment:  
+    WORKSPACE: /home/argos
+    CREDENTIALS_PASSPHRASE:
+      from_secret: drone_sa_password
+    CREDENTIALS_KEY_ID:
+      from_secret: drone_sa_keyid
+  volumes:
+  - name: argos_workspace
+    path: /home/argos
+  when:
+    event:
+    - tag
+  depends_on:
+  - pitest
+  - sonar
+    
 - name: argos-service
   image: argosnotary/argos-docker-base:11.0.8
   pull: always
@@ -64,6 +103,7 @@ steps:
   - mongodb
   - pitest
   - sonar
+  - post-argos
   - argos-integration-test-stub
   
 - name: argos-integration-test-service
@@ -78,6 +118,7 @@ steps:
   - mongodb
   - pitest
   - sonar
+  - post-argos
   - argos-integration-test-stub
   
 - name: argos-jenkins
@@ -93,6 +134,7 @@ steps:
   depends_on:
   - pitest
   - sonar
+  - post-argos
   
 - name: regression test
   image: argosnotary/argos-build:3.6.3
@@ -108,6 +150,7 @@ steps:
   - argos-integration-test-service
   - pitest
   - sonar
+  - post-argos
 
 - name: release argos service beta image
   image: plugins/docker
@@ -193,6 +236,24 @@ steps:
   depends_on:
   - sign artifacts
   
+- name: argos-release
+  image: argosnotary/argos4j-cli:1.0-beta
+  commands:
+  - argos-cli --config-file argos-settings.json release
+  environment:  
+    CREDENTIALS_PASSPHRASE:
+      from_secret: drone_sa_password
+    CREDENTIALS_KEY_ID:
+      from_secret: drone_sa_keyid
+  volumes:
+  - name: argos_workspace
+    path: /home/argos/workspace
+  when:
+    event:
+    - tag
+  depends_on:
+  - deploy release to sonatype
+
 - name: slack on success
   image: plugins/slack
   settings:
@@ -206,6 +267,7 @@ steps:
   - regression test
   - release argos service image
   - release argos service beta image
+  - argos-release
   
 services:
 - name: mongodb
