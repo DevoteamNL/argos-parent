@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-set -x
 RUNNABLE_JAR=${RUNNABLE_JAR:-/argos.jar}
 if [ -z "$1" ]; then
 	exec java ${JAVA_OPTS} -jar ${RUNNABLE_JAR}
