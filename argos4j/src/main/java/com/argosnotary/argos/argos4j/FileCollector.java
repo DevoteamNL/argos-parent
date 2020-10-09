@@ -45,7 +45,7 @@ import java.util.Optional;
 @ToString
 public abstract class FileCollector implements Serializable {
 
-    public static final String DEFAULT_EXCLUDE_PATTERNS = "{**.git/**,**.git\\**}";
+    public static final String DEFAULT_EXCLUDE_PATTERNS = "{**.git/**,**.git\\\\**}";
     
     private static final String EXCLUDE_PATTERNS_FIELD = "excludePatterns";
 

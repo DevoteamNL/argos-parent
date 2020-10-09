@@ -222,6 +222,35 @@ class LocalArtifactCollectorTest {
     }
 
     @Test
+    void collectOnFileWithDefaultExcludePattern() throws IOException {
+        File testDir = new File(sharedTempDir, "test");
+        testDir.mkdir();
+        ArtifactCollector collector = ArtifactCollectorFactory.build(LocalFileCollector.builder()
+                .basePath(testDir.toPath())
+                .path(testDir.toPath())
+                .build());
+        File gitDir = new File(testDir, ".git");
+        gitDir.mkdir();
+        File dir2 = new File(testDir, "dir2");
+        dir2.mkdir();
+        FileUtils.write(new File(gitDir, "foo.txt"), "cool dit\r\nan other line", "UTF-8");
+        FileUtils.write(new File(testDir, ".gitignore"), "cool dit\r\nan other line", "UTF-8");
+        FileUtils.write(new File(dir2, ".gitignore"), "cool dit\r\nan other line", "UTF-8");
+        FileUtils.write(new File(testDir, "foo.link"), "cool dit\r\nan other line", "UTF-8");
+        List<Artifact> artifacts = sort(collector.collect());
+        assertThat(artifacts, hasSize(3));
+        Artifact artifact = artifacts.get(0);
+        assertThat(artifact.getUri(), is(".gitignore"));
+        assertThat(artifact.getHash(), is("cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91"));
+        artifact = artifacts.get(1);
+        assertThat(artifact.getUri(), is("dir2/.gitignore"));
+        assertThat(artifact.getHash(), is("cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91"));
+        artifact = artifacts.get(2);
+        assertThat(artifact.getUri(), is("foo.link"));
+        assertThat(artifact.getHash(), is("cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91"));
+    }
+
+    @Test
     void collectWrongBasePath() {
         Argos4jError error = assertThrows(Argos4jError.class, () -> ArtifactCollectorFactory.build(LocalFileCollector.builder()
                 .basePath(Paths.get(URI.create("notthere").getPath()))
