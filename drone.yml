@@ -176,6 +176,24 @@ steps:
   depends_on:
   - regression test
 
+- name: argos-release-check
+  image: argosnotary/argos4j-cli:1.0.0
+  commands:
+  - argos-cli --config-file argos-settings.json release
+  environment:  
+    CREDENTIALS_PASSPHRASE:
+      from_secret: drone_sa_password
+    CREDENTIALS_KEY_ID:
+      from_secret: drone_sa_keyid
+  volumes:
+  - name: argos_workspace
+    path: /home/argos/workspace
+  when:
+    event:
+    - tag
+  depends_on:
+  - regression test
+
 - name: release argos service image
   image: plugins/docker
   settings:
@@ -194,7 +212,7 @@ steps:
     event:
     - tag
   depends_on:
-  - regression test
+  - argos-release-check
 
 - name: sign artifacts
   image: plugins/gpgsign
@@ -213,7 +231,7 @@ steps:
     event:
     - tag
   depends_on:
-  - regression test
+  - argos-release-check
 
 - name: deploy release to sonatype
   image: argosnotary/argos-build:3.6.3
@@ -236,24 +254,6 @@ steps:
   depends_on:
   - sign artifacts
   
-- name: argos-release
-  image: argosnotary/argos4j-cli:1.0.0
-  commands:
-  - argos-cli --config-file argos-settings.json release
-  environment:  
-    CREDENTIALS_PASSPHRASE:
-      from_secret: drone_sa_password
-    CREDENTIALS_KEY_ID:
-      from_secret: drone_sa_keyid
-  volumes:
-  - name: argos_workspace
-    path: /home/argos/workspace
-  when:
-    event:
-    - tag
-  depends_on:
-  - deploy release to sonatype
-
 - name: slack on success
   image: plugins/slack
   settings:
@@ -264,10 +264,9 @@ steps:
     - push
     - tag
   depends_on:
-  - regression test
   - release argos service image
   - release argos service beta image
-  - argos-release
+  - deploy release to sonatype
   
 services:
 - name: mongodb
