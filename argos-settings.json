@@ -1,10 +1,10 @@
 {
     "argosServerBaseUrl": "https://cloud.argosnotary.com/api",
-    "supplyChainName": "argos",
+    "supplyChainName": "argos-parent",
 	"path": [
 		"com",
         "argosnotary",
-		"argos-parent"
+		"argos"
 	],
 	"releaseCollectors": [
         {
