@@ -37,3 +37,7 @@ RUN wget "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" \
 
 COPY files/settings.xml /root/.m2/settings.xml
 COPY files/toolchains.xml /root/.m2/toolchains.xml
+
+# install docker-ce
+RUN apt-get install -y curl        
+RUN curl -fsSL https://get.docker.com | bash

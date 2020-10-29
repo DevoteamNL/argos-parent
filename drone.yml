@@ -6,7 +6,7 @@ name: argosbuild
 platform:
   os: linux
   arch: amd64
-
+  
 steps:
 - name: pre-argos
   image: argosnotary/argos4j-cli:1.0.1
@@ -26,10 +26,10 @@ steps:
     - tag
 
 - name: build
-  image: argosnotary/argos-build:3.6.3
+  image: argosnotary/argos-build:3.6.3-docker
   commands:
   - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
-  - mvn -q install -DskipTests
+  - mvn install -DskipTests
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
@@ -37,7 +37,7 @@ steps:
   - pre-argos
   
 - name: pitest
-  image: argosnotary/argos-build:3.6.3
+  image: argosnotary/argos-build:3.6.3-docker
   commands:
   - mvn verify -Ppitest
   volumes:
@@ -47,9 +47,9 @@ steps:
   - build
 
 - name: sonar
-  image: argosnotary/argos-build:3.6.3
+  image: argosnotary/argos-build:3.6.3-docker
   commands:
-  - mvn -q -e verify sonar:sonar -Psonar -Dsonar.projectKey=argosnotary_argos-parent -Dsonar.organization=argosnotary -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
+  - mvn verify sonar:sonar -Psonar -Dsonar.projectKey=argosnotary_argos-parent -Dsonar.organization=argosnotary -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
   environment:
     SONAR_LOGIN:
       from_secret: sonar_login
@@ -82,10 +82,36 @@ steps:
   depends_on:
   - pitest
   - sonar
+
+- name: build images
+  image: argosnotary/argos-build:3.6.3-docker
+  commands:
+  - docker build --tag argosnotary/argos-service:${DRONE_TAG:-${DRONE_BRANCH//\//_}} --build-arg VERSION=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -f argos-docker/ServiceDockerfile argos-docker
+  - docker build --tag argosnotary/argos-integration-test-service:latest -f argos-docker/IntegrationTestServiceDockerfile argos-docker
+  volumes:
+  - name: docker_socket
+    path: /var/run/docker.sock
+  depends_on:
+  - build
+  - pitest
+  - sonar
+  - post-argos
+
+- name: mongodb
+  image: argosnotary/mongo:4.2.8
+  detach: true
+  depends_on:
+  - build images
+
+- name: argos-integration-test-stub
+  image: argosnotary/oauth-stub:2.25.1
+  detach: true
+  depends_on:
+  - build images
     
 - name: argos-service
-  image: argosnotary/argos-docker-base:11.0.8
-  pull: always
+  image: argosnotary/argos-service:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
+  pull: never
   detach: true
   environment:
     auth.frontendRedirectBasePath: http://argos-integration-test-stub:8080
@@ -98,27 +124,21 @@ steps:
     spring.security.oauth2.client.registration.azure.clientId: client-id
     spring.security.oauth2.client.registration.azure.clientSecret: client-secret
     spring.profiles.active: integration-test
-    RUNNABLE_JAR: '/drone/src/argos-service/target/argos-service.jar'
   depends_on:
+  - build images
   - mongodb
-  - pitest
-  - sonar
-  - post-argos
   - argos-integration-test-stub
   
 - name: argos-integration-test-service
-  image: argosnotary/argos-docker-base:11.0.8
-  pull: always
+  image: argosnotary/argos-integration-test-service:latest
+  pull: never
   detach: true
   environment:
     spring.data.mongodb.uri: mongodb://mongodb/argos
     spring.data.mongodb.database: argos
-    RUNNABLE_JAR: '/drone/src/argos-integration-test-service/target/argos-integration-test-service.jar'
   depends_on:
+  - build images
   - mongodb
-  - pitest
-  - sonar
-  - post-argos
   - argos-integration-test-stub
   
 - name: argos-jenkins
@@ -137,7 +157,7 @@ steps:
   - post-argos
   
 - name: regression test
-  image: argosnotary/argos-build:3.6.3
+  image: argosnotary/argos-build:3.6.3-docker
   commands:
   - cd argos-test
   - mvn -q clean verify -Pregression-test-drone
@@ -151,30 +171,6 @@ steps:
   - pitest
   - sonar
   - post-argos
-
-- name: release argos service beta image
-  image: plugins/docker
-  settings:
-    build_args:
-    - VERSION=${DRONE_BRANCH}
-    context: argos-docker
-    dockerfile: argos-docker/ServiceDockerfile
-    tags:
-    - ${DRONE_BRANCH//\//_}-beta
-    password:
-      from_secret: docker_login_token
-    repo: argosnotary/argos-service
-    username:
-      from_secret: docker_login_user
-  when:
-    ref:
-      include:
-      - "refs/heads/master"
-      - "refs/heads/release/*"
-    event:
-    - push
-  depends_on:
-  - regression test
 
 - name: argos-release-check
   image: argosnotary/argos4j-cli:1.0.1
@@ -195,23 +191,25 @@ steps:
   - regression test
 
 - name: release argos service image
-  image: plugins/docker
-  settings:
-    build_args:
-    - VERSION=${DRONE_TAG}
-    context: argos-docker
-    dockerfile: argos-docker/ServiceDockerfile
-    tags:
-    - ${DRONE_TAG}
-    password:
-      from_secret: docker_login_token
-    repo: argosnotary/argos-service
-    username:
-      from_secret: docker_login_user
+  image: argosnotary/argos-build:3.6.3-docker
+  commands:
+  - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+  - docker push argosnotary/argos-service:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
+  environment:  
+    DOCKER_USERNAME:
+      from_secret: docker_username  
+    DOCKER_PASSWORD:
+      from_secret: docker_password
   when:
+    ref:
+      include:
+      - "refs/heads/master"
+      - "refs/heads/release/*"
     event:
+    - push
     - tag
   depends_on:
+  - regression test
   - argos-release-check
 
 - name: sign artifacts
@@ -234,7 +232,7 @@ steps:
   - argos-release-check
 
 - name: deploy release to sonatype
-  image: argosnotary/argos-build:3.6.3
+  image: argosnotary/argos-build:3.6.3-docker
   commands:
   - cp argos4j/dependency-reduced-pom.xml argos4j/pom.xml
   - cp argos4j/dependency-reduced-pom.xml.asc argos4j/pom.xml.asc
@@ -265,18 +263,15 @@ steps:
     - tag
   depends_on:
   - release argos service image
-  - release argos service beta image
   - deploy release to sonatype
-  
-services:
-- name: mongodb
-  image: argosnotary/mongo:4.2.8
-- name: argos-integration-test-stub
-  image: argosnotary/oauth-stub:2.25.1
   
 volumes:
 - name: mvn_cache
-  temp: {}
+  host:
+    path: /datadisk/mvn
+- name: docker_socket
+  host:
+    path: /var/run/docker.sock
 - name: argos_workspace
   temp: {}
 
