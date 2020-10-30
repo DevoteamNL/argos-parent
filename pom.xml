@@ -317,7 +317,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<threads>4</threads>
+							<threads>8</threads>
 							<timeoutConstant>30000</timeoutConstant>
 							<timestampedReports>false</timestampedReports>
 							<mutationThreshold>60</mutationThreshold>

@@ -193,13 +193,16 @@ steps:
 - name: release argos service image
   image: argosnotary/argos-build:3.6.3-docker
   commands:
-  - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+  - docker login -u $${DOCKER_USERNAME} -p $${DOCKER_PASSWORD}
   - docker push argosnotary/argos-service:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
   environment:  
     DOCKER_USERNAME:
       from_secret: docker_username  
     DOCKER_PASSWORD:
       from_secret: docker_password
+  volumes:
+  - name: docker_socket
+    path: /var/run/docker.sock
   when:
     ref:
       include:
