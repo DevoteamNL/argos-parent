@@ -29,40 +29,16 @@ steps:
   image: argosnotary/argos-build:3.6.3-docker
   commands:
   - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
-  - mvn install -DskipTests
-  volumes:
-  - name: mvn_cache
-    path: /root/.m2/repository
-  depends_on:
-  - pre-argos
-  
-- name: pitest
-  image: argosnotary/argos-build:3.6.3-docker
-  commands:
-  - mvn verify -Ppitest
-  volumes:
-  - name: mvn_cache
-    path: /root/.m2/repository
-  depends_on:
-  - build
-
-- name: sonar
-  image: argosnotary/argos-build:3.6.3-docker
-  commands:
-  - mvn verify sonar:sonar -Psonar -Dsonar.projectKey=argosnotary_argos-parent -Dsonar.organization=argosnotary -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
+  - mvn install org.pitest:pitest-maven:mutationCoverage jacoco:report sonar:sonar -Psonar -Dsonar.projectKey=argosnotary_argos-parent -Dsonar.organization=argosnotary -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
   environment:
     SONAR_LOGIN:
       from_secret: sonar_login
   volumes:
   - name: mvn_cache
     path: /root/.m2/repository
-  when:
-    event:
-    - tag
-    - push
   depends_on:
-  - pitest
-
+  - pre-argos
+  
 - name: post-argos
   image: argosnotary/argos4j-cli:1.0.1
   commands:
@@ -80,8 +56,7 @@ steps:
     event:
     - tag
   depends_on:
-  - pitest
-  - sonar
+  - build
 
 - name: build images
   image: argosnotary/argos-build:3.6.3-docker
@@ -93,8 +68,6 @@ steps:
     path: /var/run/docker.sock
   depends_on:
   - build
-  - pitest
-  - sonar
   - post-argos
 
 - name: mongodb
@@ -152,8 +125,7 @@ steps:
   - name: mvn_cache
     path: /root/.m2/repository
   depends_on:
-  - pitest
-  - sonar
+  - build images
   - post-argos
   
 - name: regression test
@@ -168,8 +140,7 @@ steps:
   - argos-jenkins
   - argos-service
   - argos-integration-test-service
-  - pitest
-  - sonar
+  - mongodb
   - post-argos
 
 - name: argos-release-check
@@ -260,13 +231,10 @@ steps:
   settings:
     webhook:
       from_secret: slack_webhook
-  when:
-    event:
-    - push
-    - tag
   depends_on:
   - release argos service image
   - deploy release to sonatype
+  - regression test
   
 volumes:
 - name: mvn_cache
@@ -306,12 +274,13 @@ trigger:
   event:
   - push
   - tag
+  - pull_request
 
 depends_on:
 - argosbuild
 
 ---
 kind: signature
-hmac: 2c318980653bc5eb795f8d83c4bf13d5642c99446ba8d618900063194c492e3a
+hmac: 57e908e77555cfd0a4ed2cefd4f5d1c20aa52a5cd963cd66dbc003cb184ba41f
 
 ...
