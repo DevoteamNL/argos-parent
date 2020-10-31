@@ -310,4 +310,8 @@ trigger:
 depends_on:
 - argosbuild
 
+---
+kind: signature
+hmac: 2c318980653bc5eb795f8d83c4bf13d5642c99446ba8d618900063194c492e3a
+
 ...
