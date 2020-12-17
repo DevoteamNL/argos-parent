@@ -137,6 +137,19 @@ public class PersonalAccountRestService implements PersonalAccountApi {
                 .build()).stream()
                 .map(personalAccountMapper::convertToRestPersonalAccountWithoutRoles).collect(Collectors.toList()));
     }
+    
+    @Override
+    @PermissionCheck(permissions = {Permission.ASSIGN_ROLE})
+    public ResponseEntity<List<RestPersonalAccount>> searchPersonalAccountsWithRoles(String roleName, String localPermissionsLabelId, String name, List<String> activeKeyIds, List<String> inActiveKeyIds) {
+        return ResponseEntity.ok(accountService.searchPersonalAccounts(AccountSearchParams.builder()
+                .roleId(personalAccountMapper.convertToRoleId(roleName))
+                .localPermissionsLabelId(localPermissionsLabelId)
+                .name(name)
+                .activeKeyIds(activeKeyIds)
+                .inActiveKeyIds(inActiveKeyIds)
+                .build()).stream()
+                .map(personalAccountMapper::convertToRestPersonalAccount).collect(Collectors.toList()));
+    }
 
     @Override
     @PermissionCheck(permissions = {Permission.ASSIGN_ROLE})

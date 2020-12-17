@@ -939,6 +939,58 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/PersonalAccount"
+                  
+  /personalaccountwithroles:
+    get:
+      summary: search
+      operationId: searchPersonalAccountsWithRoles
+      tags:
+        - personal account
+      parameters:
+        - name: roleName
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/NameString"
+        - name: localPermissionsLabelId
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 1024
+        - name: activeKeyIds
+          in: query
+          required: false
+          explode: false
+          schema:
+            type: array
+            maxItems: 256
+            items:
+              $ref: "#/components/schemas/SHA256Hash"
+        - name: inactiveKeyIds
+          in: query
+          required: false
+          explode: false
+          schema:
+            type: array
+            maxItems: 256
+            items:
+              $ref: "#/components/schemas/SHA256Hash"
+      responses:
+        '200':
+          description: list of personal accounts with roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonalAccount"
+                  
   /personalaccount/{accountId}:
     get:
       summary: get personal account by id

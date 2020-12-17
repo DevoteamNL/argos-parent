@@ -127,6 +127,13 @@ Feature: Personal Account
     When method PUT
     Then status 403
     And match response == {"message":"Access denied"}
+    
+  Scenario: search personal account by role name should return 200 as admin
+    Given path '/api/personalaccountwithroles'
+    And param roleName = 'administrator'
+    When method GET
+    Then status 200
+    And match response == [{"roles":[],"id":"#uuid","name":"Luke Skywalker"}]
 
   Scenario: search personal account by role name should return 200
     * configure headers = call read('classpath:headers.js') { token: #(defaultUsertoken)}

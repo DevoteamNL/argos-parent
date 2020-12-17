@@ -243,6 +243,25 @@ class PersonalAccountRestServiceTest {
         assertThat(searchParams.getActiveKeyIds().get(), contains(KEY1));
         assertThat(searchParams.getInActiveKeyIds().get(), contains(KEY2));
     }
+    
+
+
+    @Test
+    void searchPersonalAccountsWithRoles() {
+        when(personalAccountMapper.convertToRoleId(ROLE_NAME)).thenReturn(ROLE_ID);
+        when(accountService.searchPersonalAccounts(any(AccountSearchParams.class))).thenReturn(List.of(personalAccount));
+        when(personalAccountMapper.convertToRestPersonalAccount(personalAccount)).thenReturn(restPersonalAccount);
+        ResponseEntity<List<RestPersonalAccount>> response = service.searchPersonalAccountsWithRoles(ROLE_NAME, LABEL_ID, NAME, List.of(KEY1), List.of(KEY2));
+        assertThat(response.getBody(), contains(restPersonalAccount));
+        assertThat(response.getStatusCodeValue(), Matchers.is(200));
+        verify(accountService).searchPersonalAccounts(searchParamsArgumentCaptor.capture());
+        AccountSearchParams searchParams = searchParamsArgumentCaptor.getValue();
+        assertThat(searchParams.getLocalPermissionsLabelId(), is(Optional.of(LABEL_ID)));
+        assertThat(searchParams.getRoleId(), is(Optional.of(ROLE_ID)));
+        assertThat(searchParams.getName(), is(Optional.of(NAME)));
+        assertThat(searchParams.getActiveKeyIds().get(), contains(KEY1));
+        assertThat(searchParams.getInActiveKeyIds().get(), contains(KEY2));
+    }
 
     @Test
     void updatePersonalAccountRolesById() {
