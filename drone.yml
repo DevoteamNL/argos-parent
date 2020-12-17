@@ -29,7 +29,7 @@ steps:
   image: argosnotary/argos-build:3.6.3-docker
   commands:
   - mvn versions:set -DnewVersion=${DRONE_TAG:-${DRONE_BRANCH//\//_}} -DgenerateBackupPoms=false -DprocessAllModules
-  - mvn install org.pitest:pitest-maven:mutationCoverage jacoco:report sonar:sonar -Psonar -Dsonar.projectKey=argosnotary_argos-parent -Dsonar.organization=argosnotary -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
+  - mvn install jacoco:report sonar:sonar -Psonar -Dsonar.projectKey=argosnotary_argos-parent -Dsonar.organization=argosnotary -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
   environment:
     SONAR_LOGIN:
       from_secret: sonar_login
@@ -281,6 +281,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 57e908e77555cfd0a4ed2cefd4f5d1c20aa52a5cd963cd66dbc003cb184ba41f
+hmac: b089c7f4e6b4f52e56dd16f51da61ddfbf768debda7651e37daf1d39a6d078c4
 
 ...

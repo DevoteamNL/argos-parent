@@ -314,7 +314,6 @@
                     <excludedClasses>
                         <excludedClasse>com.argosnotary.argos.argos4j.rest.api.*</excludedClasse>
                         <excludedClasse>com.argosnotary.argos.service.adapter.in.rest.api.*</excludedClasse>
-                        <excludedClasse>com.argosnotary.argos.service.adapter.out.mongodb.changelogs.*</excludedClasse>
                         <excludedClasse>*MapperImpl</excludedClasse>
                     </excludedClasses>
                     <targetClasses>
