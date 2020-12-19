@@ -7,6 +7,9 @@ platform:
   os: linux
   arch: amd64
   
+environment:
+  DOCKER_TAG_PRFX: 
+  
 steps:
 - name: pre-argos
   image: argosnotary/argos4j-cli:1.0.1
@@ -165,7 +168,8 @@ steps:
   image: argosnotary/argos-build:3.6.3-docker
   commands:
   - docker login -u $${DOCKER_USERNAME} -p $${DOCKER_PASSWORD}
-  - docker push argosnotary/argos-service:${DRONE_TAG:-${DRONE_BRANCH//\//_}}
+  - bash -c 'docker tag argosnotary/argos-service:$${DRONE_TAG:-$${DRONE_BRANCH//\//_}} argosnotary/argos-service:$${DRONE_TAG:-$${DRONE_BRANCH//\//_}-beta}'
+  - bash -c 'docker push argosnotary/argos-service:$${DRONE_TAG:-$${DRONE_BRANCH//\//_}-beta}'
   environment:  
     DOCKER_USERNAME:
       from_secret: docker_username  
@@ -281,6 +285,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: b089c7f4e6b4f52e56dd16f51da61ddfbf768debda7651e37daf1d39a6d078c4
+hmac: cba8f43b3e65469ac1543318b6d82702c4448bd6a83891b88d39924be4b312dc
 
 ...
