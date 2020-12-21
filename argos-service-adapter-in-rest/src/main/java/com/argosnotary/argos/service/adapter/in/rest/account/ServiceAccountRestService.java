@@ -44,7 +44,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.argosnotary.argos.domain.permission.Permission.READ;
-import static com.argosnotary.argos.domain.permission.Permission.SERVICE_ACCOUNT_EDIT;
+import static com.argosnotary.argos.domain.permission.Permission.TREE_EDIT;
 import static com.argosnotary.argos.service.adapter.in.rest.account.ServiceAccountLabelIdExtractor.SERVICE_ACCOUNT_LABEL_ID_EXTRACTOR;
 
 @RestController
@@ -65,7 +65,7 @@ public class ServiceAccountRestService implements ServiceAccountApi {
     private final DeleteService deleteService;
 
     @Override
-    @PermissionCheck(permissions = SERVICE_ACCOUNT_EDIT)
+    @PermissionCheck(permissions = TREE_EDIT)
     @AuditLog
     @Transactional
     public ResponseEntity<RestServiceAccount> createServiceAccount(@LabelIdCheckParam(propertyPath = "parentLabelId")
@@ -82,7 +82,7 @@ public class ServiceAccountRestService implements ServiceAccountApi {
     }
 
     @Override
-    @PermissionCheck(permissions = SERVICE_ACCOUNT_EDIT)
+    @PermissionCheck(permissions = TREE_EDIT)
     @AuditLog
     @Transactional
     public ResponseEntity<RestServiceAccountKeyPair> createServiceAccountKeyById(@LabelIdCheckParam(dataExtractor = SERVICE_ACCOUNT_LABEL_ID_EXTRACTOR)
@@ -119,7 +119,7 @@ public class ServiceAccountRestService implements ServiceAccountApi {
     }
 
     @Override
-    @PermissionCheck(permissions = SERVICE_ACCOUNT_EDIT)
+    @PermissionCheck(permissions = TREE_EDIT)
     @AuditLog
     @Transactional
     public ResponseEntity<Void> deleteServiceAccount(@LabelIdCheckParam(dataExtractor = SERVICE_ACCOUNT_LABEL_ID_EXTRACTOR)
@@ -133,7 +133,7 @@ public class ServiceAccountRestService implements ServiceAccountApi {
     }
 
     @Override
-    @PermissionCheck(permissions = SERVICE_ACCOUNT_EDIT)
+    @PermissionCheck(permissions = TREE_EDIT)
     @AuditLog
     @Transactional
     public ResponseEntity<RestServiceAccount> updateServiceAccountById(@LabelIdCheckParam(dataExtractor = SERVICE_ACCOUNT_LABEL_ID_EXTRACTOR)

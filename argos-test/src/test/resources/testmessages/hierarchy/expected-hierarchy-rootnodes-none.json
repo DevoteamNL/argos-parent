@@ -10,7 +10,7 @@
       "LAYOUT_ADD",
       "LINK_ADD",
       "READ",
-      "SERVICE_ACCOUNT_EDIT",
+      "TREE_EDIT",
       "VERIFY"
     ]
   },
@@ -23,7 +23,6 @@
     ],
     "permissions": [
       "READ",
-      "SERVICE_ACCOUNT_EDIT",
       "TREE_EDIT"
     ]
   },
@@ -36,7 +35,6 @@
     ],
     "permissions": [
       "READ",
-      "SERVICE_ACCOUNT_EDIT",
       "TREE_EDIT"
     ]
   },
@@ -49,7 +47,6 @@
     ],
     "permissions": [
       "READ",
-      "SERVICE_ACCOUNT_EDIT",
       "TREE_EDIT"
     ]
   }

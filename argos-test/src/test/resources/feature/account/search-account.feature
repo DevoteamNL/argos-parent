@@ -59,7 +59,7 @@ Feature: Search Account
   Scenario: search account by name not in path should return a 200 with empty array
     * def root1 = call read('classpath:feature/label/create-label.feature') { name: 'root1'}
     * def personalAccount = defaultTestData.personalAccounts['default-pa1']
-    * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(root1.response.id), permissions: [READ, SERVICE_ACCOUNT_EDIT,TREE_EDIT]}
+    * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(root1.response.id), permissions: [READ, TREE_EDIT]}
     * configure headers = call read('classpath:headers.js') { token: #(personalAccount.token)}
     * call read('create-service-account.feature') { name: 'not-in-path', parentLabelId: #(root1.response.id)}
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}

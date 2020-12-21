@@ -30,7 +30,6 @@ import java.util.Set;
 
 import static com.argosnotary.argos.domain.permission.Permission.LOCAL_PERMISSION_EDIT;
 import static com.argosnotary.argos.domain.permission.Permission.READ;
-import static com.argosnotary.argos.domain.permission.Permission.SERVICE_ACCOUNT_EDIT;
 import static com.argosnotary.argos.domain.permission.Permission.TREE_EDIT;
 import static com.argosnotary.argos.service.domain.security.DefaultLocalPermissionCheckStrategy.DEFAULT_LOCAL_PERMISSION_CHECK_STRATEGY_BEAN_NAME;
 import static java.util.Objects.requireNonNull;
@@ -45,7 +44,7 @@ public class DefaultLocalPermissionCheckStrategy implements LocalPermissionCheck
     private final AccountSecurityContext accountSecurityContext;
 
     public static final String DEFAULT_LOCAL_PERMISSION_CHECK_STRATEGY_BEAN_NAME = "defaultLocalPermissionCheckStrategy";
-    private final Set<Permission> implicitReadPermissions = EnumSet.of(TREE_EDIT, SERVICE_ACCOUNT_EDIT, LOCAL_PERMISSION_EDIT);
+    private final Set<Permission> implicitReadPermissions = EnumSet.of(TREE_EDIT, LOCAL_PERMISSION_EDIT);
 
     @Override
     public boolean hasLocalPermission(LocalPermissionCheckData localPermissionCheckData, Set<Permission> permissionsToCheck) {

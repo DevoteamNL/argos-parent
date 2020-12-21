@@ -148,8 +148,8 @@ Feature: Verification
     * def rootLabel = call read('classpath:feature/label/create-label.feature') { name: 'root1'}
     * def otherRootLabel = call read('classpath:feature/label/create-label.feature') { name: 'other-root-label'}
     * def personalAccount = defaultTestData.personalAccounts['default-pa1']
-    * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(rootLabel.response.id), permissions: [READ, SERVICE_ACCOUNT_EDIT,TREE_EDIT]}
-    * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(otherRootLabel.response.id), permissions: [READ, SERVICE_ACCOUNT_EDIT,TREE_EDIT]}
+    * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(rootLabel.response.id), permissions: [READ, TREE_EDIT]}
+    * call read('classpath:feature/account/set-local-permissions.feature') {accountId: #(personalAccount.accountId), labelId: #(otherRootLabel.response.id), permissions: [READ, TREE_EDIT]}
     * configure headers = call read('classpath:headers.js') { token: #(personalAccount.token)}
     * call read('classpath:feature/account/create-service-account-with-key.feature') {accountName: 'sa6', parentLabelId: #(rootLabel.response.id), keyFile: 'sa-keypair1'}
     * def otherSupplyChain = call read('classpath:feature/supplychain/create-supplychain.feature') {supplyChainName: other-supply-chain, parentLabelId: #(otherRootLabel.response.id)}

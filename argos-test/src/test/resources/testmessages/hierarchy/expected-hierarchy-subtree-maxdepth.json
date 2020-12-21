@@ -13,7 +13,6 @@
       ],
       "permissions": [
         "READ",
-        "SERVICE_ACCOUNT_EDIT",
         "TREE_EDIT"
       ]
     },
@@ -26,14 +25,12 @@
       ],
       "permissions": [
         "READ",
-        "SERVICE_ACCOUNT_EDIT",
         "TREE_EDIT"
       ]
     }
   ],
   "permissions": [
     "READ",
-    "SERVICE_ACCOUNT_EDIT",
     "TREE_EDIT"
   ]
 }

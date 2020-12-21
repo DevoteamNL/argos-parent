@@ -7,7 +7,6 @@
   ],
   "permissions": [
     "READ",
-    "SERVICE_ACCOUNT_EDIT",
     "TREE_EDIT"
   ]
 }

@@ -1851,7 +1851,6 @@ components:
         - VERIFY
         - RELEASE
         - PERSONAL_ACCOUNT_READ
-        - SERVICE_ACCOUNT_EDIT
     LocalPermissions:
       type: object
       required:

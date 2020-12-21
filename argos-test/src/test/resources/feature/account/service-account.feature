@@ -22,7 +22,8 @@ Feature: Non Personal Account
     * def defaultTestData = call read('classpath:default-test-data.js')
     * def keyPair = defaultTestData.personalAccounts['default-pa1']
     * def rootLabelId = defaultTestData.defaultRootLabel.id;
-    * configure headers = call read('classpath:headers.js') { token: #(keyPair.token)}
+    * configure headers = call read('classpath:headers.js') { token: #(keyPair.token)}    
+    * def keyPair2 = defaultTestData.personalAccounts['default-pa2']
 
 
   Scenario: store a service account with valid name should return a 201 and commit to audit log
@@ -49,16 +50,16 @@ Feature: Non Personal Account
     And match stringResponse contains 'deleteServiceAccount'
     And match stringResponse contains 'serviceAccountId'
 
-  Scenario: delete service account without SERVICE_ACCOUNT_EDIT permission should return a 403 error
+  Scenario: delete service account without TREE_EDIT permission should return a 403 error
     * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def restPath = '/api/serviceaccount/'+result.response.id
-    * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
+    * configure headers = call read('classpath:headers.js') { token: #(keyPair2.token)}
     Given path restPath
     When method DELETE
     Then status 403
 
-  Scenario: store a service account without SERVICE_ACCOUNT_EDIT permission should return a 403 error
-    * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
+  Scenario: store a service account without TREE_EDIT permission should return a 403 error
+    * configure headers = call read('classpath:headers.js') { token: #(keyPair2.token)}
     Given path '/api/serviceaccount'
     And request { name: 'sa1', parentLabelId: #(rootLabelId)}
     When method POST
@@ -107,7 +108,7 @@ Feature: Non Personal Account
 
   Scenario: retrieve service account with implicit READ permission should return a 200 error
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
-    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["SERVICE_ACCOUNT_EDIT"]}
+    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["TREE_EDIT"]}
     * configure headers = call read('classpath:headers.js') { token: #(info.token)}
     * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(info.labelId)}
     * def restPath = '/api/serviceaccount/'+result.response.id
@@ -131,9 +132,9 @@ Feature: Non Personal Account
     And match stringResponse contains 'serviceAccountId'
     And match stringResponse contains 'serviceAccount'
 
-  Scenario: update a service account without SERVICE_ACCOUNT_EDIT permission should return a 403 error
+  Scenario: update a service account without TREE_EDIT permission should return a 403 error
     * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
-    * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
+    * configure headers = call read('classpath:headers.js') { token: #(keyPair2.token)}
     * def accountId = createResult.response.id
     * def restPath = '/api/serviceaccount/'+accountId
     Given path restPath
@@ -153,11 +154,11 @@ Feature: Non Personal Account
     And match stringResponse contains 'serviceAccountId'
     And match stringResponse contains 'keyPair'
 
-  Scenario: create a service account key without SERVICE_ACCOUNT_EDIT permission should return a 403 error
+  Scenario: create a service account key without TREE_EDIT permission should return a 403 error
     * def createResult = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
     * def accountId = createResult.response.id
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
-    * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
+    * configure headers = call read('classpath:headers.js') { token: #(keyPair2.token)}
     Given path '/api/serviceaccount/'+accountId+'/key'
     And request keyPair
     When method POST
@@ -187,7 +188,7 @@ Feature: Non Personal Account
   Scenario: get a active service account key with implicit read permission should return a 200
 
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
-    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["SERVICE_ACCOUNT_EDIT"]}
+    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["TREE_EDIT"]}
     * configure headers = call read('classpath:headers.js') { token: #(info.token)}
     * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(info.labelId)}
     * def accountId = result.response.id

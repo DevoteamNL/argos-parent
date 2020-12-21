@@ -24,6 +24,5 @@ public enum Permission {
     LAYOUT_ADD,
     VERIFY,
     RELEASE,
-    PERSONAL_ACCOUNT_READ,
-    SERVICE_ACCOUNT_EDIT
+    PERSONAL_ACCOUNT_READ
 }
