@@ -36,14 +36,13 @@ import static com.argosnotary.argos.domain.permission.Permission.LOCAL_PERMISSIO
 import static com.argosnotary.argos.domain.permission.Permission.READ;
 import static com.argosnotary.argos.domain.permission.Permission.RELEASE;
 import static com.argosnotary.argos.domain.permission.Permission.TREE_EDIT;
-import static com.argosnotary.argos.domain.permission.Permission.VERIFY;
 
 public class AccountPermissionTreeNodeVisitor implements TreeNodeVisitor<Optional<TreeNode>> {
 
     private TreeNode treeNodeWithUserPermissions;
     private HashMap<String, TreeNode> parentRegistry = new HashMap<>();
     private final AccountSecurityContext accountSecurityContext;
-    private Set<Permission> hierarchyPermissions = EnumSet.of(READ, TREE_EDIT, LOCAL_PERMISSION_EDIT, LINK_ADD, LAYOUT_ADD, VERIFY, RELEASE);
+    private Set<Permission> hierarchyPermissions = EnumSet.of(READ, TREE_EDIT, LOCAL_PERMISSION_EDIT, LINK_ADD, LAYOUT_ADD, RELEASE);
 
     AccountPermissionTreeNodeVisitor(final AccountSecurityContext accountSecurityContext) {
         this.accountSecurityContext = accountSecurityContext;

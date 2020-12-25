@@ -10,7 +10,6 @@
         "READ",
         "LOCAL_PERMISSION_EDIT",
         "TREE_EDIT",
-        "VERIFY",
         "ASSIGN_ROLE"
       ]
     },

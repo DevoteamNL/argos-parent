@@ -66,7 +66,7 @@ public class VerificationRestService implements VerificationApi {
     }
 
     @Override
-    @PermissionCheck(permissions = Permission.VERIFY)
+    @PermissionCheck(permissions = Permission.READ)
     @AuditLog
     public ResponseEntity<RestVerificationResult> performVerification(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR)
                                                                       @AuditParam("supplyChainId") String supplyChainId,

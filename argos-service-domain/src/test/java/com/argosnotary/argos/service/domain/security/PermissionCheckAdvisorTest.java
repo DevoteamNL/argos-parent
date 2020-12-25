@@ -88,7 +88,7 @@ class PermissionCheckAdvisorTest {
 
     @Test
     void checkPermissionsHasMultipleGlobalPermission() {
-        when(permissionCheck.permissions()).thenReturn(new Permission[]{Permission.READ, Permission.VERIFY});
+        when(permissionCheck.permissions()).thenReturn(new Permission[]{Permission.READ});
         when(accountSecurityContext.getGlobalPermission()).thenReturn(Set.of(Permission.READ, Permission.LOCAL_PERMISSION_EDIT));
         advisor.checkPermissions(joinPoint, permissionCheck);
     }

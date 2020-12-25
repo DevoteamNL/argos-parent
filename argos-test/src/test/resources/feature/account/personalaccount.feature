@@ -92,11 +92,11 @@ Feature: Personal Account
     And request ["administrator"]
     When method PUT
     Then status 200
-    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": [{"id": "#uuid", "name":"administrator", "permissions" : ["READ","LOCAL_PERMISSION_EDIT","TREE_EDIT","VERIFY","ASSIGN_ROLE"] }]}
+    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": [{"id": "#uuid", "name":"administrator", "permissions" : ["READ","LOCAL_PERMISSION_EDIT","TREE_EDIT","ASSIGN_ROLE"] }]}
     Given path '/api/personalaccount/'+extraAccount.response.id
     When method GET
     Then status 200
-    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": [{"id": "#uuid", "name":"administrator", "permissions" : ["READ","LOCAL_PERMISSION_EDIT","TREE_EDIT","VERIFY","ASSIGN_ROLE"] }]}
+    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": [{"id": "#uuid", "name":"administrator", "permissions" : ["READ","LOCAL_PERMISSION_EDIT","TREE_EDIT","ASSIGN_ROLE"] }]}
     * def auditlog = call read('classpath:feature/auditlog.feature')
     * string stringResponse = auditlog.response
     And match stringResponse contains 'updatePersonalAccountRolesById'
@@ -195,7 +195,7 @@ Feature: Personal Account
     And match response == []
 
     Given path '/api/personalaccount/'+extraAccount.response.id+'/localpermission/'+label.response.id
-    And request ["VERIFY","READ"]
+    And request ["READ"]
     When method PUT
     Then status 200
 
@@ -236,20 +236,20 @@ Feature: Personal Account
     And match response == {"labelId": "#(label.response.id)", "permissions": ["READ"]}
 
     Given path '/api/personalaccount/'+extraAccount.response.id+'/localpermission/'+label.response.id
-    And request ["VERIFY","READ"]
+    And request ["READ"]
     When method PUT
     Then status 200
-    And match response == {"labelId": "#(label.response.id)", "permissions": ["VERIFY","READ"]}
+    And match response == {"labelId": "#(label.response.id)", "permissions": ["READ"]}
 
     Given path '/api/personalaccount/'+extraAccount.response.id+'/localpermission/'+label.response.id
     When method GET
     Then status 200
-    And match response == {"labelId": "#(label.response.id)", "permissions": ["VERIFY","READ"]}
+    And match response == {"labelId": "#(label.response.id)", "permissions": ["READ"]}
 
     Given path '/api/personalaccount/'+extraAccount.response.id+'/localpermission'
     When method GET
     Then status 200
-    And match response == [{"labelId": "#(label.response.id)", "permissions": ["VERIFY","READ"]}]
+    And match response == [{"labelId": "#(label.response.id)", "permissions": ["READ"]}]
 
     * def auditlog = call read('classpath:feature/auditlog.feature')
     * string stringResponse = auditlog.response

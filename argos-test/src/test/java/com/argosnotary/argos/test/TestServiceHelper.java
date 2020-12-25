@@ -42,7 +42,6 @@ import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.LAYOUT
 import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.LINK_ADD;
 import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.READ;
 import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.TREE_EDIT;
-import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.VERIFY;
 import static com.argosnotary.argos.test.ServiceStatusHelper.getHierarchyApi;
 import static com.argosnotary.argos.test.ServiceStatusHelper.getLayoutApi;
 import static com.argosnotary.argos.test.ServiceStatusHelper.getPersonalAccountApi;
@@ -85,7 +84,7 @@ class TestServiceHelper {
         String defaultUser1Token = getToken(DEFAULT_USER1, "User", "default@nl.nl");
         PersonalAccountApi personalAccountApi = getPersonalAccountApi(defaultTestData.getAdminToken());
         RestPersonalAccount defaultUser1 = personalAccountApi.searchPersonalAccounts(null, null, DEFAULT_USER1, null, null).iterator().next();
-        personalAccountApi.updateLocalPermissionsForLabel(defaultUser1.getId(), defaultTestData.getDefaultRootLabel().getId(), List.of(LAYOUT_ADD, READ, VERIFY, TREE_EDIT, LINK_ADD));
+        personalAccountApi.updateLocalPermissionsForLabel(defaultUser1.getId(), defaultTestData.getDefaultRootLabel().getId(), List.of(LAYOUT_ADD, READ, TREE_EDIT, LINK_ADD));
 
         TestDateKeyPair keyPair = readKeyPair(1);
         getPersonalAccountApi(defaultUser1Token).createKey(new RestKeyPair()

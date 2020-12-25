@@ -87,7 +87,7 @@ public class SupplyChainRestService implements SupplychainApi {
 
 
     @Override
-    @PermissionCheck(permissions = {Permission.READ, Permission.LINK_ADD, Permission.VERIFY}, localPermissionDataExtractorBean = SUPPLY_CHAIN_PATH_LOCAL_DATA_EXTRACTOR)
+    @PermissionCheck(permissions = {Permission.READ, Permission.LINK_ADD}, localPermissionDataExtractorBean = SUPPLY_CHAIN_PATH_LOCAL_DATA_EXTRACTOR)
     public ResponseEntity<RestSupplyChain> getSupplyChainByPath(String name, List<String> path) {
         List<String> pathToRoot = SupplyChainHelper.reversePath(path);
         return hierarchyRepository.findByNamePathToRootAndType(name, pathToRoot, TreeNode.Type.SUPPLY_CHAIN)

@@ -16,8 +16,7 @@
           "LAYOUT_ADD",
           "LINK_ADD",
           "READ",
-          "TREE_EDIT",
-          "VERIFY"
+          "TREE_EDIT"
         ]
       },
       {
@@ -31,8 +30,7 @@
           "LAYOUT_ADD",
           "LINK_ADD",
           "READ",
-          "TREE_EDIT",
-          "VERIFY"
+          "TREE_EDIT"
         ]
       },
       {
@@ -46,8 +44,7 @@
           "LAYOUT_ADD",
           "LINK_ADD",
           "READ",
-          "TREE_EDIT",
-          "VERIFY"
+          "TREE_EDIT"
         ]
       },
       {
@@ -61,8 +58,7 @@
           "LAYOUT_ADD",
           "LINK_ADD",
           "READ",
-          "TREE_EDIT",
-          "VERIFY"
+          "TREE_EDIT"
         ]
       },
       {
@@ -76,8 +72,7 @@
           "LAYOUT_ADD",
           "LINK_ADD",
           "READ",
-          "TREE_EDIT",
-          "VERIFY"
+          "TREE_EDIT"
         ]
       }
     ],
@@ -85,8 +80,7 @@
       "LAYOUT_ADD",
       "LINK_ADD",
       "READ",
-      "TREE_EDIT",
-      "VERIFY"
+      "TREE_EDIT"
     ]
   },
   {

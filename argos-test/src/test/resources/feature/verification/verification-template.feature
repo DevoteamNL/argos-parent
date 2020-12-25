@@ -38,8 +38,8 @@ Feature: Verification template
     * def stepLinksJson = karate.map(steps, stepLinksJsonMapper)
     # when a call to a feature presented with an array of messages it will cal the feature template iteratively
     * call read('classpath:feature/link/create-link.feature') stepLinksJson
-    * def keyPair = defaultTestData.serviceAccount['default-sa1']
-    * configure headers = call read('classpath:headers.js') { username: #(keyPair.keyId), password: #(keyPair.hashedKeyPassphrase)}
+    * def keyPair = defaultTestData.personalAccounts['default-pa1']
+    * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     Given path supplyChainPath + '/verification'
     And request  verificationRequest
     When method POST

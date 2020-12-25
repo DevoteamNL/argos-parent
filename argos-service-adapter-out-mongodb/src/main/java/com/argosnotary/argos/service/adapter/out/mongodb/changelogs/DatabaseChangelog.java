@@ -27,6 +27,8 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
 import org.springframework.data.mongodb.core.index.PartialIndexFilter;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.data.domain.Sort.Direction.ASC;
@@ -176,7 +178,6 @@ public class DatabaseChangelog {
                         Permission.READ,
                         Permission.LOCAL_PERMISSION_EDIT,
                         Permission.TREE_EDIT,
-                        Permission.VERIFY,
                         Permission.ASSIGN_ROLE
                 )).build(), RoleRepositoryImpl.COLLECTION);
         template.save(Role.builder()
@@ -236,6 +237,17 @@ public class DatabaseChangelog {
                 .named(SupplyChainRepositoryImpl.PARENT_LABEL_ID_FIELD + "_" 
                             + SupplyChainRepositoryImpl.SUPPLY_CHAIN_NAME_FIELD)
                 .unique());
+    }
+
+    @ChangeSet(order = "110", id = "RemoveVerifyDatabaseChangelog-1", author = "gerard")
+    public void removeVerifyFromRole(MongockTemplate template) {
+        template.updateFirst(new Query(Criteria.where("name").is(Role.ADMINISTRATOR_ROLE_NAME)),
+                new Update().set("permissions", List.of(
+                        Permission.READ, 
+                        Permission.LOCAL_PERMISSION_EDIT,
+                        Permission.TREE_EDIT, 
+                        Permission.ASSIGN_ROLE)),
+                RoleRepositoryImpl.COLLECTION);
     }
 
 }

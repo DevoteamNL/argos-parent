@@ -58,7 +58,7 @@ class ServiceAccountTest {
         assertThat(account.getInactiveKeyPairs(), contains(keyPair));
         assertThat(account.getParentLabelId(), is(PARENT_LABEL_ID));
         assertThat(account.getLocalPermissions(), contains(LocalPermissions.builder().labelId(PARENT_LABEL_ID).permissions(
-                Arrays.asList(Permission.LINK_ADD, Permission.VERIFY, Permission.RELEASE)).build()));
+                Arrays.asList(Permission.LINK_ADD, Permission.RELEASE)).build()));
     }
     
     @Test

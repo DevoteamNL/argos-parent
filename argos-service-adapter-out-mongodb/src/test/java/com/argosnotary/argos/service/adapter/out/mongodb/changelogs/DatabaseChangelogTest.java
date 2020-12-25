@@ -143,7 +143,6 @@ class DatabaseChangelogTest {
                 Permission.READ,
                 Permission.LOCAL_PERMISSION_EDIT,
                 Permission.TREE_EDIT,
-                Permission.VERIFY,
                 Permission.ASSIGN_ROLE));
         assertThat(roles.get(1).getName(), is(Role.USER_ROLE));
         assertThat(roles.get(1).getPermissions(), contains(

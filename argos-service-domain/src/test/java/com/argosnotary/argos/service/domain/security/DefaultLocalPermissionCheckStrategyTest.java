@@ -86,7 +86,7 @@ class DefaultLocalPermissionCheckStrategyTest {
         when(hierarchyRepository.getSubTree(LABEL_ID, HierarchyMode.NONE, 0)).thenReturn(Optional.of(treeNode));
         when(treeNode.getIdPathToRoot()).thenReturn(Collections.emptyList());
         when(accountSecurityContext.allLocalPermissions(Collections.singletonList(LABEL_ID))).thenReturn(Set.of(Permission.READ));
-        assertThat(strategy.hasLocalPermission(localPermissionCheckData, new HashSet<>(List.of(Permission.VERIFY, Permission.READ))), is(true));
+        assertThat(strategy.hasLocalPermission(localPermissionCheckData, new HashSet<>(List.of(Permission.READ))), is(true));
     }
 
     @Test
@@ -104,13 +104,13 @@ class DefaultLocalPermissionCheckStrategyTest {
         when(hierarchyRepository.getSubTree(LABEL_ID, HierarchyMode.NONE, 0)).thenReturn(Optional.of(treeNode));
         when(treeNode.getIdPathToRoot()).thenReturn(Collections.emptyList());
         when(accountSecurityContext.allLocalPermissions(Collections.singletonList(LABEL_ID))).thenReturn(Set.of(Permission.READ));
-        assertThat(strategy.hasLocalPermission(localPermissionCheckData, new HashSet<>(List.of(Permission.VERIFY))), is(false));
+        assertThat(strategy.hasLocalPermission(localPermissionCheckData, new HashSet<>(List.of(Permission.TREE_EDIT))), is(false));
     }
 
     @Test
     void hasNoLocalPermissionNoLabelId() {
         when(localPermissionCheckData.getLabelIds()).thenReturn(new HashSet<>());
-        assertThat(strategy.hasLocalPermission(localPermissionCheckData, new HashSet<>(List.of(Permission.VERIFY))), is(false));
+        assertThat(strategy.hasLocalPermission(localPermissionCheckData, new HashSet<>(List.of(Permission.READ))), is(false));
     }
 
     @Test
