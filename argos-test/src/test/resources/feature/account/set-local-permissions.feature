@@ -27,4 +27,4 @@ Feature: set local permissions
     Given path '/api/personalaccount/'+accountId+'/localpermission/'+labelId
     And request permissions
     When method PUT
-    Then status 200
+    Then assert responseStatus == 200 || responseStatus == 204

@@ -131,7 +131,7 @@ Feature: SupplyChain
     And match response == { name: 'name', id: '#(supplyChain.response.id)', parentLabelId: '#(info.labelId)' }
 
   Scenario: get supplychain without local permission READ should return a 403
-    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["LAYOUT_ADD"]}
+    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["LINK_ADD"]}
     * def supplyChain = call read('create-supplychain.feature') {supplyChainName: name, parentLabelId: #(info.labelId)}
     * configure headers = call read('classpath:headers.js') { token: #(info.token)}
     * def restPath = '/api/supplychain/'+supplyChain.response.id
@@ -225,7 +225,7 @@ Feature: SupplyChain
     Then status 403
 
   Scenario: query supplychain without local permission READ should return a 403
-    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["LAYOUT_ADD"]}
+    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["ASSIGN_ROLE"]}
     * def supplyChain = call read('create-supplychain.feature') {supplyChainName: supply-chain-name, parentLabelId: #(info.labelId)}
     * configure headers = call read('classpath:headers.js') { token: #(info.token)}
     Given path '/api/supplychain'

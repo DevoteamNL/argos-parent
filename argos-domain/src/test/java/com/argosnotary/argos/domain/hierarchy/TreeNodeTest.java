@@ -39,7 +39,7 @@ class TreeNodeTest {
     private TreeNode childNode;
     private TreeNode childNode2;
     
-    private Permission permission = Permission.LAYOUT_ADD;
+    private Permission permission = Permission.TREE_EDIT;
     private Permission permission2 = Permission.LINK_ADD;
 
     @BeforeEach

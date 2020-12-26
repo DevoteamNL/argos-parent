@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.argosnotary.argos.domain.permission.Permission.LAYOUT_ADD;
 import static com.argosnotary.argos.domain.permission.Permission.LINK_ADD;
 import static com.argosnotary.argos.domain.permission.Permission.LOCAL_PERMISSION_EDIT;
 import static com.argosnotary.argos.domain.permission.Permission.READ;
@@ -42,7 +41,7 @@ public class AccountPermissionTreeNodeVisitor implements TreeNodeVisitor<Optiona
     private TreeNode treeNodeWithUserPermissions;
     private HashMap<String, TreeNode> parentRegistry = new HashMap<>();
     private final AccountSecurityContext accountSecurityContext;
-    private Set<Permission> hierarchyPermissions = EnumSet.of(READ, TREE_EDIT, LOCAL_PERMISSION_EDIT, LINK_ADD, LAYOUT_ADD, RELEASE);
+    private Set<Permission> hierarchyPermissions = EnumSet.of(READ, TREE_EDIT, LOCAL_PERMISSION_EDIT, LINK_ADD, RELEASE);
 
     AccountPermissionTreeNodeVisitor(final AccountSecurityContext accountSecurityContext) {
         this.accountSecurityContext = accountSecurityContext;

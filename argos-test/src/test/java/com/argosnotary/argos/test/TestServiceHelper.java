@@ -38,7 +38,6 @@ import org.mapstruct.factory.Mappers;
 import java.io.IOException;
 import java.util.List;
 
-import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.LAYOUT_ADD;
 import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.LINK_ADD;
 import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.READ;
 import static com.argosnotary.argos.argos4j.rest.api.model.RestPermission.TREE_EDIT;
@@ -84,7 +83,7 @@ class TestServiceHelper {
         String defaultUser1Token = getToken(DEFAULT_USER1, "User", "default@nl.nl");
         PersonalAccountApi personalAccountApi = getPersonalAccountApi(defaultTestData.getAdminToken());
         RestPersonalAccount defaultUser1 = personalAccountApi.searchPersonalAccounts(null, null, DEFAULT_USER1, null, null).iterator().next();
-        personalAccountApi.updateLocalPermissionsForLabel(defaultUser1.getId(), defaultTestData.getDefaultRootLabel().getId(), List.of(LAYOUT_ADD, READ, TREE_EDIT, LINK_ADD));
+        personalAccountApi.updateLocalPermissionsForLabel(defaultUser1.getId(), defaultTestData.getDefaultRootLabel().getId(), List.of(READ, TREE_EDIT, LINK_ADD));
 
         TestDateKeyPair keyPair = readKeyPair(1);
         getPersonalAccountApi(defaultUser1Token).createKey(new RestKeyPair()

@@ -46,7 +46,7 @@ class PersonalAccountTest {
     protected static final String AZURE = "azure";
     protected static final LocalPermissions LOCAL_PERMISSIONS = LocalPermissions
             .builder()
-            .permissions(Collections.singletonList(Permission.LAYOUT_ADD)).labelId("labelId").build();
+            .permissions(Collections.singletonList(Permission.TREE_EDIT)).labelId("labelId").build();
 
     @Mock
     private KeyPair activeKeyPair;

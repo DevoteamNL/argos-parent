@@ -22,13 +22,14 @@ Feature: Layout
     * def defaultTestData = call read('classpath:default-test-data.js')
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
     * def supplyChain = call read('classpath:feature/supplychain/create-supplychain.feature') { supplyChainName: 'name', parentLabelId: #(defaultTestData.defaultRootLabel.id)}
-    * def accountWithNoReadPermissions = call read('classpath:feature/account/create-personal-account.feature') {name: 'account with no read permissions person',email: 'local.permissions@LAYOUT_ADD.go'}
-    * call read('classpath:feature/account/set-local-permissions.feature') { accountId: #(accountWithNoReadPermissions.response.id),labelId: #(supplyChain.response.parentLabelId), permissions: ["LAYOUT_ADD", "LINK_ADD"]}
+    * def accountWithNoReadPermissions = call read('classpath:feature/account/create-personal-account.feature') {name: 'account with no read permissions person',email: 'local.permissions@ff.go'}
+    * call read('classpath:feature/account/set-local-permissions.feature') { accountId: #(accountWithNoReadPermissions.response.id),labelId: #(supplyChain.response.parentLabelId), permissions: ["LINK_ADD"]}
     * def layoutPath = '/api/supplychain/'+ supplyChain.response.id + '/layout'
     * def validLayout = 'classpath:testmessages/layout/valid-layout.json'
-    * def accountWithLayoutAddPermission = defaultTestData.personalAccounts['default-pa1']
-    * configure headers = call read('classpath:headers.js') { token: #(accountWithLayoutAddPermission.token)}
-    * def tokenWithoutLayoutAddPermissions = defaultTestData.adminToken
+    * def accountWithTreeEditPermission = defaultTestData.personalAccounts['default-pa1']
+    * configure headers = call read('classpath:headers.js') { token: #(accountWithTreeEditPermission.token)}
+    * def accountWithoutTreeEditPermission = defaultTestData.personalAccounts['default-pa2']
+    * def tokenWithoutTreeEditPermissions = accountWithoutTreeEditPermission.token
 
   Scenario: store layout with valid specifications should return a 200 and commit to auditlog
     * call read('create-layout.feature') {supplyChainId:#(supplyChain.response.id), json:#(validLayout), keyNumber:1}
@@ -53,8 +54,8 @@ Feature: Layout
     When method POST
     Then status 401
 
-  Scenario: store layout without LAYOUT_ADD permission should return a 403 error
-    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutLayoutAddPermissions)}
+  Scenario: store layout without TREE_EDIT permission should return a 403 error
+    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutTreeEditPermissions)}
     * def layout2BSigned = read(validLayout)
     * def signedLayout = call read('classpath:feature/layout/sign-layout.feature') {json:#(layout2BSigned),keyNumber:1}
     Given path layoutPath
@@ -100,11 +101,11 @@ Feature: Layout
     * def expectedResponse = read('classpath:testmessages/layout/valid-update-layout-response.json')
     And match response contains expectedResponse
 
-  Scenario: update a layout without LAYOUT_ADD permission should return a 403
+  Scenario: update a layout without TREE_EDIT permission should return a 403
     * def layoutResponse = call read('create-layout.feature') {supplyChainId:#(supplyChain.response.id), json:#(validLayout), keyNumber:1}
     * def layoutToBeSigned = read('classpath:testmessages/layout/valid-update-layout.json')
     * def requestBody = call read('sign-layout.feature') {json:#(layoutToBeSigned),keyNumber:1}
-    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutLayoutAddPermissions)}
+    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutTreeEditPermissions)}
     Given path layoutPath
     And request requestBody.response
     When method POST
@@ -156,9 +157,9 @@ Feature: Layout
     Then status 200
     And match response == read('classpath:testmessages/layout/approval-config-create-multiple-response.json')
 
-  Scenario: create ApprovalConfiguration without LAYOUT_ADD permission should return a 403
+  Scenario: create ApprovalConfiguration without TREE_EDIT permission should return a 403
     * call read('create-layout.feature') {supplyChainId:#(supplyChain.response.id), json:#(validLayout), keyNumber:1}
-    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutLayoutAddPermissions)}
+    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutTreeEditPermissions)}
     Given path layoutPath+'/approvalconfig'
     And request read('classpath:testmessages/layout/approval-config-create-request.json')
     When method POST
@@ -185,7 +186,7 @@ Feature: Layout
     And request read('classpath:testmessages/layout/approval-config-create-multiple.json')
     When method POST
     Then status 200
-    * configure headers = call read('classpath:headers.js') { token: #(accountWithLayoutAddPermission.token)}
+    * configure headers = call read('classpath:headers.js') { token: #(accountWithTreeEditPermission.token)}
     Given path layoutPath+'/approvalconfig/me'
     When method GET
     Then status 200
@@ -193,7 +194,7 @@ Feature: Layout
 
   Scenario: get personal approvalConfigurations without LINK_ADD permission should return a 403
     * call read('create-layout.feature') {supplyChainId:#(supplyChain.response.id), json:#(validLayout), keyNumber:1}
-    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutLayoutAddPermissions)}
+    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutTreeEditPermissions)}
     Given path layoutPath+'/approvalconfig/me'
     When method GET
     Then status 403
@@ -206,10 +207,10 @@ Feature: Layout
     Then status 200
     And match response == releaseConfig
 
-  Scenario: create release configuration without LAYOUT_ADD permission should return 403
+  Scenario: create release configuration without TREE_EDIT permission should return 403
     Given path layoutPath+'/releaseconfig'
     * def releaseConfig = { artifactCollectorSpecifications: [{name: "xldeploy", type: "XLDEPLOY", uri: "https://localhost:8888", context: {applicationName: "appname"}}]}
-    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutLayoutAddPermissions)}
+    * configure headers = call read('classpath:headers.js') { token: #(tokenWithoutTreeEditPermissions)}
     And request releaseConfig
     When method POST
     Then status 403

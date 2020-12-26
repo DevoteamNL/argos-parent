@@ -19,9 +19,8 @@ public enum Permission {
     READ,
     TREE_EDIT,
     LOCAL_PERMISSION_EDIT,
-    ASSIGN_ROLE,
     LINK_ADD,
-    LAYOUT_ADD,
     RELEASE,
+    ASSIGN_ROLE,
     PERSONAL_ACCOUNT_READ
 }

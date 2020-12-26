@@ -32,5 +32,5 @@ Feature: Permissions
     Given path '/api/permissions'
     And method GET
     Then status 200
-    And match response == ["READ","TREE_EDIT","LOCAL_PERMISSION_EDIT","ASSIGN_ROLE","LINK_ADD","LAYOUT_ADD","RELEASE","PERSONAL_ACCOUNT_READ"]
+    And match response == ["READ","TREE_EDIT","LOCAL_PERMISSION_EDIT","LINK_ADD","RELEASE","ASSIGN_ROLE","PERSONAL_ACCOUNT_READ"]
 

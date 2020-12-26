@@ -97,10 +97,9 @@ Feature: Non Personal Account
 
   Scenario: retrieve service account without READ permission should return a 403 error
     * def result = call read('create-service-account.feature') { name: 'sa1', parentLabelId: #(rootLabelId)}
-    * def accounWithNoReadPermission = call read('classpath:feature/account/create-personal-account.feature') {name: 'unauthorized person',email: 'local.unauthorized@extra.nogo'}
+    * def accountWithNoReadPermission = call read('classpath:feature/account/create-personal-account.feature') {name: 'unauthorized person',email: 'local.unauthorized@extra.nogo'}
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
-    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["LAYOUT_ADD"]}
-    * configure headers = call read('classpath:headers.js') { token: #(accounWithNoReadPermission.response.token)}
+    * configure headers = call read('classpath:headers.js') { token: #(accountWithNoReadPermission.response.token)}
     * def restPath = '/api/serviceaccount/'+result.response.id
     Given path restPath
     When method GET
@@ -206,7 +205,7 @@ Feature: Non Personal Account
     * def keyPair = read('classpath:testmessages/key/sa-keypair1.json')
     * call read('create-service-account-key.feature') {accountId: #(accountId), key: #(keyPair)}
     * configure headers = call read('classpath:headers.js') { token: #(defaultTestData.adminToken)}
-    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["LAYOUT_ADD"]}
+    * def info = call read('classpath:create-local-authorized-account.js') {permissions: ["ASSIGN_ROLE"]}
     * configure headers = call read('classpath:headers.js') { token: #(info.token)}
     * def restPath = '/api/serviceaccount/'+accountId+'/key'
     Given path restPath

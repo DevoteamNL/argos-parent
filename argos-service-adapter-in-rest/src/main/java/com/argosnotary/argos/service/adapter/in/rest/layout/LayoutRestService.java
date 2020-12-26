@@ -80,7 +80,7 @@ public class LayoutRestService implements LayoutApi {
 
 
     @Override
-    @PermissionCheck(permissions = Permission.LAYOUT_ADD)
+    @PermissionCheck(permissions = Permission.TREE_EDIT)
     public ResponseEntity<Void> validateLayout(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, RestLayout restLayout) {
         Layout layout = layoutMetaBlockConverter.convertFromRestLayout(restLayout);
         validator.validateLayout(layout);
@@ -88,7 +88,7 @@ public class LayoutRestService implements LayoutApi {
     }
 
     @Override
-    @PermissionCheck(permissions = Permission.LAYOUT_ADD)
+    @PermissionCheck(permissions = Permission.TREE_EDIT)
     @AuditLog
     @Transactional
     public ResponseEntity<RestLayoutMetaBlock> createOrUpdateLayout(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) @AuditParam("supplyChainId") String supplyChainId, @AuditParam("layout") RestLayoutMetaBlock restLayoutMetaBlock) {
@@ -111,7 +111,7 @@ public class LayoutRestService implements LayoutApi {
 
     @Override
     @Transactional
-    @PermissionCheck(permissions = Permission.LAYOUT_ADD)
+    @PermissionCheck(permissions = Permission.TREE_EDIT)
     public ResponseEntity<List<RestApprovalConfiguration>> createApprovalConfigurations(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, 
             List<RestApprovalConfiguration> restApprovalConfigurations) {
         List<ApprovalConfiguration> approvalConfigurations = restApprovalConfigurations.stream()
@@ -155,7 +155,7 @@ public class LayoutRestService implements LayoutApi {
 
     @Override
     @Transactional
-    @PermissionCheck(permissions = Permission.LAYOUT_ADD)
+    @PermissionCheck(permissions = Permission.TREE_EDIT)
     public ResponseEntity<RestReleaseConfiguration> createReleaseConfiguration(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, 
             RestReleaseConfiguration restReleaseConfiguration) {
         validateContextFieldsForCollectorSpecification(restReleaseConfiguration);

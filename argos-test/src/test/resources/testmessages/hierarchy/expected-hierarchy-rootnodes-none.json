@@ -7,7 +7,6 @@
     "children": [
     ],
     "permissions": [
-      "LAYOUT_ADD",
       "LINK_ADD",
       "READ",
       "TREE_EDIT"
