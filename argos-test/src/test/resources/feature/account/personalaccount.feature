@@ -168,13 +168,11 @@ Feature: Personal Account
     Then status 200
     And match response == expectedResponse
 
-  Scenario: search personal account without PERSONAL_ACCOUNT_READ should return a 403
-    * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email: 'extra@extra.go'}
-    * configure headers = call read('classpath:headers.js') { token: #(extraAccount.response.token)}
+  Scenario: search personal account without authentication should return a 401
+    * configure headers = call read('classpath:headers.js') { token: ""}
     Given path '/api/personalaccount'
     When method GET
-    Then status 403
-    And match response == {"message":"Access denied"}
+    Then status 401
 
   Scenario: search personal account by name should return 200
     * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email: 'extra@extra.go'}
@@ -321,13 +319,11 @@ Feature: Personal Account
     Then status 200
     Then match response == {keyId: #(defaultTestData.personalAccounts['default-pa1'].keyId), publicKey: #(defaultTestData.personalAccounts['default-pa1'].publicKey)}
 
-  Scenario: search personal account without PERSONAL_ACCOUNT_READ should return a 403
-    * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email: 'extra@extra.go'}
-    * configure headers = call read('classpath:headers.js') { token: #(extraAccount.response.token)}
+  Scenario: search personal account not authenticated should return a 401
+    * configure headers = call read('classpath:headers.js') { token: ""}
     Given path '/api/personalaccount/'+defaultTestData.personalAccounts['default-pa1'].accountId+'/key'
     When method GET
-    Then status 403
-    And match response == {"message":"Access denied"}
+    Then status 401
 
   Scenario: should refresh token
     * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 16}

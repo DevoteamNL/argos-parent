@@ -73,7 +73,7 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     private final TokenProvider tokenProvider;
 
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     @Override
     public ResponseEntity<RestProfile> getPersonalAccountOfAuthenticatedUser() {
         return accountSecurityContext.getAuthenticatedAccount()
@@ -82,7 +82,7 @@ public class PersonalAccountRestService implements PersonalAccountApi {
                 .map(ResponseEntity::ok).orElseThrow(this::accountNotFound);
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     @Override
     public ResponseEntity<Void> logout() {
         accountSecurityContext.getTokenInfo()
@@ -91,13 +91,13 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     }
 
     @Override
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RestToken> refreshToken() {
         TokenInfo tokenInfo = accountSecurityContext.getTokenInfo().orElseThrow(() -> new ArgosError("no token info"));
         return tokenProvider.refreshToken(tokenInfo).map(token -> ResponseEntity.ok(new RestToken().token(token))).orElseThrow(() -> new ArgosError("expired", WARNING));
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     @Override
     @AuditLog
     @Transactional
@@ -118,7 +118,7 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     }
 
     @Override
-    @PermissionCheck(permissions = {Permission.PERSONAL_ACCOUNT_READ})
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RestPublicKey> getPersonalAccountKeyById(String accountId) {
         PersonalAccount account = accountService.getPersonalAccountById(accountId).orElseThrow(this::accountNotFound);
         return ResponseEntity.ok(Optional.ofNullable(account.getActiveKeyPair()).map(keyPairMapper::convertToRestPublicKey)
@@ -126,7 +126,7 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     }
 
     @Override
-    @PermissionCheck(permissions = {Permission.PERSONAL_ACCOUNT_READ})
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<RestPersonalAccount>> searchPersonalAccounts(String roleName, String localPermissionsLabelId, String name, List<String> activeKeyIds, List<String> inActiveKeyIds) {
         return ResponseEntity.ok(accountService.searchPersonalAccounts(AccountSearchParams.builder()
                 .roleId(personalAccountMapper.convertToRoleId(roleName))

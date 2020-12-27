@@ -180,10 +180,6 @@ public class DatabaseChangelog {
                         Permission.TREE_EDIT,
                         Permission.ASSIGN_ROLE
                 )).build(), RoleRepositoryImpl.COLLECTION);
-        template.save(Role.builder()
-                .name(Role.USER_ROLE)
-                .permissions(List.of(Permission.PERSONAL_ACCOUNT_READ))
-                .build(), RoleRepositoryImpl.COLLECTION);
     }
 
     @ChangeSet(order = "001", id = "ServiceAccountDatabaseChangelog-1", author = "bart")
@@ -247,6 +243,9 @@ public class DatabaseChangelog {
                         Permission.LOCAL_PERMISSION_EDIT,
                         Permission.TREE_EDIT, 
                         Permission.ASSIGN_ROLE)),
+                RoleRepositoryImpl.COLLECTION);
+
+        template.findAllAndRemove(new Query(Criteria.where("name").is("user")),
                 RoleRepositoryImpl.COLLECTION);
     }
 

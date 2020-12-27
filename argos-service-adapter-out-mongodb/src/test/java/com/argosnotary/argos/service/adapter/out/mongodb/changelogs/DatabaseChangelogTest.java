@@ -136,7 +136,7 @@ class DatabaseChangelogTest {
         when(template.indexOps(RoleRepositoryImpl.COLLECTION)).thenReturn(indexOperations);
         new DatabaseChangelog().addRoleDatabaseIndexes(template);
         verify(indexOperations, times(2)).ensureIndex(any());
-        verify(template, times(2)).save(roleArgumentCaptor.capture(), eq(RoleRepositoryImpl.COLLECTION));
+        verify(template, times(1)).save(roleArgumentCaptor.capture(), eq(RoleRepositoryImpl.COLLECTION));
         List<Role> roles = roleArgumentCaptor.getAllValues();
         assertThat(roles.get(0).getName(), is(Role.ADMINISTRATOR_ROLE_NAME));
         assertThat(roles.get(0).getPermissions(), contains(
@@ -144,9 +144,7 @@ class DatabaseChangelogTest {
                 Permission.LOCAL_PERMISSION_EDIT,
                 Permission.TREE_EDIT,
                 Permission.ASSIGN_ROLE));
-        assertThat(roles.get(1).getName(), is(Role.USER_ROLE));
-        assertThat(roles.get(1).getPermissions(), contains(
-                Permission.PERSONAL_ACCOUNT_READ));
+        assertThat(roles.size(), is(1));
     }
 
     @Test

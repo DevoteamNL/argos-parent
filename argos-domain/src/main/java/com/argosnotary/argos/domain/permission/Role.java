@@ -28,7 +28,6 @@ import java.util.UUID;
 public class Role {
 
     public static final String ADMINISTRATOR_ROLE_NAME = "administrator";
-    public static final String USER_ROLE = "user";
 
     @Builder.Default
     private String roleId = UUID.randomUUID().toString();

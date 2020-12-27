@@ -29,7 +29,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.argosnotary.argos.domain.permission.Permission.ASSIGN_ROLE;
-import static com.argosnotary.argos.domain.permission.Permission.PERSONAL_ACCOUNT_READ;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
@@ -122,7 +121,7 @@ class AccountPermissionTreeNodeVisitorTest {
     @Test
     void visitEnterWithoutPermissionsShouldReturnFalseAndEmptyResult() {
         when(accountSecurityContext.allLocalPermissions(any())).thenReturn(emptySet());
-        when(accountSecurityContext.getGlobalPermission()).thenReturn(Set.of(PERSONAL_ACCOUNT_READ, ASSIGN_ROLE));
+        when(accountSecurityContext.getGlobalPermission()).thenReturn(Set.of(ASSIGN_ROLE));
         assertThat(accountPermissionTreeNodeVisitor.visitEnter(root), is(false));
         Optional<TreeNode> optionalTreeNode = accountPermissionTreeNodeVisitor.result();
         assertThat(optionalTreeNode.isPresent(), is(false));

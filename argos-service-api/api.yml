@@ -1848,7 +1848,6 @@ components:
         - LINK_ADD
         - RELEASE
         - ASSIGN_ROLE
-        - PERSONAL_ACCOUNT_READ
     LocalPermissions:
       type: object
       required:

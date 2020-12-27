@@ -21,6 +21,5 @@ public enum Permission {
     LOCAL_PERMISSION_EDIT,
     LINK_ADD,
     RELEASE,
-    ASSIGN_ROLE,
-    PERSONAL_ACCOUNT_READ
+    ASSIGN_ROLE
 }

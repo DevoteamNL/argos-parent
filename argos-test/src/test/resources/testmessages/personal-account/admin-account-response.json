@@ -12,13 +12,6 @@
         "TREE_EDIT",
         "ASSIGN_ROLE"
       ]
-    },
-    {
-      "id": "#uuid",
-      "name": "user",
-      "permissions": [
-        "PERSONAL_ACCOUNT_READ"
-      ]
     }
   ]
 }
