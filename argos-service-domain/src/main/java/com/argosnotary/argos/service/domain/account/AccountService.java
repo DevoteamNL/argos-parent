@@ -20,8 +20,10 @@ import com.argosnotary.argos.domain.account.ServiceAccount;
 import com.argosnotary.argos.domain.crypto.KeyPair;
 import com.argosnotary.argos.domain.crypto.ServiceAccountKeyPair;
 import com.argosnotary.argos.domain.permission.LocalPermissions;
+import com.argosnotary.argos.domain.permission.Role;
 
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 
 public interface AccountService {
@@ -39,7 +41,7 @@ public interface AccountService {
 
     List<PersonalAccount> searchPersonalAccounts(AccountSearchParams params);
 
-    Optional<PersonalAccount> updatePersonalAccountRolesById(String accountId, List<String> roleNames);
+    Optional<PersonalAccount> updatePersonalAccountRolesById(String accountId, Set<Role> roles);
 
     Optional<PersonalAccount> updatePersonalAccountLocalPermissionsById(String accountId, LocalPermissions localPermissions);
 

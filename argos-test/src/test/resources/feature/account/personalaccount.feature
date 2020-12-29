@@ -89,14 +89,14 @@ Feature: Personal Account
   Scenario: update roles should return 200 and commit to auditlog
     * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email: 'extra@extra.go'}
     Given path '/api/personalaccount/'+extraAccount.response.id+'/role'
-    And request ["administrator"]
+    And request ["ADMINISTRATOR"]
     When method PUT
     Then status 200
-    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": [{"id": "#uuid", "name":"administrator", "permissions" : ["READ","LOCAL_PERMISSION_EDIT","TREE_EDIT","ASSIGN_ROLE"] }]}
+    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": ["ADMINISTRATOR"]}
     Given path '/api/personalaccount/'+extraAccount.response.id
     When method GET
     Then status 200
-    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": [{"id": "#uuid", "name":"administrator", "permissions" : ["READ","LOCAL_PERMISSION_EDIT","TREE_EDIT","ASSIGN_ROLE"] }]}
+    Then match response == {"id":"#(extraAccount.response.id)","name":"Extra Person", "roles": ["ADMINISTRATOR"]}
     * def auditlog = call read('classpath:feature/auditlog.feature')
     * string stringResponse = auditlog.response
     And match stringResponse contains 'updatePersonalAccountRolesById'
@@ -109,12 +109,12 @@ Feature: Personal Account
   Scenario: remove administrator role of administrator should return 400
     * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email: 'extra@extra.go'}
     Given path '/api/personalaccount/'+extraAccount.response.id+'/role'
-    And request ["administrator"]
+    And request ["ADMINISTRATOR"]
     When method PUT
     Then status 200
     * configure headers = call read('classpath:headers.js') { token: #(extraAccount.response.token)}
     Given path '/api/personalaccount/'+extraAccount.response.id+'/role'
-    And request ["user"]
+    And request []
     When method PUT
     Then status 400
     And match response == {"messages": [{"type": "DATA_INPUT","message": "administrators can not unassign there own administrator role"}]}
@@ -123,25 +123,17 @@ Feature: Personal Account
     * def extraAccount = call read('classpath:feature/account/create-personal-account.feature') {name: 'Extra Person', email: 'extra@extra.go'}
     * configure headers = call read('classpath:headers.js') { token: #(extraAccount.response.token)}
     Given path '/api/personalaccount/'+extraAccount.response.id+'/role'
-    And request ["administrator"]
+    And request ["ADMINISTRATOR"]
     When method PUT
     Then status 403
     And match response == {"message":"Access denied"}
     
   Scenario: search personal account by role name should return 200 as admin
     Given path '/api/personalaccountwithroles'
-    And param roleName = 'administrator'
+    And param role = "ADMINISTRATOR"
     When method GET
     Then status 200
     And match response == [{"roles":[],"id":"#uuid","name":"Luke Skywalker"}]
-
-  Scenario: search personal account by role name should return 200
-    * configure headers = call read('classpath:headers.js') { token: #(defaultUsertoken)}
-    Given path '/api/personalaccount'
-    And param roleName = 'administrator'
-    When method GET
-    Then status 200
-    And match response == [{"id":"#uuid","name":"Luke Skywalker"}]
 
   Scenario: search personal account by active key id should return 200
     * configure headers = call read('classpath:headers.js') { token: #(defaultUsertoken)}

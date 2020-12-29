@@ -28,6 +28,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -46,7 +47,7 @@ public class AccountInfoRepositoryImpl implements AccountInfoRepository {
     static final String ACCOUNT_KEY_ID_FIELD = "key.keyId";
 
     @Override
-    public List<AccountKeyInfo> findByKeyIds(List<String> keyIds) {
+    public List<AccountKeyInfo> findByKeyIds(Set<String> keyIds) {
         Criteria rootCriteria = Criteria.where(ACCOUNT_KEY_ID_FIELD).in(keyIds);
         Query query = new Query(rootCriteria);
         return template.find(query, AccountKeyInfo.class, ACCOUNTS_KEYINFO_VIEW);

@@ -23,7 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -34,6 +34,6 @@ public abstract class Account implements Serializable {
     private String name;
     private String email;
     private KeyPair activeKeyPair;
-    private List<? extends KeyPair> inactiveKeyPairs;
-    private List<LocalPermissions> localPermissions;
+    private Set<KeyPair> inactiveKeyPairs;
+    private Set<LocalPermissions> localPermissions;
 }

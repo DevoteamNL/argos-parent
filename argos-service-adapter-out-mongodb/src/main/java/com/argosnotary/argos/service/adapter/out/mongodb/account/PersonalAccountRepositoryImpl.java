@@ -16,6 +16,7 @@
 package com.argosnotary.argos.service.adapter.out.mongodb.account;
 
 import com.argosnotary.argos.domain.account.PersonalAccount;
+import com.argosnotary.argos.domain.permission.Role;
 import com.argosnotary.argos.service.domain.account.AccountSearchParams;
 import com.argosnotary.argos.service.domain.account.PersonalAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class PersonalAccountRepositoryImpl implements PersonalAccountRepository 
 
     public static final String EMAIL = "email";
     public static final String NAME_FIELD = "name";
-    public static final String ROLE_ID_FIELD = "roleIds";
+    public static final String ROLE_FIELD = "roles";
     public static final String PERMISSIONS_LABEL_ID_FIELD = "localPermissions.labelId";
     private static final String CASE_INSENSITIVE = "i";
     private final MongoTemplate template;
@@ -86,8 +87,8 @@ public class PersonalAccountRepositoryImpl implements PersonalAccountRepository 
 
     @Override
     public List<PersonalAccount> search(AccountSearchParams params) {
-        Query query = params.getRoleId()
-                .map(this::roleIdQuery).orElseGet(() ->
+        Query query = params.getRole()
+                .map(this::roleQuery).orElseGet(() ->
                         params.getLocalPermissionsLabelId().map(this::labelIdQuery)
                                 .orElseGet(() -> params.getName().map(this::nameQuery)
                                         .orElseGet(() -> params.getActiveKeyIds().map(this::activeKeyIdsQuery)
@@ -113,8 +114,8 @@ public class PersonalAccountRepositoryImpl implements PersonalAccountRepository 
         return new Query(where(PERMISSIONS_LABEL_ID_FIELD).is(labelId));
     }
 
-    private Query roleIdQuery(String roleId) {
-        return new Query(where(ROLE_ID_FIELD).in(roleId));
+    private Query roleQuery(Role role) {
+        return new Query(where(ROLE_FIELD).in(role.name()));
     }
 
     @Override

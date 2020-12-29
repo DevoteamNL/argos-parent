@@ -17,13 +17,15 @@ package com.argosnotary.argos.domain.account;
 
 import com.argosnotary.argos.domain.crypto.KeyPair;
 import com.argosnotary.argos.domain.permission.LocalPermissions;
+import com.argosnotary.argos.domain.permission.Role;
+
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.UUID.randomUUID;
 
@@ -36,30 +38,30 @@ public class PersonalAccount extends Account {
             String name,
             String email,
             KeyPair activeKeyPair,
-            List<KeyPair> inactiveKeyPairs,
+            Set<KeyPair> inactiveKeyPairs,
             String providerName,
             String providerId,
-            List<String> roleIds,
-            List<LocalPermissions> localPermissions
+            Set<Role> roles,
+            Set<LocalPermissions> localPermissions
     ) {
         super(randomUUID().toString(),
                 name,
                 email,
                 activeKeyPair,
-                inactiveKeyPairs == null ? new ArrayList<>() : inactiveKeyPairs,
-                localPermissions == null ? new ArrayList<>() : localPermissions);
+                inactiveKeyPairs == null ? new HashSet<>() : inactiveKeyPairs,
+                localPermissions == null ? new HashSet<>() : localPermissions);
         this.providerName = providerName;
         this.providerId = providerId;
-        this.roleIds = roleIds == null ? new ArrayList<>() : roleIds;
+        this.roles = roles == null ? new HashSet<>() : roles;
     }
 
     private String providerName;
     private String providerId;
-    private List<String> roleIds;
+    private Set<Role> roles;
 
-    public void addRoleId(String roleId) {
-        roleIds = new ArrayList<>(roleIds);
-        roleIds.add(roleId);
+    public void addRole(Role role) {
+        roles = new HashSet<>(this.roles);
+        roles.add(role);
     }
 
 }

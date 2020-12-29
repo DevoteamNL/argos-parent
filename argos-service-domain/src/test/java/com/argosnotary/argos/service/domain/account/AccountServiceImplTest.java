@@ -24,7 +24,6 @@ import com.argosnotary.argos.domain.crypto.ServiceAccountKeyPair;
 import com.argosnotary.argos.domain.permission.LocalPermissions;
 import com.argosnotary.argos.domain.permission.Permission;
 import com.argosnotary.argos.domain.permission.Role;
-import com.argosnotary.argos.service.domain.permission.RoleRepository;
 import com.argosnotary.argos.service.domain.security.AccountSecurityContext;
 
 import org.bouncycastle.operator.OperatorCreationException;
@@ -33,7 +32,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -43,9 +41,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import static com.argosnotary.argos.domain.permission.Role.ADMINISTRATOR_ROLE_NAME;
-import static java.util.Collections.emptyList;
+import static com.argosnotary.argos.domain.permission.Role.ADMINISTRATOR;
+import static java.util.Collections.emptySet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
@@ -62,17 +61,17 @@ class AccountServiceImplTest {
     private static final String ACCOUNT_NAME = "accountName";
     private static final String ACCOUNT_ID = "accountId";
     private static final String EMAIL = "email";
-    private static final String ROLE_ID = "roleId";
+    private static final Role ROLE = Role.ADMINISTRATOR;
     private static final String KEY_ID = "keyId";
-    private static final String ROLE_NAME = "roleName";
     private static final String PARENT_LABEL_ID = "parentLabelId";
     private static final String LABEL_ID = "labelId";
-    private static final String ADMIN_ROLE_ID = "adminRoleId";
+    private static final String OTHER_LABEL_ID = "other";
     private static final String ADMIN_ACCOUNT_ID = "adminAccountId";
 
 
     private KeyPair activeKeyPair;
     private KeyPair inactiveKeyPair;
+    private Set<KeyPair> inactiveKeyPairSet;
     private KeyPair newKeyPair;
 
     private AccountServiceImpl accountService;
@@ -83,46 +82,32 @@ class AccountServiceImplTest {
     @Mock
     private PersonalAccountRepository personalAccountRepository;
 
-    @Mock
-    private RoleRepository roleRepository;
-
-    @Mock
     private PersonalAccount account;
-
-    @Mock
-    private Role role;
 
     @Mock
     private ServiceAccountKeyPair serviceAccountKeyPair;
 
-    @Mock
     private PersonalAccount existingAccount;
 
-    @Mock
     private ServiceAccount existingServiceAccount;
 
-    @Mock
     private ServiceAccount serviceAccount;
 
     @Mock
     private AccountSearchParams params;
 
-    @Mock
     private LocalPermissions newLocalPermissions;
 
-    @Mock
     private LocalPermissions existingLocalPermissions;
 
     @Captor
-    private ArgumentCaptor<List<LocalPermissions>> localPermissionsListArgumentCaptor;
+    private ArgumentCaptor<Set<LocalPermissions>> localPermissionsSetArgumentCaptor;
 
-    @Mock
-    private Role adminRole;
+    private Role adminRole = Role.ADMINISTRATOR;
 
     @Mock
     private AccountSecurityContext accountSecurityContext;
 
-    @Mock
     private Account adminAccount;
 
     @BeforeEach
@@ -130,12 +115,18 @@ class AccountServiceImplTest {
         activeKeyPair = KeyPair.createKeyPair("test".toCharArray());
         inactiveKeyPair = KeyPair.createKeyPair("test".toCharArray());
         newKeyPair = KeyPair.createKeyPair("test".toCharArray());
-        accountService = new AccountServiceImpl(serviceAccountRepository, personalAccountRepository, roleRepository, accountSecurityContext);
+        accountService = new AccountServiceImpl(serviceAccountRepository, personalAccountRepository, accountSecurityContext);
+        account = new PersonalAccount("accountName", null, null, null, null, null, null, null);
+        adminAccount = new PersonalAccount("adminAccount", null, activeKeyPair, null, null, null, Set.of(ADMINISTRATOR), null);
+        existingAccount = new PersonalAccount("existingAccount", null, null, null, null, null, null, null);
+        serviceAccount = new ServiceAccount(null, null, null, null);
+        existingServiceAccount = new ServiceAccount(null, null, null, null);
+        existingLocalPermissions = LocalPermissions.builder().labelId(LABEL_ID).permissions(Set.of(Permission.READ)).build();
+        newLocalPermissions = LocalPermissions.builder().labelId(OTHER_LABEL_ID).permissions(Set.of(Permission.TREE_EDIT)).build();
     }
 
     @Test
     void deactivateKeyPairNoActiveKeyAndNoInactiveKeys() {
-        PersonalAccount account = PersonalAccount.builder().name(ACCOUNT_NAME).build();
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
         assertThat(accountService.activateNewKey(ACCOUNT_ID, newKeyPair), is(Optional.of(account)));
         assertThat(account.getInactiveKeyPairs(), empty());
@@ -144,7 +135,7 @@ class AccountServiceImplTest {
 
     @Test
     void deactivateKeyPairNoActiveKey() {
-        PersonalAccount account = PersonalAccount.builder().name(ACCOUNT_NAME).activeKeyPair(activeKeyPair).build();
+        account.setActiveKeyPair(activeKeyPair);
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
         assertThat(accountService.activateNewKey(ACCOUNT_ID, newKeyPair), is(Optional.of(account)));
         assertThat(account.getInactiveKeyPairs(), contains(activeKeyPair));
@@ -152,8 +143,8 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void deactivateKeyPairNoActiveKeyAndEmptyList() {
-        PersonalAccount account = PersonalAccount.builder().name(ACCOUNT_NAME).activeKeyPair(activeKeyPair).inactiveKeyPairs(emptyList()).build();
+    void deactivateKeyPairNoActiveKeyAndemptySet() {
+        account.setActiveKeyPair(activeKeyPair);
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
         assertThat(accountService.activateNewKey(ACCOUNT_ID, newKeyPair), is(Optional.of(account)));
         assertThat(account.getInactiveKeyPairs(), contains(activeKeyPair));
@@ -162,45 +153,42 @@ class AccountServiceImplTest {
 
     @Test
     void deactivateKeyPairNoActiveKeyAndInactiveKeyPair() {
-        PersonalAccount account = PersonalAccount.builder().name(ACCOUNT_NAME).activeKeyPair(activeKeyPair).inactiveKeyPairs(Collections.singletonList(inactiveKeyPair)).build();
+        account.setActiveKeyPair(activeKeyPair);
+        account.getInactiveKeyPairs().add(inactiveKeyPair);
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
         accountService.activateNewKey(ACCOUNT_ID, newKeyPair);
-        assertThat(account.getInactiveKeyPairs(), contains(inactiveKeyPair, activeKeyPair));
+        assertThat(account.getInactiveKeyPairs(), is(Set.of(inactiveKeyPair, activeKeyPair)));
         assertThat(account.getActiveKeyPair(), sameInstance(newKeyPair));
         verify(personalAccountRepository).update(account);
     }
 
     @Test
     void authenticateFirstUserShouldBeAssignedRoleAdminAndRoleUser() {
+        account.setEmail(EMAIL);
         when(personalAccountRepository.getTotalNumberOfAccounts()).thenReturn(0L);
-        when(account.getEmail()).thenReturn(EMAIL);
-        when(personalAccountRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
-        when(role.getRoleId()).thenReturn(ROLE_ID);
-        when(roleRepository.findByName(ADMINISTRATOR_ROLE_NAME)).thenReturn(Optional.of(role));
         PersonalAccount personalAccount = accountService.authenticateUser(account).get();
         assertThat(personalAccount, sameInstance(account));
-        verify(personalAccount).setRoleIds(List.of(ROLE_ID));
+        assertThat(personalAccount.getRoles(), is(Set.of(ADMINISTRATOR)));
         verify(personalAccountRepository).save(personalAccount);
     }
 
     @Test
-    void authenticateSecondUserShouldBeAssignedRoleUser() {
+    void authenticateSecondUserShouldHaveNoRole() {
+        account.setEmail(EMAIL);
         when(personalAccountRepository.getTotalNumberOfAccounts()).thenReturn(1L);
-        when(account.getEmail()).thenReturn(EMAIL);
         when(personalAccountRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
         PersonalAccount personalAccount = accountService.authenticateUser(account).get();
         assertThat(personalAccount, sameInstance(account));
+        assertThat(personalAccount.getRoles(), is(emptySet()));
         verify(personalAccountRepository).save(personalAccount);
     }
 
     @Test
     void authenticateUserSecondTime() {
-        when(account.getEmail()).thenReturn(EMAIL);
-        when(account.getName()).thenReturn(ACCOUNT_NAME);
+        account.setEmail(EMAIL);
         when(personalAccountRepository.findByEmail(EMAIL)).thenReturn(Optional.of(existingAccount));
         PersonalAccount personalAccount = accountService.authenticateUser(account).get();
         assertThat(personalAccount, sameInstance(existingAccount));
-        verify(personalAccount).setName(ACCOUNT_NAME);
         verify(personalAccountRepository).update(personalAccount);
     }
 
@@ -208,7 +196,6 @@ class AccountServiceImplTest {
     void activateNewKey() {
         when(serviceAccountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(serviceAccount));
         assertThat(accountService.activateNewKey(ACCOUNT_ID, serviceAccountKeyPair), is(Optional.of(serviceAccount)));
-        verify(serviceAccount).setActiveKeyPair(serviceAccountKeyPair);
         verify(serviceAccountRepository).update(serviceAccount);
     }
 
@@ -236,14 +223,14 @@ class AccountServiceImplTest {
 
     @Test
     void serviceAccountFindKeyPairByKeyId() {
-        when(serviceAccount.getActiveKeyPair()).thenReturn(activeKeyPair);
+        serviceAccount.setActiveKeyPair(activeKeyPair);
         when(serviceAccountRepository.findByActiveKeyId(KEY_ID)).thenReturn(Optional.of(serviceAccount));
         assertThat(accountService.findKeyPairByKeyId(KEY_ID), is(Optional.of(activeKeyPair)));
     }
 
     @Test
     void personalAccountFindKeyPairByKeyId() {
-        when(account.getActiveKeyPair()).thenReturn(activeKeyPair);
+        account.setActiveKeyPair(activeKeyPair);
         when(personalAccountRepository.findByActiveKeyId(KEY_ID)).thenReturn(Optional.of(account));
         assertThat(accountService.findKeyPairByKeyId(KEY_ID), is(Optional.of(activeKeyPair)));
     }
@@ -263,57 +250,34 @@ class AccountServiceImplTest {
 
     @Test
     void updatePersonalAccountRolesById() {
-        when(adminAccount.getAccountId()).thenReturn(ADMIN_ACCOUNT_ID);
         when(accountSecurityContext.getAuthenticatedAccount()).thenReturn(Optional.of(adminAccount));
-        when(role.getRoleId()).thenReturn(ROLE_ID);
-        when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
 
-        when(account.getAccountId()).thenReturn(ACCOUNT_ID);
+        account.setAccountId(ACCOUNT_ID);
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
-        assertThat(accountService.updatePersonalAccountRolesById(ACCOUNT_ID, List.of(ROLE_NAME)), is(Optional.of(account)));
-        verify(account).setRoleIds(List.of(ROLE_ID));
+        assertThat(accountService.updatePersonalAccountRolesById(ACCOUNT_ID, Set.of(ROLE)), is(Optional.of(account)));
+        assertThat(account.getRoles(), is(Set.of(ROLE)));
         verify(personalAccountRepository).update(account);
     }
 
     @Test
     void administratorUpdatePersonalAccountRolesById() {
-        when(account.getAccountId()).thenReturn(ACCOUNT_ID);
+        account.setAccountId(ACCOUNT_ID);
         when(accountSecurityContext.getAuthenticatedAccount()).thenReturn(Optional.of(account));
-        when(role.getRoleId()).thenReturn(ROLE_ID);
-        when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
-        when(adminRole.getRoleId()).thenReturn(ADMIN_ROLE_ID);
-        when(roleRepository.findByName(ADMINISTRATOR_ROLE_NAME)).thenReturn(Optional.of(adminRole));
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
-        assertThat(accountService.updatePersonalAccountRolesById(ACCOUNT_ID, List.of(ROLE_NAME, ADMINISTRATOR_ROLE_NAME)), is(Optional.of(account)));
-        verify(account).setRoleIds(List.of(ROLE_ID, ADMIN_ROLE_ID));
+        assertThat(accountService.updatePersonalAccountRolesById(ACCOUNT_ID, Set.of(ADMINISTRATOR)), is(Optional.of(account)));
+        assertThat(account.getRoles(), is(Set.of(ADMINISTRATOR)));
         verify(personalAccountRepository).update(account);
     }
 
     @Test
     void updatePersonalAccountRolesByIdNotAllowed() {
-        when(account.getAccountId()).thenReturn(ACCOUNT_ID);
+        account.setAccountId(ACCOUNT_ID);
+        account.setRoles(Set.of(ADMINISTRATOR));
         when(accountSecurityContext.getAuthenticatedAccount()).thenReturn(Optional.of(account));
-        when(adminRole.getRoleId()).thenReturn(ADMIN_ROLE_ID);
-        when(roleRepository.findByName(ADMINISTRATOR_ROLE_NAME)).thenReturn(Optional.of(adminRole));
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
-        when(account.getRoleIds()).thenReturn(List.of(ADMIN_ROLE_ID));
-        List<String> roles = List.of(ROLE_NAME);
-        ArgosError exception = assertThrows(ArgosError.class, () -> accountService.updatePersonalAccountRolesById(ACCOUNT_ID, roles));
+        ArgosError exception = assertThrows(ArgosError.class, () -> accountService.updatePersonalAccountRolesById(ACCOUNT_ID, emptySet()));
         assertThat(exception.getMessage(), is("administrators can not unassign there own administrator role"));
         assertThat(exception.getLevel(), is(ArgosError.Level.WARNING));
-    }
-
-    @Test
-    void updatePersonalAccountAdministratorRoleNotFound() {
-        when(account.getAccountId()).thenReturn(ACCOUNT_ID);
-        when(accountSecurityContext.getAuthenticatedAccount()).thenReturn(Optional.of(account));
-        when(roleRepository.findByName(ADMINISTRATOR_ROLE_NAME)).thenReturn(Optional.empty());
-        when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
-        when(account.getRoleIds()).thenReturn(List.of(ADMIN_ROLE_ID));
-        List<String> roles = List.of(ROLE_NAME);
-        ArgosError exception = assertThrows(ArgosError.class, () -> accountService.updatePersonalAccountRolesById(ACCOUNT_ID, roles));
-        assertThat(exception.getMessage(), is("administrator role not found"));
-        assertThat(exception.getLevel(), is(ArgosError.Level.ERROR));
     }
 
     @Test
@@ -321,7 +285,7 @@ class AccountServiceImplTest {
 
         when(accountSecurityContext.getAuthenticatedAccount()).thenReturn(Optional.empty());
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
-        List<String> roles = List.of(ROLE_NAME);
+        Set<Role> roles = Set.of(ROLE);
         ArgosError exception = assertThrows(ArgosError.class, () -> accountService.updatePersonalAccountRolesById(ACCOUNT_ID, roles));
         assertThat(exception.getMessage(), is("no authenticated account"));
         assertThat(exception.getLevel(), is(ArgosError.Level.ERROR));
@@ -341,53 +305,39 @@ class AccountServiceImplTest {
 
     @Test
     void update() {
-        when(serviceAccount.getName()).thenReturn(ACCOUNT_NAME);
-        when(serviceAccount.getEmail()).thenReturn(EMAIL);
-        when(serviceAccount.getParentLabelId()).thenReturn(PARENT_LABEL_ID);
-        when(serviceAccountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingServiceAccount));
-        assertThat(accountService.update(ACCOUNT_ID, serviceAccount), is(Optional.of(existingServiceAccount)));
-        verify(serviceAccountRepository).update(existingServiceAccount);
-        verify(existingServiceAccount).setEmail(EMAIL);
-        verify(existingServiceAccount).setName(ACCOUNT_NAME);
-        verify(existingServiceAccount).setParentLabelId(PARENT_LABEL_ID);
+        serviceAccount = ServiceAccount.builder().name(ACCOUNT_NAME).parentLabelId(PARENT_LABEL_ID).build();
+        when(serviceAccountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(serviceAccount));
+        assertThat(accountService.update(ACCOUNT_ID, serviceAccount), is(Optional.of(serviceAccount)));
+        verify(serviceAccountRepository).update(serviceAccount);
     }
-
+    
     @Test
-    void updatePersonalAccountLocalPermissionsByIdExistingLocalPermissions() {
-        when(existingLocalPermissions.getLabelId()).thenReturn(LABEL_ID);
-        when(account.getLocalPermissions()).thenReturn(List.of(existingLocalPermissions));
-        when(newLocalPermissions.getLabelId()).thenReturn(LABEL_ID);
-        when(newLocalPermissions.getPermissions()).thenReturn(List.of(Permission.READ));
+    void updatePersonalAccountLocalPermissionsByIdExistingLocalPermissionsNoChange() {
+        account.setLocalPermissions(Set.of(existingLocalPermissions));
+        newLocalPermissions = LocalPermissions.builder().labelId(LABEL_ID).permissions(Set.of(Permission.READ)).build();
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
         assertThat(accountService.updatePersonalAccountLocalPermissionsById(ACCOUNT_ID, newLocalPermissions), is(Optional.of(account)));
-        verify(existingLocalPermissions).setPermissions(List.of(Permission.READ));
+        assertThat(account.getLocalPermissions(), is(Set.of(existingLocalPermissions)));
         verify(personalAccountRepository).update(account);
     }
 
     @Test
     void updatePersonalAccountLocalPermissionsByIdExistingLocalPermissionsDelete() {
-        when(existingLocalPermissions.getLabelId()).thenReturn(LABEL_ID);
-        when(account.getLocalPermissions()).thenReturn(List.of(existingLocalPermissions));
-        when(newLocalPermissions.getLabelId()).thenReturn(LABEL_ID);
-        when(newLocalPermissions.getPermissions()).thenReturn(emptyList());
+        account.setLocalPermissions(Set.of(existingLocalPermissions));
+        newLocalPermissions.setLabelId(LABEL_ID);
+        newLocalPermissions.setPermissions(emptySet());
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
         assertThat(accountService.updatePersonalAccountLocalPermissionsById(ACCOUNT_ID, newLocalPermissions), is(Optional.of(account)));
-        verify(account).setLocalPermissions(localPermissionsListArgumentCaptor.capture());
-        assertThat(localPermissionsListArgumentCaptor.getValue(), empty());
-        verify(personalAccountRepository).update(account);
+        assertThat(account.getLocalPermissions(), is(emptySet()));
         verify(personalAccountRepository).update(account);
     }
 
     @Test
     void updatePersonalAccountLocalPermissionsByIdNonExistingLocalPermissions() {
-        when(existingLocalPermissions.getLabelId()).thenReturn(LABEL_ID);
-        when(account.getLocalPermissions()).thenReturn(List.of(existingLocalPermissions));
-        when(newLocalPermissions.getLabelId()).thenReturn("other");
-        when(newLocalPermissions.getPermissions()).thenReturn(List.of(Permission.READ));
+        account.setLocalPermissions(Set.of(existingLocalPermissions));
         when(personalAccountRepository.findByAccountId(ACCOUNT_ID)).thenReturn(Optional.of(account));
         assertThat(accountService.updatePersonalAccountLocalPermissionsById(ACCOUNT_ID, newLocalPermissions), is(Optional.of(account)));
-        verify(account).setLocalPermissions(localPermissionsListArgumentCaptor.capture());
-        assertThat(localPermissionsListArgumentCaptor.getValue(), contains(existingLocalPermissions, newLocalPermissions));
+        assertThat(account.getLocalPermissions(), is(Set.of(existingLocalPermissions, newLocalPermissions)));
         verify(personalAccountRepository).update(account);
     }
 

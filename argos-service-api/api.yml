@@ -896,11 +896,6 @@ paths:
       tags:
         - personal account
       parameters:
-        - name: roleName
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/NameString"
         - name: localPermissionsLabelId
           in: query
           required: false
@@ -947,40 +942,17 @@ paths:
       tags:
         - personal account
       parameters:
-        - name: roleName
+        - name: role
           in: query
           required: false
           schema:
-            $ref: "#/components/schemas/NameString"
-        - name: localPermissionsLabelId
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/UUID"
+            $ref: "#/components/schemas/Role"
         - name: name
           in: query
           required: false
           schema:
             type: string
             maxLength: 1024
-        - name: activeKeyIds
-          in: query
-          required: false
-          explode: false
-          schema:
-            type: array
-            maxItems: 256
-            items:
-              $ref: "#/components/schemas/SHA256Hash"
-        - name: inactiveKeyIds
-          in: query
-          required: false
-          explode: false
-          schema:
-            type: array
-            maxItems: 256
-            items:
-              $ref: "#/components/schemas/SHA256Hash"
       responses:
         '200':
           description: list of personal accounts with roles
@@ -1056,7 +1028,7 @@ paths:
               type: array
               maxItems: 20
               items:
-                $ref: "#/components/schemas/NameString"
+                $ref: "#/components/schemas/Role"
       responses:
         '200':
           description: updated personal account
@@ -1825,21 +1797,8 @@ components:
         parentLabelId:
           $ref: "#/components/schemas/UUID"
     Role:
-      type: object
-      required:
-        - name
-      properties:
-        id:
-          $ref: "#/components/schemas/UUID"
-          readOnly: true
-        name:
-          $ref: "#/components/schemas/NameString"
-        permissions:
-          type: array
-          minItems: 1
-          maxItems: 20
-          items:
-            $ref: "#/components/schemas/Permission"
+      enum:
+        - ADMINISTRATOR
     Permission:
       enum:
         - READ

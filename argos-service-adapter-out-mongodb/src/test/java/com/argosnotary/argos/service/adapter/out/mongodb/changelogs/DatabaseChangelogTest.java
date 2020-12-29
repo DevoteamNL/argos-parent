@@ -36,7 +36,6 @@ import com.argosnotary.argos.service.adapter.out.mongodb.link.LinkMetaBlockRepos
 import com.argosnotary.argos.service.adapter.out.mongodb.release.ReleaseRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.account.PersonalAccountRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.layout.ReleaseConfigurationRepositoryImpl;
-import com.argosnotary.argos.service.adapter.out.mongodb.permission.RoleRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.account.ServiceAccountRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.supplychain.SupplyChainRepositoryImpl;
 
@@ -129,22 +128,6 @@ class DatabaseChangelogTest {
         when(template.indexOps(ReleaseRepositoryImpl.COLLECTION_NAME)).thenReturn(indexOperations);
         new DatabaseChangelog().addReleaseDatabaseIndexes(template);
         verify(indexOperations, times(1)).ensureIndex(any());
-    }
-
-    @Test
-    void addRoleDatabaseIndexes() {
-        when(template.indexOps(RoleRepositoryImpl.COLLECTION)).thenReturn(indexOperations);
-        new DatabaseChangelog().addRoleDatabaseIndexes(template);
-        verify(indexOperations, times(2)).ensureIndex(any());
-        verify(template, times(1)).save(roleArgumentCaptor.capture(), eq(RoleRepositoryImpl.COLLECTION));
-        List<Role> roles = roleArgumentCaptor.getAllValues();
-        assertThat(roles.get(0).getName(), is(Role.ADMINISTRATOR_ROLE_NAME));
-        assertThat(roles.get(0).getPermissions(), contains(
-                Permission.READ,
-                Permission.LOCAL_PERMISSION_EDIT,
-                Permission.TREE_EDIT,
-                Permission.ASSIGN_ROLE));
-        assertThat(roles.size(), is(1));
     }
 
     @Test

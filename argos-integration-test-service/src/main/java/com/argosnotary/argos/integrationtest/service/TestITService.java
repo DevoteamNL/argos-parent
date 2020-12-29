@@ -50,7 +50,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.sql.Timestamp;
@@ -163,7 +162,7 @@ public class TestITService implements IntegrationTestServiceApi {
                 .email(restPersonalAccount.getEmail())
                 .providerName(AZURE)
                 .providerId(UUID.randomUUID().toString())
-                .roleIds(Collections.emptyList())
+                .roles(Collections.emptySet())
                 .build();
 
         personalAccountRepository.save(personalAccount);

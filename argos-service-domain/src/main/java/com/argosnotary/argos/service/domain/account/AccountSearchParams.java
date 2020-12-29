@@ -20,16 +20,18 @@ import lombok.Builder;
 import java.util.List;
 import java.util.Optional;
 
+import com.argosnotary.argos.domain.permission.Role;
+
 @Builder
 public class AccountSearchParams {
-    private final String roleId;
+    private final Role role;
     private final String localPermissionsLabelId;
     private final String name;
     private final List<String> activeKeyIds;
     private final List<String> inActiveKeyIds;
 
-    public Optional<String> getRoleId() {
-        return Optional.ofNullable(roleId);
+    public Optional<Role> getRole() {
+        return Optional.ofNullable(role);
     }
 
     public Optional<String> getLocalPermissionsLabelId() {

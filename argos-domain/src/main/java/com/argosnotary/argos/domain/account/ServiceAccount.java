@@ -15,7 +15,7 @@
  */
 package com.argosnotary.argos.domain.account;
 
-import com.argosnotary.argos.domain.crypto.ServiceAccountKeyPair;
+import com.argosnotary.argos.domain.crypto.KeyPair;
 import com.argosnotary.argos.domain.permission.LocalPermissions;
 import com.argosnotary.argos.domain.permission.Permission;
 import lombok.Builder;
@@ -23,23 +23,31 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.singleton;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 public class ServiceAccount extends Account {
+    private static final Set<Permission> permissions;
+    static {
+        permissions = new HashSet<>();
+        permissions.add(Permission.LINK_ADD);
+                permissions.add(Permission.RELEASE);
+    }
     private String parentLabelId;
 
     @Builder
-    public ServiceAccount(String name, ServiceAccountKeyPair activeKeyPair, List<ServiceAccountKeyPair> inactiveKeyPairs, String parentLabelId) {
-        super(UUID.randomUUID().toString(), name, null, activeKeyPair, inactiveKeyPairs == null ? emptyList() : inactiveKeyPairs, singletonList(LocalPermissions.builder().labelId(parentLabelId)
-                .permissions(Arrays.asList(Permission.LINK_ADD, Permission.RELEASE)).build()));
+    public ServiceAccount(String name, KeyPair activeKeyPair,
+            Set<KeyPair> inactiveKeyPairs, String parentLabelId) {
+        super(UUID.randomUUID().toString(), name, null, activeKeyPair,
+                inactiveKeyPairs == null ? new HashSet<>() : inactiveKeyPairs,
+                singleton(LocalPermissions.builder().labelId(parentLabelId)
+                        .permissions(permissions).build()));
         this.parentLabelId = parentLabelId;
     }
 }

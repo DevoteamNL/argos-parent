@@ -20,7 +20,6 @@ import com.argosnotary.argos.domain.layout.ArtifactType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.ToString;
 
 @Getter

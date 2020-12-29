@@ -27,19 +27,14 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
 import org.springframework.data.mongodb.core.index.PartialIndexFilter;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import com.argosnotary.argos.service.adapter.out.mongodb.layout.ApprovalConfigurationRepositoryImpl;
-import com.argosnotary.argos.domain.permission.Permission;
-import com.argosnotary.argos.domain.permission.Role;
 import com.argosnotary.argos.service.adapter.out.mongodb.account.FinishedSessionRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.hierarchy.LabelRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.layout.LayoutMetaBlockRepositoryImpl;
@@ -47,7 +42,6 @@ import com.argosnotary.argos.service.adapter.out.mongodb.link.LinkMetaBlockRepos
 import com.argosnotary.argos.service.adapter.out.mongodb.release.ReleaseRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.account.PersonalAccountRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.layout.ReleaseConfigurationRepositoryImpl;
-import com.argosnotary.argos.service.adapter.out.mongodb.permission.RoleRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.account.ServiceAccountRepositoryImpl;
 import com.argosnotary.argos.service.adapter.out.mongodb.supplychain.SupplyChainRepositoryImpl;
 
@@ -170,16 +164,6 @@ public class DatabaseChangelog {
 
     @ChangeSet(order = "001", id = "RoleDatabaseChangelog-1", author = "bart")
     public void addRoleDatabaseIndexes(MongockTemplate template) {
-        template.indexOps(RoleRepositoryImpl.COLLECTION).ensureIndex(new Index(RoleRepositoryImpl.ROLE_ID_FIELD, ASC).unique());
-        template.indexOps(RoleRepositoryImpl.COLLECTION).ensureIndex(new Index(RoleRepositoryImpl.ROLE_NAME_FIELD, ASC).unique());
-        template.save(Role.builder()
-                .name(Role.ADMINISTRATOR_ROLE_NAME)
-                .permissions(List.of(
-                        Permission.READ,
-                        Permission.LOCAL_PERMISSION_EDIT,
-                        Permission.TREE_EDIT,
-                        Permission.ASSIGN_ROLE
-                )).build(), RoleRepositoryImpl.COLLECTION);
     }
 
     @ChangeSet(order = "001", id = "ServiceAccountDatabaseChangelog-1", author = "bart")
@@ -235,18 +219,9 @@ public class DatabaseChangelog {
                 .unique());
     }
 
-    @ChangeSet(order = "110", id = "RemoveVerifyDatabaseChangelog-1", author = "gerard")
+    @ChangeSet(order = "110", id = "DropRoleCollectionDatabaseChangelog-1", author = "gerard")
     public void removeVerifyFromRole(MongockTemplate template) {
-        template.updateFirst(new Query(Criteria.where("name").is(Role.ADMINISTRATOR_ROLE_NAME)),
-                new Update().set("permissions", List.of(
-                        Permission.READ, 
-                        Permission.LOCAL_PERMISSION_EDIT,
-                        Permission.TREE_EDIT, 
-                        Permission.ASSIGN_ROLE)),
-                RoleRepositoryImpl.COLLECTION);
-
-        template.findAllAndRemove(new Query(Criteria.where("name").is("user")),
-                RoleRepositoryImpl.COLLECTION);
+        template.dropCollection("roles");
     }
 
 }

@@ -15,14 +15,11 @@
  */
 package com.argosnotary.argos.service.adapter.in.rest.permission;
 
-import com.argosnotary.argos.domain.permission.Role;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPermission;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestRole;
-import com.argosnotary.argos.service.domain.permission.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
@@ -31,36 +28,21 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PermissionRestServiceTest {
 
-    @Mock
-    private RoleRepository roleRepository;
-
-    @Mock
-    private RoleMapper converter;
-
     private PermissionRestService service;
-
-    @Mock
-    private Role role;
-
-    @Mock
-    private RestRole restRole;
 
     @BeforeEach
     void setUp() {
-        service = new PermissionRestService(roleRepository, converter);
+        service = new PermissionRestService();
     }
 
     @Test
     void getRoles() {
-        when(roleRepository.findAll()).thenReturn(List.of(role));
-        when(converter.convertToRestRole(role)).thenReturn(restRole);
         ResponseEntity<List<RestRole>> response = service.getRoles();
-        assertThat(response.getBody(), contains(restRole));
+        assertThat(response.getBody(), contains(RestRole.values()));
         assertThat(response.getStatusCodeValue(), is(200));
     }
 

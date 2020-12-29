@@ -77,7 +77,7 @@ public class SearchAccountRestservice implements SearchAccountApi {
     @Override
     public ResponseEntity<List<RestAccountKeyInfo>> searchKeysFromAccount(@LabelIdCheckParam(dataExtractor = SUPPLY_CHAIN_LABEL_ID_EXTRACTOR) String supplyChainId, 
             List<String> keyIds) {
-        List<RestAccountKeyInfo> restAccountKeyInfos = accountInfoRepository.findByKeyIds(keyIds)
+        List<RestAccountKeyInfo> restAccountKeyInfos = accountInfoRepository.findByKeyIds(keyIds.stream().collect(Collectors.toSet()))
                 .stream()
                 .map(accountKeyInfoMapper::convertToRestAccountKeyInfo)
                 .collect(Collectors.toList());

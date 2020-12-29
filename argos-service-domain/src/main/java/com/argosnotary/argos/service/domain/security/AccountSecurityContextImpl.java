@@ -72,7 +72,7 @@ public class AccountSecurityContextImpl implements AccountSecurityContext {
                     .map(labelId -> localPermissionsMap.getOrDefault(labelId, emptyList()))
                     .flatMap(List::stream)
                     .map(LocalPermissions::getPermissions)
-                    .flatMap(List::stream)
+                    .flatMap(Set::stream)
                     .collect(toSet());
         } else {
             return emptySet();

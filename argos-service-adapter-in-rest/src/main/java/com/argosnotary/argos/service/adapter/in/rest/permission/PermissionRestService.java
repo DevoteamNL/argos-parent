@@ -32,16 +32,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PermissionRestService implements PermissionsApi {
 
-    private final RoleRepository roleRepository;
-    private final RoleMapper converter;
-
     @Override
     public ResponseEntity<List<RestRole>> getRoles() {
-        List<RestRole> roles = roleRepository.findAll()
-                .stream()
-                .map(converter::convertToRestRole)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(roles);
+        return ResponseEntity.ok(List.of(RestRole.values()));
     }
 
     @Override

@@ -17,19 +17,19 @@ package com.argosnotary.argos.service.domain.account;
 
 import org.junit.jupiter.api.Test;
 
+import com.argosnotary.argos.domain.permission.Role;
+
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 class AccountSearchParamsTest {
-
-    private static final String ROLE_ID = "roleId";
     private static final String LABEL_ID = "labelId";
 
     @Test
-    void getRoleId() {
-        assertThat(AccountSearchParams.builder().roleId(ROLE_ID).build().getRoleId(), is(Optional.of(ROLE_ID)));
+    void getRole() {
+        assertThat(AccountSearchParams.builder().role(Role.ADMINISTRATOR).build().getRole(), is(Optional.of(Role.ADMINISTRATOR)));
     }
 
     @Test

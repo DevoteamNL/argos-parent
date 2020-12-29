@@ -244,9 +244,9 @@ class HierarchyServiceImplTest {
     @Test
     void getSubTreeShouldReturnTreeNodeWithPermissions() {
         createTreeNodeHierarchy();
-        List<LocalPermissions> localPermissions = Collections.singletonList(LocalPermissions.builder()
+        Set<LocalPermissions> localPermissions = Collections.singleton(LocalPermissions.builder()
                 .labelId(ROOT_1_ID)
-                .permissions(List.of(Permission.READ))
+                .permissions(Set.of(Permission.READ))
                 .build());
         when(account.getLocalPermissions()).thenReturn(localPermissions);
         when(authentication.getPrincipal()).thenReturn(accountUserDetailsAdapter);
@@ -267,7 +267,7 @@ class HierarchyServiceImplTest {
     @Test
     void getSubTreeWithNoPermissionsShouldReturnEmpty() {
         createTreeNodeHierarchy();
-        when(account.getLocalPermissions()).thenReturn(emptyList());
+        when(account.getLocalPermissions()).thenReturn(emptySet());
         when(authentication.getPrincipal()).thenReturn(accountUserDetailsAdapter);
         when(accountUserDetailsAdapter.getAccount()).thenReturn(account);
         when(accountUserDetailsAdapter.getGlobalPermissions()).thenReturn(emptySet());
@@ -281,9 +281,9 @@ class HierarchyServiceImplTest {
     @Test
     void getRootNodesWithPartialPermissionsShouldFilterResult() {
         createTreeNodeHierarchy();
-        List<LocalPermissions> localPermissions = Collections.singletonList(LocalPermissions.builder()
+        Set<LocalPermissions> localPermissions = Collections.singleton(LocalPermissions.builder()
                 .labelId(ROOT_1_ID)
-                .permissions(List.of(Permission.READ))
+                .permissions(Set.of(Permission.READ))
                 .build());
         when(account.getLocalPermissions()).thenReturn(localPermissions);
         when(authentication.getPrincipal()).thenReturn(accountUserDetailsAdapter);
@@ -300,16 +300,16 @@ class HierarchyServiceImplTest {
     @Test
     void getRootNodesWithDifferentPermissionsDownTreeShouldResultInCorrectPermissions() {
         createTreeNodeHierarchy();
-        List<LocalPermissions> localPermissions = List.of(
+        Set<LocalPermissions> localPermissions = Set.of(
                 LocalPermissions
                         .builder()
                         .labelId(ROOT_1_ID)
-                        .permissions(List.of(Permission.READ))
+                        .permissions(Set.of(Permission.READ))
                         .build(),
                 LocalPermissions
                         .builder()
                         .labelId(CHILD_2_1_ID)
-                        .permissions(List.of(Permission.TREE_EDIT))
+                        .permissions(Set.of(Permission.TREE_EDIT))
                         .build()
 
         );

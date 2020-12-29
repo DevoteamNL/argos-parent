@@ -30,6 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -46,34 +47,21 @@ class PersonalAccountUserDetailsServiceTest {
 
     @Mock
     private PersonalAccount personalAccount;
-    @Mock
-    private RoleRepository roleRepository;
 
     @Mock
     private PersonalAccountAuthenticationToken token;
 
     @BeforeEach
     void setUp() {
-        personalAccountUserDetailsService = new PersonalAccountUserDetailsService(personalAccountRepository, roleRepository);
+        personalAccountUserDetailsService = new PersonalAccountUserDetailsService(personalAccountRepository);
     }
 
     @Test
     void loadUserById() {
-        Role role = Role.builder().name("test").permissions(List.of(Permission.READ)).roleId("id").build();
-        when(roleRepository.findByIds(any())).thenReturn(List.of(role));
+        Role role = Role.ADMINISTRATOR;
         when(personalAccountRepository.findByAccountId("id")).thenReturn(Optional.of(personalAccount));
         when(personalAccount.getName()).thenReturn("name");
-        when(token.getCredentials()).thenReturn("id");
-        UserDetails userDetails = personalAccountUserDetailsService.loadUserByToken(token);
-        assertThat(userDetails.getUsername(), is("name"));
-    }
-
-    @Test
-    void loadUserByIdRolesWithNullPermissionsShouldNotFail() {
-        Role role = Role.builder().name("test").build();
-        when(roleRepository.findByIds(any())).thenReturn(List.of(role));
-        when(personalAccountRepository.findByAccountId("id")).thenReturn(Optional.of(personalAccount));
-        when(personalAccount.getName()).thenReturn("name");
+        when(personalAccount.getRoles()).thenReturn(Set.of(role));
         when(token.getCredentials()).thenReturn("id");
         UserDetails userDetails = personalAccountUserDetailsService.loadUserByToken(token);
         assertThat(userDetails.getUsername(), is("name"));

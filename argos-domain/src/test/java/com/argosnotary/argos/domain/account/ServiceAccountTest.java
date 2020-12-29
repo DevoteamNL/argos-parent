@@ -25,6 +25,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -47,18 +49,20 @@ class ServiceAccountTest {
 
     @Test
     void builder() {
+        Set<Permission> permissions = new HashSet<>();
+        permissions.add(Permission.LINK_ADD);
+        permissions.add(Permission.RELEASE);
         ServiceAccount account = ServiceAccount.builder().name(NAME)
                 .parentLabelId(PARENT_LABEL_ID)
                 .activeKeyPair(activeKeyPair)
-                .inactiveKeyPairs(Collections.singletonList(keyPair))
+                .inactiveKeyPairs(Collections.singleton(keyPair))
                 .build();
         assertThat(account.getAccountId(), hasLength(36));
         assertThat(account.getEmail(), nullValue());
         assertThat(account.getActiveKeyPair(), sameInstance(activeKeyPair));
         assertThat(account.getInactiveKeyPairs(), contains(keyPair));
         assertThat(account.getParentLabelId(), is(PARENT_LABEL_ID));
-        assertThat(account.getLocalPermissions(), contains(LocalPermissions.builder().labelId(PARENT_LABEL_ID).permissions(
-                Arrays.asList(Permission.LINK_ADD, Permission.RELEASE)).build()));
+        assertThat(account.getLocalPermissions(), contains(LocalPermissions.builder().labelId(PARENT_LABEL_ID).permissions(permissions).build()));
     }
     
     @Test
@@ -67,7 +71,7 @@ class ServiceAccountTest {
         account.setName(NAME);
         account.setParentLabelId(PARENT_LABEL_ID);
         account.setActiveKeyPair(activeKeyPair);
-        account.setInactiveKeyPairs(Collections.singletonList(keyPair));
+        account.setInactiveKeyPairs(Collections.singleton(keyPair));
         
         assertThat(account.getAccountId(), hasLength(36));
         assertThat(account.getEmail(), nullValue());

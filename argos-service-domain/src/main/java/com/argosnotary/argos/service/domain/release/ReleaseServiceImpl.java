@@ -141,12 +141,12 @@ public class ReleaseServiceImpl implements ReleaseService {
     }
 
     private List<ReleaseDossier.Account> getAccounts(LayoutMetaBlock layoutMetaBlock) {
-        List<String> keyIds = layoutMetaBlock
+        Set<String> keyIds = layoutMetaBlock
                 .getLayout()
                 .getKeys()
                 .stream()
                 .map(PublicKey::getKeyId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         return accountInfoRepository.findByKeyIds(keyIds).stream()
                 .map(toAccount()

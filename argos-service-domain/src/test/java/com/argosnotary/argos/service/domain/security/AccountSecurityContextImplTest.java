@@ -75,9 +75,9 @@ class AccountSecurityContextImplTest {
 
     @Test
     void getAllPermissionsWithCorrectIdsShouldReturnCorrectSet() {
-        List<LocalPermissions> localPermissions = Collections.singletonList(LocalPermissions.builder()
+        Set<LocalPermissions> localPermissions = Collections.singleton(LocalPermissions.builder()
                 .labelId(LABEL_ID)
-                .permissions(List.of(Permission.READ))
+                .permissions(Set.of(Permission.READ))
                 .build());
         when(account.getLocalPermissions()).thenReturn(localPermissions);
         when(authentication.getPrincipal()).thenReturn(accountUserDetailsAdapter);

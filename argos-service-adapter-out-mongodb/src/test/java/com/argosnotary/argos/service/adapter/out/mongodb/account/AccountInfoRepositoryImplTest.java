@@ -61,7 +61,7 @@ class AccountInfoRepositoryImplTest {
     @Test
     void findByKeyIds() {
         when(template.find(any(), eq(AccountKeyInfo.class), eq(ACCOUNTS_KEYINFO_VIEW))).thenReturn(Collections.singletonList(accountKeyInfo));
-        accountInfoRepository.findByKeyIds(Collections.singletonList("keyId"));
+        accountInfoRepository.findByKeyIds(Collections.singleton("keyId"));
         verify(template).find(queryArgumentCaptor.capture(), eq(AccountKeyInfo.class), eq(ACCOUNTS_KEYINFO_VIEW));
         assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"key.keyId\" : { \"$in\" : [\"keyId\"]}}, Fields: {}, Sort: {}"));
     }

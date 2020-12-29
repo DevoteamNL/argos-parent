@@ -20,7 +20,6 @@ import com.argosnotary.argos.domain.account.PersonalAccount;
 import com.argosnotary.argos.domain.permission.Permission;
 import com.argosnotary.argos.domain.permission.Role;
 import com.argosnotary.argos.service.domain.account.PersonalAccountRepository;
-import com.argosnotary.argos.service.domain.permission.RoleRepository;
 import com.argosnotary.argos.service.domain.security.AccountUserDetailsAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,9 +34,7 @@ import java.util.stream.Stream;
 public class PersonalAccountUserDetailsService {
 
     private final PersonalAccountRepository personalAccountRepository;
-
-    private final RoleRepository roleRepository;
-
+    
     private static Stream<? extends Permission> apply(Role role) {
         return role.getPermissions().stream();
     }
@@ -45,8 +42,7 @@ public class PersonalAccountUserDetailsService {
     UserDetails loadUserByToken(PersonalAccountAuthenticationToken token) {
         PersonalAccount personalAccount = personalAccountRepository.findByAccountId(token.getCredentials())
                 .orElseThrow(() -> new ArgosError("Personal account with id " + token.getCredentials() + " not found"));
-        Set<Permission> globalPermissions = roleRepository
-                .findByIds(personalAccount.getRoleIds())
+        Set<Permission> globalPermissions = personalAccount.getRoles()
                 .stream()
                 .filter(role -> role.getPermissions() != null)
                 .flatMap(PersonalAccountUserDetailsService::apply)

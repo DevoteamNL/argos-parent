@@ -21,5 +21,5 @@ public enum Permission {
     LOCAL_PERMISSION_EDIT,
     LINK_ADD,
     RELEASE,
-    ASSIGN_ROLE
+    ASSIGN_ROLE;
 }

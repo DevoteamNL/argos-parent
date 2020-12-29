@@ -15,22 +15,26 @@
  */
 package com.argosnotary.argos.domain.permission;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.util.List;
-import java.util.UUID;
+public enum Role {
 
-@Getter
-@Setter
-@Builder
-public class Role {
+    ADMINISTRATOR;
 
-    public static final String ADMINISTRATOR_ROLE_NAME = "administrator";
+    public Set<Permission> getPermissions() {
+        if (this == ADMINISTRATOR) {
+            Set<Permission> permissions = new HashSet<>();
+            permissions.addAll(Arrays.asList(
+                    Permission.READ, 
+                    Permission.LOCAL_PERMISSION_EDIT, 
+                    Permission.TREE_EDIT,
+                    Permission.ASSIGN_ROLE));
+            return permissions;
+        } else {
+            throw new AssertionError("Unknown role: " + this);
+        }
 
-    @Builder.Default
-    private String roleId = UUID.randomUUID().toString();
-    private String name;
-    private List<Permission> permissions;
+    }
 }

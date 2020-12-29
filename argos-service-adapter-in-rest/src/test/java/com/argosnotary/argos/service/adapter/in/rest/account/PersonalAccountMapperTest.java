@@ -23,121 +23,91 @@ import com.argosnotary.argos.service.adapter.in.rest.api.model.RestLocalPermissi
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPermission;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPersonalAccount;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestRole;
-import com.argosnotary.argos.service.adapter.in.rest.permission.RoleMapper;
-import com.argosnotary.argos.service.domain.permission.RoleRepository;
+
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasLength;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class PersonalAccountMapperTest {
 
     private static final String EMAIL = "email";
     private static final String NAME = "name";
-    private static final String ROLE_ID = "roleId";
     private static final String LABEL_ID = "labelId";
-    private static final String ROLE_NAME = "roleName";
-    @Mock
-    private RoleRepository roleRepository;
-
-    @Mock
-    private RoleMapper roleMapper;
-
 
     private PersonalAccountMapperImpl mapper;
 
-    @Mock
-    private Role role;
-
-    @Mock
-    private RestRole restRole;
+    private RestRole restRole = RestRole.ADMINISTRATOR;
+    
+    private PersonalAccount personalAccount;
 
 
     @BeforeEach
     void setUp() {
         mapper = new PersonalAccountMapperImpl();
-        ReflectionTestUtils.setField(mapper, "roleRepository", roleRepository);
-        ReflectionTestUtils.setField(mapper, "roleMapper", roleMapper);
+        personalAccount = PersonalAccount.builder().email(EMAIL).name(NAME).roles(Set.of(Role.ADMINISTRATOR)).build();
     }
 
     @Test
     void convertToRestPersonalAccount() {
-        when(roleRepository.findByIds(List.of(ROLE_ID))).thenReturn(List.of(role));
-        when(roleMapper.convertToRestRole(role)).thenReturn(restRole);
-        RestPersonalAccount restPersonalAccount = mapper.convertToRestPersonalAccount(mockPersonalAccount());
+        RestPersonalAccount restPersonalAccount = mapper.convertToRestPersonalAccount(personalAccount);
         validate(restPersonalAccount);
         assertThat(restPersonalAccount.getRoles(), contains(restRole));
     }
 
     @Test
     void convertToRestPersonalAccountWithoutRoles() {
-        RestPersonalAccount restPersonalAccount = mapper.convertToRestPersonalAccountWithoutRoles(mockPersonalAccount());
+        RestPersonalAccount restPersonalAccount = mapper.convertToRestPersonalAccountWithoutRoles(personalAccount);
+        assertEquals(null, restPersonalAccount.getRoles());
         validate(restPersonalAccount);
     }
 
     @Test
     void convertToRestLocalPermission() {
-        LocalPermissions localPermissions = LocalPermissions.builder().labelId(LABEL_ID).permissions(List.of(Permission.values())).build();
-        RestLocalPermissions restLocalPermissions = mapper.convertToRestLocalPermission(localPermissions);
-        assertThat(restLocalPermissions.getLabelId(), is(LABEL_ID));
-        assertThat(restLocalPermissions.getPermissions(), contains(RestPermission.values()));
-    }
-
-    @Test
-    void localPermissionListToRestLocalPermissionList() {
-        assertThat(mapper.permissionListToRestPermissionList(List.of(Permission.values())), contains(RestPermission.values()));
+        LocalPermissions localPermissions = LocalPermissions.builder().labelId(LABEL_ID).permissions(Set.of(Permission.values())).build();
+        RestLocalPermissions restLocalPermissions = mapper.convertToRestLocalPermissions(localPermissions);
+        assertThat(mapper.convertToLocalPermissions(restLocalPermissions), is(localPermissions));
     }
 
     @Test
     void convertToRestLocalPermissions() {
-        LocalPermissions localPermissions = LocalPermissions.builder().labelId(LABEL_ID).permissions(List.of(Permission.values())).build();
-        List<RestLocalPermissions> restLocalPermissions = mapper.convertToRestLocalPermissions(List.of(localPermissions));
-        assertThat(restLocalPermissions, contains(new RestLocalPermissions().labelId(LABEL_ID).permissions(List.of(RestPermission.values()))));
-    }
+        LocalPermissions localPermissions = LocalPermissions.builder().labelId(LABEL_ID).permissions(EnumSet.allOf(Permission.class)).build();
+        List<RestLocalPermissions> restLocalPermissions = mapper.convertToRestLocalPermissionsList(Set.of(localPermissions));
+        assertEquals(mapper.convertToLocalPermissionsSet(restLocalPermissions), Set.of(localPermissions));
+    } 
+
 
     @Test
     void convertToLocalPermissions() {
-        assertThat(mapper.convertToLocalPermissions(List.of(RestPermission.values())), contains(Permission.values()));
+        List<RestPermission> restPerms = new ArrayList<>(EnumSet.allOf(RestPermission.class));
+        RestLocalPermissions restLocalPermissions = new RestLocalPermissions().labelId(LABEL_ID).permissions(restPerms);
+        Set<Permission> perms = EnumSet.allOf(Permission.class);
+        assertThat(mapper.convertToLocalPermissionsSet(List.of(restLocalPermissions)), is(Set.of(LocalPermissions.builder().labelId(LABEL_ID).permissions(perms).build())));
     }
 
     @Test
-    void convertToRoleId() {
-        when(role.getRoleId()).thenReturn(ROLE_ID);
-        when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
-        assertThat(mapper.convertToRoleId(ROLE_NAME), is(ROLE_ID));
-    }
-
-    @Test
-    void convertToRoleIdNameNull() {
-        assertThat(mapper.convertToRoleId(null), nullValue());
-    }
-
-    @Test
-    void convertToRoleIdNotFound() {
-        when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.empty());
-        assertThat(mapper.convertToRoleId(ROLE_NAME), nullValue());
+    void convertToPermissions() {
+        List<RestPermission> restPerms = new ArrayList<>(EnumSet.allOf(RestPermission.class));
+        Set<Permission> perms = EnumSet.allOf(Permission.class);
+        assertThat(mapper.convertToPermissionSet(restPerms), is(perms));
     }
 
     private void validate(RestPersonalAccount restPersonalAccount) {
         assertThat(restPersonalAccount.getName(), is(NAME));
         assertThat(restPersonalAccount.getId(), hasLength(36));
     }
-
-    private PersonalAccount mockPersonalAccount() {
-        return PersonalAccount.builder().email(EMAIL).name(NAME).roleIds(List.of(ROLE_ID)).build();
-    }
-
 }

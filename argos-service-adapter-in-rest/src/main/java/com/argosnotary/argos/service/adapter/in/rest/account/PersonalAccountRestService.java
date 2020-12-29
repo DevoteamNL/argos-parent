@@ -24,6 +24,7 @@ import com.argosnotary.argos.domain.crypto.KeyIdProvider;
 import com.argosnotary.argos.domain.crypto.KeyPair;
 import com.argosnotary.argos.domain.permission.LocalPermissions;
 import com.argosnotary.argos.domain.permission.Permission;
+import com.argosnotary.argos.domain.permission.Role;
 import com.argosnotary.argos.service.adapter.in.rest.api.handler.PersonalAccountApi;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestKeyPair;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestLocalPermissions;
@@ -31,6 +32,7 @@ import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPermission;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPersonalAccount;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestProfile;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPublicKey;
+import com.argosnotary.argos.service.adapter.in.rest.api.model.RestRole;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestToken;
 import com.argosnotary.argos.service.domain.account.AccountSearchParams;
 import com.argosnotary.argos.service.domain.account.AccountService;
@@ -55,6 +57,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.argosnotary.argos.domain.ArgosError.Level.WARNING;
@@ -127,9 +130,8 @@ public class PersonalAccountRestService implements PersonalAccountApi {
 
     @Override
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<RestPersonalAccount>> searchPersonalAccounts(String roleName, String localPermissionsLabelId, String name, List<String> activeKeyIds, List<String> inActiveKeyIds) {
+    public ResponseEntity<List<RestPersonalAccount>> searchPersonalAccounts(String localPermissionsLabelId, String name, List<String> activeKeyIds, List<String> inActiveKeyIds) {
         return ResponseEntity.ok(accountService.searchPersonalAccounts(AccountSearchParams.builder()
-                .roleId(personalAccountMapper.convertToRoleId(roleName))
                 .localPermissionsLabelId(localPermissionsLabelId)
                 .name(name)
                 .activeKeyIds(activeKeyIds)
@@ -140,13 +142,10 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     
     @Override
     @PermissionCheck(permissions = {Permission.ASSIGN_ROLE})
-    public ResponseEntity<List<RestPersonalAccount>> searchPersonalAccountsWithRoles(String roleName, String localPermissionsLabelId, String name, List<String> activeKeyIds, List<String> inActiveKeyIds) {
+    public ResponseEntity<List<RestPersonalAccount>> searchPersonalAccountsWithRoles(RestRole role, String name) {
         return ResponseEntity.ok(accountService.searchPersonalAccounts(AccountSearchParams.builder()
-                .roleId(personalAccountMapper.convertToRoleId(roleName))
-                .localPermissionsLabelId(localPermissionsLabelId)
+                .role(role == null ? null : Role.valueOf(role.name()))
                 .name(name)
-                .activeKeyIds(activeKeyIds)
-                .inActiveKeyIds(inActiveKeyIds)
                 .build()).stream()
                 .map(personalAccountMapper::convertToRestPersonalAccount).collect(Collectors.toList()));
     }
@@ -155,8 +154,8 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     @PermissionCheck(permissions = {Permission.ASSIGN_ROLE})
     @AuditLog
     @Transactional
-    public ResponseEntity<RestPersonalAccount> updatePersonalAccountRolesById(@AuditParam("accountId") String accountId, @AuditParam("roleNames") List<String> roleNames) {
-        return accountService.updatePersonalAccountRolesById(accountId, roleNames)
+    public ResponseEntity<RestPersonalAccount> updatePersonalAccountRolesById(@AuditParam("accountId") String accountId, @AuditParam("roleNames") List<RestRole> roles) {
+        return accountService.updatePersonalAccountRolesById(accountId, personalAccountMapper.convertToRoles(roles))
                 .map(personalAccountMapper::convertToRestPersonalAccount)
                 .map(ResponseEntity::ok).orElseThrow(this::accountNotFound);
     }
@@ -164,8 +163,8 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     @Override
     @PermissionCheck(permissions = {Permission.LOCAL_PERMISSION_EDIT})
     public ResponseEntity<List<RestLocalPermissions>> getAllLocalPermissions(String accountId) {
-        return ResponseEntity.ok(accountService.getPersonalAccountById(accountId).map(PersonalAccount::getLocalPermissions)
-                .map(personalAccountMapper::convertToRestLocalPermissions).orElse(Collections.emptyList()));
+        Set<LocalPermissions> localPermissions = accountService.getPersonalAccountById(accountId).map(PersonalAccount::getLocalPermissions).orElse(Collections.emptySet());
+        return ResponseEntity.ok(localPermissions.stream().map(personalAccountMapper::convertToRestLocalPermissions).collect(Collectors.toList()));
     }
 
     @Override
@@ -174,7 +173,7 @@ public class PersonalAccountRestService implements PersonalAccountApi {
         PersonalAccount personalAccount = accountService.getPersonalAccountById(accountId).orElseThrow(this::accountNotFound);
         return ResponseEntity.ok(personalAccount.getLocalPermissions().stream()
                 .filter(localPermissions -> localPermissions.getLabelId().equals(labelId))
-                .findFirst().map(personalAccountMapper::convertToRestLocalPermission)
+                .findFirst().map(personalAccountMapper::convertToRestLocalPermissions)
                 .orElseGet(() -> new RestLocalPermissions().labelId(labelId)));
     }
 
@@ -184,13 +183,13 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     @Transactional
     public ResponseEntity<RestLocalPermissions> updateLocalPermissionsForLabel(@AuditParam("accountId") String accountId,
                                                                                @LabelIdCheckParam @AuditParam("labelId") String labelId,
-                                                                               @AuditParam("localPermissions") List<RestPermission> restLocalPermission) {
+                                                                               @AuditParam("localPermissions") List<RestPermission> restPermissions) {
         verifyParentLabelExists(labelId);
-        LocalPermissions newLocalPermissions = LocalPermissions.builder().labelId(labelId).permissions(personalAccountMapper.convertToLocalPermissions(restLocalPermission)).build();
+        LocalPermissions newLocalPermissions = LocalPermissions.builder().labelId(labelId).permissions(personalAccountMapper.convertToPermissionSet(restPermissions).stream().collect(Collectors.toSet())).build();
         PersonalAccount personalAccount = accountService.updatePersonalAccountLocalPermissionsById(accountId, newLocalPermissions).orElseThrow(this::accountNotFound);
         return personalAccount.getLocalPermissions().stream()
                 .filter(localPermissions -> localPermissions.getLabelId().equals(labelId))
-                .findFirst().map(personalAccountMapper::convertToRestLocalPermission).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+                .findFirst().map(personalAccountMapper::convertToRestLocalPermissions).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @Override

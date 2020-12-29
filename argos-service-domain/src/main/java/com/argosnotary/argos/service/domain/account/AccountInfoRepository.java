@@ -21,9 +21,10 @@ import com.argosnotary.argos.domain.account.AccountType;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AccountInfoRepository {
-    List<AccountKeyInfo> findByKeyIds(List<String> keyIds);
+    List<AccountKeyInfo> findByKeyIds(Set<String> keyIds);
 
     List<AccountInfo> findByNameIdPathToRootAndAccountType(String name, List<String> idPathToRoot, @Nullable AccountType accountType);
 }

@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,5 +29,5 @@ import java.util.List;
 @EqualsAndHashCode
 public class LocalPermissions implements Serializable {
     private String labelId;
-    private List<Permission> permissions;
+    private Set<Permission> permissions;
 }

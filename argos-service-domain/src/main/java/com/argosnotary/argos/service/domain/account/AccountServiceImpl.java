@@ -23,19 +23,19 @@ import com.argosnotary.argos.domain.crypto.KeyPair;
 import com.argosnotary.argos.domain.crypto.ServiceAccountKeyPair;
 import com.argosnotary.argos.domain.permission.LocalPermissions;
 import com.argosnotary.argos.domain.permission.Role;
-import com.argosnotary.argos.service.domain.permission.RoleRepository;
 import com.argosnotary.argos.service.domain.security.AccountSecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.argosnotary.argos.domain.permission.Role.ADMINISTRATOR_ROLE_NAME;
+import static com.argosnotary.argos.domain.permission.Role.ADMINISTRATOR;
 
 
 @Service
@@ -45,7 +45,6 @@ public class AccountServiceImpl implements AccountService {
 
     private final ServiceAccountRepository serviceAccountRepository;
     private final PersonalAccountRepository personalAccountRepository;
-    private final RoleRepository roleRepository;
     private final AccountSecurityContext accountSecurityContext;
 
     @Override
@@ -105,19 +104,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<PersonalAccount> updatePersonalAccountRolesById(String accountId, List<String> roleNames) {
+    public Optional<PersonalAccount> updatePersonalAccountRolesById(String accountId, Set<Role> roles) {
         return personalAccountRepository.findByAccountId(accountId).map(personalAccount -> {
-            checkAdministratorRoleChange(personalAccount, roleNames);
-            personalAccount.setRoleIds(getRoleIds(roleNames));
+            checkAdministratorRoleChange(personalAccount, roles);
+            personalAccount.setRoles(roles);
             personalAccountRepository.update(personalAccount);
             return personalAccount;
         });
     }
 
-    private void checkAdministratorRoleChange(PersonalAccount personalAccount, List<String> roleNames) {
+    private void checkAdministratorRoleChange(PersonalAccount personalAccount, Set<Role> roles) {
         Account authenticatedAccount = accountSecurityContext.getAuthenticatedAccount().orElseThrow(() -> new ArgosError("no authenticated account"));
-        if (authenticatedAccount.getAccountId().equals(personalAccount.getAccountId()) && !roleNames.contains(ADMINISTRATOR_ROLE_NAME) &&
-                personalAccount.getRoleIds().contains(resolveAdministratorRoleId())) {
+        if (authenticatedAccount.getAccountId().equals(personalAccount.getAccountId()) && !roles.contains(ADMINISTRATOR) &&
+                personalAccount.getRoles().contains(ADMINISTRATOR)) {
             throw new ArgosError("administrators can not unassign there own administrator role", ArgosError.Level.WARNING);
         }
     }
@@ -130,34 +129,30 @@ public class AccountServiceImpl implements AccountService {
             } else {
                 addOrUpdateLocalPermissions(newLocalPermissions, personalAccount);
             }
+            personalAccountRepository.update(personalAccount);
             return personalAccount;
         });
     }
 
     private void addOrUpdateLocalPermissions(LocalPermissions newLocalPermissions, PersonalAccount personalAccount) {
-        findLocalPermissions(newLocalPermissions, personalAccount)
-                .ifPresentOrElse(localPermissions -> localPermissions.setPermissions(newLocalPermissions.getPermissions()),
-                        () -> {
-                            ArrayList<LocalPermissions> localPermissions = new ArrayList<>(personalAccount.getLocalPermissions());
-                            localPermissions.add(newLocalPermissions);
-                            personalAccount.setLocalPermissions(localPermissions);
-                        });
-        personalAccountRepository.update(personalAccount);
+        Set<LocalPermissions> localPermissionsSet = personalAccount.getLocalPermissions().stream()
+                .map(localPermissions -> {
+                    if (localPermissions.getLabelId().equals(newLocalPermissions.getLabelId())) {
+                        localPermissions.setPermissions(
+                                newLocalPermissions.getPermissions().stream().collect(Collectors.toSet()));
+                    }
+                    return localPermissions;
+                }).collect(Collectors.toSet());
+        // in case newLocalPermissions not in localpermissions
+        localPermissionsSet.add(newLocalPermissions);
+        personalAccount.setLocalPermissions(localPermissionsSet);
     }
 
     private void removeLocalPermissions(LocalPermissions newLocalPermissions, PersonalAccount personalAccount) {
-        findLocalPermissions(newLocalPermissions, personalAccount).ifPresent(localPermissions -> {
-            ArrayList<LocalPermissions> localPermissionList = new ArrayList<>(personalAccount.getLocalPermissions());
-            localPermissionList.remove(localPermissions);
-            personalAccount.setLocalPermissions(localPermissionList);
-            personalAccountRepository.update(personalAccount);
-        });
-    }
-
-    private Optional<LocalPermissions> findLocalPermissions(LocalPermissions newLocalPermissions, PersonalAccount personalAccount) {
-        return personalAccount.getLocalPermissions().stream()
-                .filter(localPermissions -> localPermissions.getLabelId().equals(newLocalPermissions.getLabelId()))
-                .findFirst();
+        Set<LocalPermissions> localPermissions = personalAccount.getLocalPermissions().stream()
+                .filter(localPermission -> !localPermission.getLabelId().equals(newLocalPermissions.getLabelId()))
+                .collect(Collectors.toSet());
+        personalAccount.setLocalPermissions(localPermissions);
     }
 
     @Override
@@ -191,24 +186,13 @@ public class AccountServiceImpl implements AccountService {
         return serviceAccountRepository.exists(serviceAccountId);
     }
 
-    private List<String> getRoleIds(List<String> roleNames) {
-        return roleNames.stream().map(roleRepository::findByName)
-                .filter(Optional::isPresent)
-                .map(Optional::get).map(Role::getRoleId).collect(Collectors.toList());
-    }
-
     private long getTotalPersonalAccounts() {
         return personalAccountRepository.getTotalNumberOfAccounts();
     }
 
     private void makeAdministrator(PersonalAccount personalAccount) {
         log.info("Assigned administrator role to personal account " + personalAccount.getName());
-        personalAccount.setRoleIds(List.of(resolveAdministratorRoleId()));
-    }
-
-    private String resolveAdministratorRoleId() {
-        return roleRepository.findByName(ADMINISTRATOR_ROLE_NAME).map(Role::getRoleId)
-                .orElseThrow(() -> new ArgosError(ADMINISTRATOR_ROLE_NAME + " role not found"));
+        personalAccount.addRole(ADMINISTRATOR);
     }
 
     private void activateNewKey(Account account, KeyPair newKeyPair) {
@@ -218,7 +202,7 @@ public class AccountServiceImpl implements AccountService {
 
     private void deactivateKeyPair(Account account) {
         Optional.ofNullable(account.getActiveKeyPair()).ifPresent(keyPair -> {
-            List<KeyPair> inactiveKeyPairs = new ArrayList<>(Optional.ofNullable(account.getInactiveKeyPairs()).orElse(Collections.emptyList()));
+            Set<KeyPair> inactiveKeyPairs = Optional.ofNullable(account.getInactiveKeyPairs()).orElse(new HashSet<>());
             inactiveKeyPairs.add(keyPair);
             account.setActiveKeyPair(null);
             account.setInactiveKeyPairs(inactiveKeyPairs);

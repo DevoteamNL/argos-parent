@@ -24,52 +24,42 @@ import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPermission;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestPersonalAccount;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestProfile;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestRole;
-import com.argosnotary.argos.service.adapter.in.rest.permission.RoleMapper;
-import com.argosnotary.argos.service.domain.permission.RoleRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public abstract class PersonalAccountMapper {
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private RoleMapper roleMapper;
-
 
     @Mapping(target = "id", source = "accountId")
-    @Mapping(target = "roles", source = "roleIds", qualifiedByName = "convertToRestRoles")
     public abstract RestPersonalAccount convertToRestPersonalAccount(PersonalAccount personalAccount);
 
-    @Named("convertToRestRoles")
-    public List<RestRole> convertToRestRoles(List<String> roleIds) {
-        return roleRepository.findByIds(roleIds).stream().map(roleMapper::convertToRestRole).collect(Collectors.toList());
-    }
-
     @Mapping(target = "id", source = "accountId")
-    @Mapping(target = "roles", source = "roleIds", qualifiedByName = "convertToRestRoles")
     public abstract RestProfile convertToRestProfile(PersonalAccount personalAccount);
 
     @Mapping(target = "id", source = "accountId")
     @Mapping(target = "roles", ignore = true)
     public abstract RestPersonalAccount convertToRestPersonalAccountWithoutRoles(PersonalAccount personalAccount);
 
-    public abstract List<RestLocalPermissions> convertToRestLocalPermissions(List<LocalPermissions> localPermissions);
+    public abstract List<RestLocalPermissions> convertToRestLocalPermissionsList(Set<LocalPermissions> localPermissions);
 
-    public abstract List<Permission> convertToLocalPermissions(List<RestPermission> localPermissions);
+    public abstract Set<LocalPermissions> convertToLocalPermissionsSet(List<RestLocalPermissions> localPermissions);
 
-    public abstract RestLocalPermissions convertToRestLocalPermission(LocalPermissions localPermissions);
+    public abstract RestLocalPermissions convertToRestLocalPermissions(LocalPermissions localPermissions);
+    
+    public abstract LocalPermissions convertToLocalPermissions(RestLocalPermissions localPermissions);
+    
+    public abstract Set<Role> convertToRoles(List<RestRole> roles);
+    
+    public abstract List<RestPermission> convertToRestPermissionList(Set<Permission> permissions);
 
-    @Named("convertToRoleId")
-    public String convertToRoleId(String optionalRoleName) {
-        return Optional.ofNullable(optionalRoleName).flatMap(roleName -> roleRepository.findByName(roleName)).map(Role::getRoleId).orElse(null);
-    }
+    public abstract Set<Permission> convertToPermissionSet(List<RestPermission> permissions);
+    
+    public abstract List<RestRole> convertToRestRoleList(Set<Role> roles);
+    
+    public abstract RestRole convertToRestRole(Role role);
+
 }

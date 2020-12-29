@@ -17,6 +17,7 @@ package com.argosnotary.argos.service.adapter.out.mongodb.account;
 
 import com.mongodb.client.result.UpdateResult;
 import com.argosnotary.argos.domain.account.PersonalAccount;
+import com.argosnotary.argos.domain.permission.Role;
 import com.argosnotary.argos.service.domain.account.AccountSearchParams;
 import org.bson.Document;
 import org.hamcrest.Matchers;
@@ -148,9 +149,9 @@ class PersonalAccountRepositoryImplTest {
     @Test
     void searchByRoleId() {
         when(template.find(any(Query.class), eq(PersonalAccount.class), eq(COLLECTION))).thenReturn(List.of(personalAccount));
-        assertThat(repository.search(AccountSearchParams.builder().roleId(ROLE_ID).build()), contains(personalAccount));
+        assertThat(repository.search(AccountSearchParams.builder().role(Role.ADMINISTRATOR).build()), contains(personalAccount));
         verify(template).find(queryArgumentCaptor.capture(), eq(PersonalAccount.class), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), Matchers.is("Query: { \"roleIds\" : { \"$in\" : [\"roleId\"]}}, Fields: { \"accountId\" : 1, \"name\" : 1, \"email\" : 1}, Sort: { \"name\" : 1}"));
+        assertThat(queryArgumentCaptor.getValue().toString(), Matchers.is("Query: { \"roles\" : { \"$in\" : [\"ADMINISTRATOR\"]}}, Fields: { \"accountId\" : 1, \"name\" : 1, \"email\" : 1}, Sort: { \"name\" : 1}"));
     }
 
     @Test
