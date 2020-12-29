@@ -87,14 +87,20 @@ public class PersonalAccountRepositoryImpl implements PersonalAccountRepository 
 
     @Override
     public List<PersonalAccount> search(AccountSearchParams params) {
-        Query query = params.getRole()
-                .map(this::roleQuery).orElseGet(() ->
-                        params.getLocalPermissionsLabelId().map(this::labelIdQuery)
+        Query query = params.getLocalPermissionsLabelId().map(this::labelIdQuery)
                                 .orElseGet(() -> params.getName().map(this::nameQuery)
                                         .orElseGet(() -> params.getActiveKeyIds().map(this::activeKeyIdsQuery)
-                                                .orElseGet(() -> params.getInActiveKeyIds().map(this::inActiveKeyIdsQuery).orElseGet(Query::new))
-                                        )));
+                                                .orElseGet(() -> params.getInActiveKeyIds().map(this::inActiveKeyIdsQuery).orElseGet(Query::new))));
         query.fields().include(ACCOUNT_ID).include(EMAIL).include(NAME_FIELD);
+        return template.find(query.with(Sort.by(NAME_FIELD)), PersonalAccount.class, COLLECTION);
+    }
+
+    @Override
+    public List<PersonalAccount> searchWithRoles(AccountSearchParams params) {
+        Query query = params.getRole().map(this::roleQuery)
+                .orElseGet(() -> params.getName().map(this::nameQuery)
+                                        .orElseGet(Query::new));
+        query.fields().include(ACCOUNT_ID).include(EMAIL).include(NAME_FIELD).include(ROLE_FIELD);
         return template.find(query.with(Sort.by(NAME_FIELD)), PersonalAccount.class, COLLECTION);
     }
 

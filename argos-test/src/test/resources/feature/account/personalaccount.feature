@@ -133,7 +133,7 @@ Feature: Personal Account
     And param role = "ADMINISTRATOR"
     When method GET
     Then status 200
-    And match response == [{"roles":[],"id":"#uuid","name":"Luke Skywalker"}]
+    And match response == [{"roles":["ADMINISTRATOR"],"id":"#uuid","name":"Luke Skywalker"}]
 
   Scenario: search personal account by active key id should return 200
     * configure headers = call read('classpath:headers.js') { token: #(defaultUsertoken)}

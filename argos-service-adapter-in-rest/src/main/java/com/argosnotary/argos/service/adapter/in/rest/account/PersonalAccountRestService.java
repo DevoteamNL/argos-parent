@@ -143,7 +143,7 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     @Override
     @PermissionCheck(permissions = {Permission.ASSIGN_ROLE})
     public ResponseEntity<List<RestPersonalAccount>> searchPersonalAccountsWithRoles(RestRole role, String name) {
-        return ResponseEntity.ok(accountService.searchPersonalAccounts(AccountSearchParams.builder()
+        return ResponseEntity.ok(accountService.searchPersonalAccountsWithRoles(AccountSearchParams.builder()
                 .role(role == null ? null : Role.valueOf(role.name()))
                 .name(name)
                 .build()).stream()

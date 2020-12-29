@@ -30,6 +30,7 @@ import com.argosnotary.argos.domain.layout.LayoutMetaBlock;
 import com.argosnotary.argos.domain.link.Artifact;
 import com.argosnotary.argos.domain.link.Link;
 import com.argosnotary.argos.domain.link.LinkMetaBlock;
+import com.argosnotary.argos.domain.permission.Role;
 import com.argosnotary.argos.domain.release.ReleaseDossier;
 import com.argosnotary.argos.domain.release.ReleaseDossierMetaData;
 import com.argosnotary.argos.domain.supplychain.SupplyChain;
@@ -88,7 +89,8 @@ import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /*
  * Integration tests of all repositories exept the Release Repository
@@ -109,7 +111,8 @@ class AllRepositoriesImplIT {
             .activeKeyPair(new KeyPair("keyId1", null, null))
             .inactiveKeyPairs(Set.of(
                     new KeyPair("keyId2", null, null),
-                    new KeyPair("keyId3", null, null))).build();
+                    new KeyPair("keyId3", null, null)))
+            .roles(Set.of(Role.ADMINISTRATOR)).build();
     private static final String KLAASJE = "Klaasje";
     private static final PersonalAccount KLAASJE_ACCOUNT = PersonalAccount.builder()
             .name(KLAASJE).email("klaasje@klaas.nl")
@@ -350,6 +353,13 @@ class AllRepositoriesImplIT {
         assertThat(searchInActiveIds(List.of("keyId3")), contains(PIETJE));
         assertThat(searchInActiveIds(List.of("keyId5")), contains(KLAASJE));
         assertThat(searchInActiveIds(List.of("otherKey", "keyId1")), empty());
+    } 
+
+
+    @Test
+    void searchByAdminRole() {
+        List<PersonalAccount> admins = personalAccountRepository.searchWithRoles(AccountSearchParams.builder().role(Role.ADMINISTRATOR).build());
+        assertThat(admins.get(0).getRoles(), is(Set.of(Role.ADMINISTRATOR)));
     }
     
     @Test
@@ -508,6 +518,10 @@ class AllRepositoriesImplIT {
                         .hash(HASH_2)
                         .uri(DOCKER_1_IML)
                         .build());
+    }
+
+    private List<String> searchByRole(Role role) {
+        return searchAccount(AccountSearchParams.builder().role(role).build());
     }
     
     private List<String> searchByName(String name) {

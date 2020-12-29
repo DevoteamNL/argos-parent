@@ -41,6 +41,8 @@ public interface AccountService {
 
     List<PersonalAccount> searchPersonalAccounts(AccountSearchParams params);
 
+    List<PersonalAccount> searchPersonalAccountsWithRoles(AccountSearchParams params);
+
     Optional<PersonalAccount> updatePersonalAccountRolesById(String accountId, Set<Role> roles);
 
     Optional<PersonalAccount> updatePersonalAccountLocalPermissionsById(String accountId, LocalPermissions localPermissions);

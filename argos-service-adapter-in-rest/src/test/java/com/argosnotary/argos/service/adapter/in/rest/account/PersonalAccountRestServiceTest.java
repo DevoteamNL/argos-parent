@@ -142,10 +142,11 @@ class PersonalAccountRestServiceTest {
         keyPair = KeyPair.createKeyPair(PRIVAT_KEY_PASSPHRASE);
         personalAccount.setActiveKeyPair(keyPair);
         personalAccount.setLocalPermissions(Set.of(localPermissions));
+        personalAccount.setRoles(Set.of(Role.ADMINISTRATOR));
         restPersonalAccount = new RestPersonalAccount();
         restPersonalAccount.setName("accountName");
         restPersonalAccount.id(ACCOUNT_ID);
-        restPersonalAccount.roles(List.of());
+        restPersonalAccount.roles(List.of(RestRole.ADMINISTRATOR));
         restProfile = new RestProfile();
         restProfile.email("email");
         restProfile.id(ACCOUNT_ID);
@@ -256,11 +257,12 @@ class PersonalAccountRestServiceTest {
 
     @Test
     void searchPersonalAccountsWithRoles() {
-        when(accountService.searchPersonalAccounts(any(AccountSearchParams.class))).thenReturn(List.of(personalAccount));
+        restPersonalAccount.roles(List.of(RestRole.ADMINISTRATOR));
+        when(accountService.searchPersonalAccountsWithRoles(any(AccountSearchParams.class))).thenReturn(List.of(personalAccount));
         ResponseEntity<List<RestPersonalAccount>> response = service.searchPersonalAccountsWithRoles(RestRole.ADMINISTRATOR, NAME);
         assertThat(response.getBody(), contains(restPersonalAccount));
         assertThat(response.getStatusCodeValue(), Matchers.is(200));
-        verify(accountService).searchPersonalAccounts(searchParamsArgumentCaptor.capture());
+        verify(accountService).searchPersonalAccountsWithRoles(searchParamsArgumentCaptor.capture());
         AccountSearchParams searchParams = searchParamsArgumentCaptor.getValue();
         assertThat(searchParams.getLocalPermissionsLabelId(), is(Optional.empty()));
         assertThat(searchParams.getRole(), is(Optional.of(Role.ADMINISTRATOR)));

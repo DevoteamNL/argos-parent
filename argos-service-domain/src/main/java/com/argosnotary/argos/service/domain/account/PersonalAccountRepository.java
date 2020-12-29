@@ -38,4 +38,6 @@ public interface PersonalAccountRepository {
     long getTotalNumberOfAccounts();
 
     List<PersonalAccount> search(AccountSearchParams params);
+
+    List<PersonalAccount> searchWithRoles(AccountSearchParams params);
 }

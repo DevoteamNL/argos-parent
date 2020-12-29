@@ -102,6 +102,11 @@ public class AccountServiceImpl implements AccountService {
     public List<PersonalAccount> searchPersonalAccounts(AccountSearchParams params) {
         return personalAccountRepository.search(params);
     }
+    
+    @Override
+    public List<PersonalAccount> searchPersonalAccountsWithRoles(AccountSearchParams params) {
+        return personalAccountRepository.searchWithRoles(params);
+    }
 
     @Override
     public Optional<PersonalAccount> updatePersonalAccountRolesById(String accountId, Set<Role> roles) {

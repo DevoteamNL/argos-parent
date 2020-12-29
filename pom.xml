@@ -101,7 +101,7 @@
         <pitest-maven.version>1.5.2</pitest-maven.version>
         <protonpack.version>1.15</protonpack.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
-        <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
+        <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
         <swagger-annotations.version>1.6.2</swagger-annotations.version>
         <swagger-ui.version>3.32.5</swagger-ui.version>
         <java.version>11</java.version>
