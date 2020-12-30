@@ -67,7 +67,7 @@ class FinishedSessionRepositoryImplTest {
     @Test
     void hadSessionId() {
         when(template.exists(any(Query.class), eq(COLLECTION))).thenReturn(true);
-        assertThat(repository.hasSessionId(SESSION_ID), is(true));
+        assertThat(repository.isUsedSessionId(SESSION_ID), is(true));
         verify(template).exists(queryArgumentCaptor.capture(), eq(COLLECTION));
         assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"sessionId\" : \"sessionId\"}, Fields: {}, Sort: {}"));
     }

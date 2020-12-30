@@ -53,6 +53,7 @@ import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.Period;
@@ -189,7 +190,7 @@ public class TestITService implements IntegrationTestServiceApi {
                 .setSubject(accountId)
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(issuedAt)
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plus(Period.ofDays(1))))
+                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plus(Duration.ofHours(12))))
                 .signWith(secretKey)
                 .compact();
     }

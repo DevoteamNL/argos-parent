@@ -52,7 +52,7 @@ class TokenProviderImplTest {
     void setUp() {
         tokenProvider = new TokenProviderImpl();
         ReflectionTestUtils.setField(tokenProvider, "secret", SECRET);
-        ReflectionTestUtils.setField(tokenProvider, "timeout", Duration.of(1, MINUTES));
+        ReflectionTestUtils.setField(tokenProvider, "expiration", Duration.of(1, MINUTES));
         ReflectionTestUtils.setField(tokenProvider, "sessionTimeout", Duration.of(2, MINUTES));
         ReflectionTestUtils.setField(tokenProvider, "refreshInterval", Duration.of(3, MINUTES));
         tokenProvider.init();
@@ -81,7 +81,7 @@ class TokenProviderImplTest {
 
     @Test
     void validateTokenExpired() {
-        ReflectionTestUtils.setField(tokenProvider, "timeout", Duration.of(1, ChronoUnit.NANOS));
+        ReflectionTestUtils.setField(tokenProvider, "expiration", Duration.of(1, ChronoUnit.NANOS));
         String token = tokenProvider.createToken("id");
         assertThat(tokenProvider.validateToken(token), is(false));
     }
@@ -104,14 +104,14 @@ class TokenProviderImplTest {
 
     @Test
     void refreshExpired() {
-        Date issuedAt = Date.from(LocalDateTime.now().minus(Duration.of(5, MINUTES)).atZone(ZoneId.systemDefault()).toInstant());
+        Date issuedAt = Date.from(LocalDateTime.now().minus(Duration.of(60, MINUTES)).atZone(ZoneId.systemDefault()).toInstant());
         when(tokenInfo.getIssuedAt()).thenReturn(issuedAt);
         assertThat(tokenProvider.refreshToken(tokenInfo).isPresent(), is(false));
     }
 
     @Test
     void shouldRefresh() {
-        Date issuedAt = Date.from(LocalDateTime.now().minus(Duration.of(3, MINUTES)).atZone(ZoneId.systemDefault()).toInstant());
+        Date issuedAt = Date.from(LocalDateTime.now().minus(Duration.of(16, MINUTES)).atZone(ZoneId.systemDefault()).toInstant());
         when(tokenInfo.getIssuedAt()).thenReturn(issuedAt);
         assertThat(tokenProvider.shouldRefresh(tokenInfo), is(true));
     }

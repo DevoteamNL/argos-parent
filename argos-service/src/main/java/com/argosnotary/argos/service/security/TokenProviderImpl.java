@@ -33,12 +33,13 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,14 +51,14 @@ public class TokenProviderImpl implements TokenProvider {
     @Value("${jwt.token.secret}")
     private String secret;
 
-    @Value("#{T(java.time.Duration).parse('${jwt.token.expiration}')}")
-    private Duration timeout;
+    @Value("#{T(java.time.Duration).parse('${jwt.token.refreshInterval}')}")
+    private Duration refreshInterval;
 
     @Value("#{T(java.time.Duration).parse('${jwt.token.sessionTimout}')}")
     private Duration sessionTimeout;
 
-    @Value("#{T(java.time.Duration).parse('${jwt.token.refreshInterval}')}")
-    private Duration refreshInterval;
+    @Value("#{T(java.time.Duration).parse('${jwt.token.expiration}')}")
+    private Duration expiration;
 
     private SecretKey secretKey;
 
@@ -94,19 +95,20 @@ public class TokenProviderImpl implements TokenProvider {
     }
 
     public boolean shouldRefresh(TokenInfo tokenInfo) {
-        return LocalDateTime.now().isAfter(toLocalDateTime(tokenInfo.getIssuedAt()).plus(refreshInterval));
+        return new Date().getTime() > tokenInfo.getIssuedAt().getTime() + refreshInterval.toMillis();
     }
 
     public boolean sessionExpired(TokenInfo tokenInfo) {
-        return LocalDateTime.now().isAfter(toLocalDateTime(tokenInfo.getIssuedAt()).plus(refreshInterval).plus(sessionTimeout));
+        return new Date().getTime() > tokenInfo.getIssuedAt().getTime() + refreshInterval.toMillis() + sessionTimeout.toMillis();
     }
 
     public String createToken(String accountId) {
+        Date now = new Date();
         return Jwts.builder()
                 .setSubject(accountId)
                 .setId(UUID.randomUUID().toString())
-                .setIssuedAt(new Date())
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plus(timeout)))
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime()+expiration.toMillis()))
                 .signWith(secretKey)
                 .compact();
     }

@@ -69,7 +69,7 @@ spring:
             iconUrl: /images/auth_icons/google.svg
             displayName: Google
           azure:
-            authorizationUri: http://localhost:8087/oauth2/v2.0/authorize
+            authorizationUri: http://localhost:8087/oauth2/v2.0/authorize-manual
             tokenUri: http://localhost:8087/oauth2/v2.0/token
             userInfoUri: http://localhost:8087/v1.0/me
             userNameAttribute: displayName
@@ -95,7 +95,7 @@ jwt:
   token:
     expiration: PT12H
     refreshInterval: PT15M
-    sessionTimout: PT5M
+    sessionTimout: PT45M
 
     # replace with the result of com.argosnotary.argos.service.security.TokenProvider.main
     secret: Z2LcVpgCuGtpb5rBDNIIWGe8RXqYGWDpWFjWhYQUS2Z8rjE2/GTJlu0s6BRYG0Mn0kV8StC9cFE83Jkl68RCkw==
@@ -105,7 +105,7 @@ jwt:
   # redirectUri mentioned by the client in the /oauth2/authorize request.
   # We're not using cookies because they won't work well in mobile clients.
 auth:
-  frontendRedirectBasePath: http://localhost:3000
+  frontendRedirectBasePath: http://localhost:8080
 
 logging:
   pattern:

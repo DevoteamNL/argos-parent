@@ -42,7 +42,7 @@ public class FinishedSessionRepositoryImpl implements FinishedSessionRepository 
     }
 
     @Override
-    public boolean hasSessionId(String sessionId) {
+    public boolean isUsedSessionId(String sessionId) {
         return template.exists(new Query(where(SESSION_ID_FIELD).is(sessionId)), COLLECTION);
     }
 

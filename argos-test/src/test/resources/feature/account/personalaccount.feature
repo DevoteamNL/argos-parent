@@ -318,7 +318,7 @@ Feature: Personal Account
     Then status 401
 
   Scenario: should refresh token
-    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 16}
+    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 18}
     * configure headers = call read('classpath:headers.js') { token: #(extraToken.response.token)}
     Given path '/api/personalaccount/me'
     When method GET
@@ -326,8 +326,12 @@ Feature: Personal Account
     Then match response.message == 'refresh token'
 
   Scenario: refresh token
-    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 16}
+    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 32}
     * configure headers = call read('classpath:headers.js') { token: #(extraToken.response.token)}
+    Given path '/api/personalaccount/me'
+    When method GET
+    Then status 401
+    Then match response.message == 'refresh token'
     Given path '/api/personalaccount/me/refresh'
     When method GET
     Then status 200
@@ -338,7 +342,7 @@ Feature: Personal Account
     Then match response.name == 'Default User'
 
   Scenario: token session expired
-    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 21}
+    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 62}
     * configure headers = call read('classpath:headers.js') { token: #(extraToken.response.token)}
     Given path '/api/personalaccount/me'
     When method GET
@@ -346,7 +350,7 @@ Feature: Personal Account
     Then match response == ''
 
   Scenario: token session expired can not refresh token
-    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 21}
+    * def extraToken = call read('classpath:feature/account/create-token.feature') {accountId: #(defaultTestData.personalAccounts['default-pa1'].accountId), minutesEarlier: 720}
     * configure headers = call read('classpath:headers.js') { token: #(extraToken.response.token)}
     Given path '/api/personalaccount/me/refresh'
     When method GET

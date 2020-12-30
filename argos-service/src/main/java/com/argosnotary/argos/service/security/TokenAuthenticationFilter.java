@@ -45,7 +45,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         Optional<TokenInfo> optionalTokenInfo = getJwtFromRequest(request).filter(tokenProvider::validateToken).map(tokenProvider::getTokenInfo);
         if (optionalTokenInfo.isPresent()) {
             TokenInfo tokenInfo = optionalTokenInfo.get();
-            if (!tokenProvider.sessionExpired(tokenInfo) && !finishedSessionRepository.hasSessionId(tokenInfo.getSessionId())) {
+            if (!tokenProvider.sessionExpired(tokenInfo) && !finishedSessionRepository.isUsedSessionId(tokenInfo.getSessionId())) {
                 if (!"/api/personalaccount/me/refresh".equals(request.getRequestURI()) && tokenProvider.shouldRefresh(tokenInfo)) {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
