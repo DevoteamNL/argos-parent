@@ -1,41 +1,43 @@
 {
-  "name": "root1",
-  "type": "LABEL",
-  "referenceId": "#uuid",
-  "hasChildren": true,
-  "children": [
-    {
-      "name": "childaroot1",
-      "type": "LABEL",
-      "referenceId": "#uuid",
-      "hasChildren": true,
-      "children": [
-        {
-          "name": "sa-1",
-          "type": "SERVICE_ACCOUNT",
-          "referenceId": "#uuid",
-          "hasChildren": false,
-          "children": [],
-          "permissions": [
-            "LOCAL_PERMISSION_EDIT"
-          ]
-        },
-        {
-          "name": "supply-chain-1",
-          "type": "SUPPLY_CHAIN",
-          "referenceId": "#uuid",
-          "hasChildren": false,
-          "children": [],
-          "permissions": [
-            "LOCAL_PERMISSION_EDIT"
-          ]
-        }
-      ],
-      "permissions": [
-        "LOCAL_PERMISSION_EDIT"
-      ]
-    }
-  ],
-  "permissions": [
-  ]
+	"name": "root1",
+	"type": "LABEL",
+	"referenceId": "#uuid",
+	"hasChildren": true,
+	"children": [
+		{
+			"name": "childaroot1",
+			"type": "LABEL",
+			"referenceId": "#uuid",
+			"parentLabelId": "#uuid",
+			"hasChildren": true,
+			"children": [
+				{
+					"name": "sa-1",
+					"type": "SERVICE_ACCOUNT",
+					"referenceId": "#uuid",
+					"parentLabelId": "#uuid",
+					"hasChildren": false,
+					"children": [],
+					"permissions": [
+						"LOCAL_PERMISSION_EDIT"
+					]
+				},
+				{
+					"name": "supply-chain-1",
+					"type": "SUPPLY_CHAIN",
+					"referenceId": "#uuid",
+					"parentLabelId": "#uuid",
+					"hasChildren": false,
+					"children": [],
+					"permissions": [
+						"LOCAL_PERMISSION_EDIT"
+					]
+				}
+			],
+			"permissions": [
+				"LOCAL_PERMISSION_EDIT"
+			]
+		}
+	],
+	"permissions": []
 }

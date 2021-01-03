@@ -1,36 +1,36 @@
 {
-  "name": "root1",
-  "type": "LABEL",
-  "referenceId": "#uuid",
-  "hasChildren": true,
-  "children": [
-    {
-      "name": "childaroot1",
-      "type": "LABEL",
-      "referenceId": "#uuid",
-      "hasChildren": true,
-      "children": [
-      ],
-      "permissions": [
-        "READ",
-        "TREE_EDIT"
-      ]
-    },
-    {
-      "name": "childbroot1",
-      "type": "LABEL",
-      "referenceId": "#uuid",
-      "hasChildren": false,
-      "children": [
-      ],
-      "permissions": [
-        "READ",
-        "TREE_EDIT"
-      ]
-    }
-  ],
-  "permissions": [
-    "READ",
-    "TREE_EDIT"
-  ]
+	"name": "root1",
+	"type": "LABEL",
+	"referenceId": "#uuid",
+	"hasChildren": true,
+	"children": [
+		{
+			"name": "childaroot1",
+			"type": "LABEL",
+			"referenceId": "#uuid",
+			"parentLabelId": "#uuid",
+			"hasChildren": true,
+			"children": [],
+			"permissions": [
+				"READ",
+				"TREE_EDIT"
+			]
+		},
+		{
+			"name": "childbroot1",
+			"type": "LABEL",
+			"referenceId": "#uuid",
+			"parentLabelId": "#uuid",
+			"hasChildren": false,
+			"children": [],
+			"permissions": [
+				"READ",
+				"TREE_EDIT"
+			]
+		}
+	],
+	"permissions": [
+		"READ",
+		"TREE_EDIT"
+	]
 }

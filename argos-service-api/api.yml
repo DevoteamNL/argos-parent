@@ -1731,6 +1731,8 @@ components:
             - SERVICE_ACCOUNT
         referenceId:
           $ref: "#/components/schemas/UUID"
+        parentLabelId:
+          $ref: "#/components/schemas/UUID"
         hasChildren:
           type: boolean
         children:

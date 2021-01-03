@@ -1,246 +1,263 @@
 [
-	{
-		"name": "default-root-label",
-		"type": "LABEL",
-		"referenceId": "#uuid",
-		"hasChildren": true,
-		"children": [
-			{
-				"name": "default-sa1",
-				"type": "SERVICE_ACCOUNT",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"LINK_ADD",
-					"READ",
-					"TREE_EDIT"
-				]
-			},
-			{
-				"name": "default-sa2",
-				"type": "SERVICE_ACCOUNT",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"LINK_ADD",
-					"READ",
-					"TREE_EDIT"
-				]
-			},
-			{
-				"name": "default-sa3",
-				"type": "SERVICE_ACCOUNT",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"LINK_ADD",
-					"READ",
-					"TREE_EDIT"
-				]
-			},
-			{
-				"name": "default-sa4",
-				"type": "SERVICE_ACCOUNT",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"LINK_ADD",
-					"READ",
-					"TREE_EDIT"
-				]
-			},
-			{
-				"name": "default-sa5",
-				"type": "SERVICE_ACCOUNT",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"LINK_ADD",
-					"READ",
-					"TREE_EDIT"
-				]
-			}
-		],
-		"permissions": [
-			"LINK_ADD",
-			"READ",
-			"TREE_EDIT"
-		]
-	},
-	{
-		"name": "root1",
-		"type": "LABEL",
-		"referenceId": "#uuid",
-		"hasChildren": true,
-		"children": [
-			{
-				"name": "childaroot1",
-				"type": "LABEL",
-				"referenceId": "#uuid",
-				"hasChildren": true,
-				"children": [
-					{
-						"name": "sa-1",
-						"type": "SERVICE_ACCOUNT",
-						"referenceId": "#uuid",
-						"hasChildren": false,
-						"children": [],
-						"permissions": [
-							"READ",
-							"TREE_EDIT"
-						]
-					},
-					{
-						"name": "supply-chain-1",
-						"type": "SUPPLY_CHAIN",
-						"referenceId": "#uuid",
-						"hasChildren": false,
-						"children": [],
-						"permissions": [
-							"READ",
-							"TREE_EDIT"
-						]
-					}
-				],
-				"permissions": [
-					"READ",
-					"TREE_EDIT"
-				]
-			},
-			{
-				"name": "childbroot1",
-				"type": "LABEL",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"READ",
-					"TREE_EDIT"
-				]
-			}
-		],
-		"permissions": [
-			"READ",
-			"TREE_EDIT"
-		]
-	},
-	{
-		"name": "root2",
-		"type": "LABEL",
-		"referenceId": "#uuid",
-		"hasChildren": true,
-		"children": [
-			{
-				"name": "childaroot2",
-				"type": "LABEL",
-				"referenceId": "#uuid",
-				"hasChildren": true,
-				"children": [
-					{
-						"name": "sa-2",
-						"type": "SERVICE_ACCOUNT",
-						"referenceId": "#uuid",
-						"hasChildren": false,
-						"children": [],
-						"permissions": [
-							"READ",
-							"TREE_EDIT"
-						]
-					},
-					{
-						"name": "supply-chain-2",
-						"type": "SUPPLY_CHAIN",
-						"referenceId": "#uuid",
-						"hasChildren": false,
-						"children": [],
-						"permissions": [
-							"READ",
-							"TREE_EDIT"
-						]
-					}
-				],
-				"permissions": [
-					"READ",
-					"TREE_EDIT"
-				]
-			},
-			{
-				"name": "childbroot2",
-				"type": "LABEL",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"READ",
-					"TREE_EDIT"
-				]
-			}
-		],
-		"permissions": [
-			"READ",
-			"TREE_EDIT"
-		]
-	},
-	{
-		"name": "root3",
-		"type": "LABEL",
-		"referenceId": "#uuid",
-		"hasChildren": true,
-		"children": [
-			{
-				"name": "childaroot3",
-				"type": "LABEL",
-				"referenceId": "#uuid",
-				"hasChildren": true,
-				"children": [
-					{
-						"name": "sa-3",
-						"type": "SERVICE_ACCOUNT",
-						"referenceId": "#uuid",
-						"hasChildren": false,
-						"children": [],
-						"permissions": [
-							"READ",
-							"TREE_EDIT"
-						]
-					},
-					{
-						"name": "supply-chain-3",
-						"type": "SUPPLY_CHAIN",
-						"referenceId": "#uuid",
-						"hasChildren": false,
-						"children": [],
-						"permissions": [
-							"READ",
-							"TREE_EDIT"
-						]
-					}
-				],
-				"permissions": [
-					"READ",
-					"TREE_EDIT"
-				]
-			},
-			{
-				"name": "childbroot3",
-				"type": "LABEL",
-				"referenceId": "#uuid",
-				"hasChildren": false,
-				"children": [],
-				"permissions": [
-					"READ",
-					"TREE_EDIT"
-				]
-			}
-		],
-		"permissions": [
-			"READ",
-			"TREE_EDIT"
-		]
-	}
+    {
+        "name": "default-root-label",
+        "type": "LABEL",
+        "referenceId": "#uuid",
+        "hasChildren": true,
+        "children": [
+            {
+                "name": "default-sa1",
+                "type": "SERVICE_ACCOUNT",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "LINK_ADD",
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            },
+            {
+                "name": "default-sa2",
+                "type": "SERVICE_ACCOUNT",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "LINK_ADD",
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            },
+            {
+                "name": "default-sa3",
+                "type": "SERVICE_ACCOUNT",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "LINK_ADD",
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            },
+            {
+                "name": "default-sa4",
+                "type": "SERVICE_ACCOUNT",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "LINK_ADD",
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            },
+            {
+                "name": "default-sa5",
+                "type": "SERVICE_ACCOUNT",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "LINK_ADD",
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            }
+        ],
+        "permissions": [
+            "LINK_ADD",
+            "READ",
+            "TREE_EDIT"
+        ]
+    },
+    {
+        "name": "root1",
+        "type": "LABEL",
+        "referenceId": "#uuid",
+        "hasChildren": true,
+        "children": [
+            {
+                "name": "childaroot1",
+                "type": "LABEL",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": true,
+                "children": [
+                    {
+                        "name": "sa-1",
+                        "type": "SERVICE_ACCOUNT",
+                        "referenceId": "#uuid",
+                        "parentLabelId": "#uuid",
+                        "hasChildren": false,
+                        "children": [],
+                        "permissions": [
+                            "READ",
+                            "TREE_EDIT"
+                        ]
+                    },
+                    {
+                        "name": "supply-chain-1",
+                        "type": "SUPPLY_CHAIN",
+                        "referenceId": "#uuid",
+                        "parentLabelId": "#uuid",
+                        "hasChildren": false,
+                        "children": [],
+                        "permissions": [
+                            "READ",
+                            "TREE_EDIT"
+                        ]
+                    }
+                ],
+                "permissions": [
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            },
+            {
+                "name": "childbroot1",
+                "type": "LABEL",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            }
+        ],
+        "permissions": [
+            "READ",
+            "TREE_EDIT"
+        ]
+    },
+    {
+        "name": "root2",
+        "type": "LABEL",
+        "referenceId": "#uuid",
+        "hasChildren": true,
+        "children": [
+            {
+                "name": "childaroot2",
+                "type": "LABEL",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": true,
+                "children": [
+                    {
+                        "name": "sa-2",
+                        "type": "SERVICE_ACCOUNT",
+                        "referenceId": "#uuid",
+                        "parentLabelId": "#uuid",
+                        "hasChildren": false,
+                        "children": [],
+                        "permissions": [
+                            "READ",
+                            "TREE_EDIT"
+                        ]
+                    },
+                    {
+                        "name": "supply-chain-2",
+                        "type": "SUPPLY_CHAIN",
+                        "referenceId": "#uuid",
+                        "parentLabelId": "#uuid",
+                        "hasChildren": false,
+                        "children": [],
+                        "permissions": [
+                            "READ",
+                            "TREE_EDIT"
+                        ]
+                    }
+                ],
+                "permissions": [
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            },
+            {
+                "name": "childbroot2",
+                "type": "LABEL",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            }
+        ],
+        "permissions": [
+            "READ",
+            "TREE_EDIT"
+        ]
+    },
+    {
+        "name": "root3",
+        "type": "LABEL",
+        "referenceId": "#uuid",
+        "hasChildren": true,
+        "children": [
+            {
+                "name": "childaroot3",
+                "type": "LABEL",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": true,
+                "children": [
+                    {
+                        "name": "sa-3",
+                        "type": "SERVICE_ACCOUNT",
+                        "referenceId": "#uuid",
+                        "parentLabelId": "#uuid",
+                        "hasChildren": false,
+                        "children": [],
+                        "permissions": [
+                            "READ",
+                            "TREE_EDIT"
+                        ]
+                    },
+                    {
+                        "name": "supply-chain-3",
+                        "type": "SUPPLY_CHAIN",
+                        "referenceId": "#uuid",
+                        "parentLabelId": "#uuid",
+                        "hasChildren": false,
+                        "children": [],
+                        "permissions": [
+                            "READ",
+                            "TREE_EDIT"
+                        ]
+                    }
+                ],
+                "permissions": [
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            },
+            {
+                "name": "childbroot3",
+                "type": "LABEL",
+                "referenceId": "#uuid",
+                "parentLabelId": "#uuid",
+                "hasChildren": false,
+                "children": [],
+                "permissions": [
+                    "READ",
+                    "TREE_EDIT"
+                ]
+            }
+        ],
+        "permissions": [
+            "READ",
+            "TREE_EDIT"
+        ]
+    }
 ]
