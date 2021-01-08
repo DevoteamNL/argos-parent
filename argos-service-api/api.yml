@@ -1707,7 +1707,7 @@ components:
         - name
       properties:
         id:
-          $ref: "#/components/schemas/NameString"
+          $ref: "#/components/schemas/UUID"
           readOnly: true
         name:
           $ref: "#/components/schemas/NameString"
