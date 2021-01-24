@@ -172,7 +172,7 @@ public class PersonalAccountRestService implements PersonalAccountApi {
     }
 
     @Override
-    @PermissionCheck(permissions = {Permission.LOCAL_PERMISSION_EDIT})
+    @PermissionCheck(permissions = {Permission.LOCAL_PERMISSION_EDIT, Permission.TREE_EDIT})
     public ResponseEntity<RestLocalPermissions> getLocalPermissionsForLabel(String accountId, @LabelIdCheckParam String labelId) {
         PersonalAccount personalAccount = accountService.getPersonalAccountById(accountId).orElseThrow(this::accountNotFound);
         return ResponseEntity.ok(personalAccount.getLocalPermissions().stream()
