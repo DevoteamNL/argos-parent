@@ -77,3 +77,13 @@ drone pipeline.
 ## How to run
 See [developer documentation](docs/DEVELOPER.md)
 
+## Sign Drone pipeline
+
+```sh
+export DRONE_SERVER=https://drone.argosnotary.com
+export DRONE_TOKEN=<drone token>
+
+drone sign --save argosnotary/argos-parent ./drone.yml
+```
+
+
