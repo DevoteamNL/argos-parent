@@ -33,17 +33,15 @@ public class MatchRule extends Rule {
     private String sourcePathPrefix;
     private ArtifactType destinationType;
     private String destinationPathPrefix;
-    private String destinationSegmentName;
     private String destinationStepName;
 
     @Builder
     public MatchRule(String pattern, String sourcePathPrefix, @NonNull ArtifactType destinationType,
-            String destinationPathPrefix, String destinationSegmentName, String destinationStepName) {
+            String destinationPathPrefix, String destinationStepName) {
         super(RuleType.MATCH, pattern);
         this.sourcePathPrefix = sourcePathPrefix;
         this.destinationPathPrefix = destinationPathPrefix;
         this.destinationType = destinationType;
-        this.destinationSegmentName = destinationSegmentName;
         this.destinationStepName = destinationStepName;
     }
 }

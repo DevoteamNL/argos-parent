@@ -37,7 +37,6 @@ class RestApprovalConfigurationTest {
     void emptyRestLayoutMetaBlock() {
         assertThat(validate(new RestApprovalConfiguration()), contains(expectedErrors(
                 "artifactCollectorSpecifications", "size must be between 1 and 20",
-                "segmentName", "must not be null",
                 "stepName", "must not be null")));
     }
 
@@ -45,24 +44,11 @@ class RestApprovalConfigurationTest {
     void incorrectStepName() throws URISyntaxException {
         assertThat(validate(new RestApprovalConfiguration()
                 .stepName("name%")
-                .segmentName("segment").
-                        artifactCollectorSpecifications(singletonList(new RestArtifactCollectorSpecification()
+                .artifactCollectorSpecifications(singletonList(new RestArtifactCollectorSpecification()
                                 .name("xldeploy").type(RestArtifactCollectorSpecification.TypeEnum.XLDEPLOY)
                                 .uri(new URI("http://xldeploy.nl"))))
         ), contains(expectedErrors(
                 "stepName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"")));
-
-    }
-
-    @Test
-    void incorrectSegmentName() throws URISyntaxException {
-        assertThat(validate(new RestApprovalConfiguration().stepName("name").segmentName("&segment")
-                .artifactCollectorSpecifications(singletonList(new RestArtifactCollectorSpecification()
-                        .name("xldeploy")
-                        .type(RestArtifactCollectorSpecification.TypeEnum.XLDEPLOY)
-                        .uri(new URI("http://xldeploy.nl"))))
-        ), contains(expectedErrors(
-                "segmentName", "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\"")));
 
     }
 }

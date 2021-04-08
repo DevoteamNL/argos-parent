@@ -1,7 +1,5 @@
 {
   "link": {
-    "runId": "69af2dd",
-    "layoutSegmentName": "segment1",
     "materials": [
       {
         "uri": "src/test/java/com/argosnotary/argos/test/ArgosServiceTestIT.java",

@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import com.argosnotary.argos.domain.layout.Layout;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.domain.layout.rule.MatchRule;
 import com.argosnotary.argos.domain.layout.rule.Rule;
@@ -48,11 +47,9 @@ class ClonerTest {
         assertNull(Mappers.getMapper(Cloner.class).clone((Layout)null));
         assertNull(Mappers.getMapper(Cloner.class).clone((Step)null));
         assertNull(Mappers.getMapper(Cloner.class).clone((MatchRule)null));
-        assertNull(Mappers.getMapper(Cloner.class).clone((LayoutSegment)null));
         assertNull(Mappers.getMapper(Cloner.class).clone((List<Rule>)null));
         assertNull(Mappers.getMapper(Cloner.class).cloneSteps((List<Step>)null));
         assertNull(Mappers.getMapper(Cloner.class).cloneArtifacts((List<Artifact>)null));
-        assertNull(Mappers.getMapper(Cloner.class).cloneLayoutSegments((List<LayoutSegment>)null));
     }
 
 }

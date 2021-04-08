@@ -32,7 +32,6 @@ import java.util.List;
 @ToString
 public class ApprovalConfiguration {
     private String stepName;
-    private String segmentName;
     private String supplyChainId;
     private List<ArtifactCollectorSpecification> artifactCollectorSpecifications;
 }

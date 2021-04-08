@@ -61,11 +61,11 @@ class ApprovalConfigurationRepositoryImplTest {
     }
 
     @Test
-    void findBySupplyChainIdSegmentNameAndStepName() {
+    void findBySupplyChainIdAndStepName() {
         when(template.findOne(any(), eq(ApprovalConfiguration.class), eq(COLLECTION))).thenReturn(approvalConfiguration);
-        assertThat(approvalConfigurationRepository.findBySupplyChainIdSegmentNameAndStepName("supplyChain", "segmentName", "stepName"), is(Optional.of(approvalConfiguration)));
+        assertThat(approvalConfigurationRepository.findBySupplyChainIdAndStepName("supplyChain", "stepName"), is(Optional.of(approvalConfiguration)));
         verify(template).findOne(queryArgumentCaptor.capture(), eq(ApprovalConfiguration.class), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"supplyChainId\" : \"supplyChain\", \"$and\" : [{ \"segmentName\" : \"segmentName\"}, { \"stepName\" : \"stepName\"}]}, Fields: {}, Sort: {}"));
+        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"supplyChainId\" : \"supplyChain\", \"$and\" : [{ \"stepName\" : \"stepName\"}]}, Fields: {}, Sort: {}"));
     }
 
 

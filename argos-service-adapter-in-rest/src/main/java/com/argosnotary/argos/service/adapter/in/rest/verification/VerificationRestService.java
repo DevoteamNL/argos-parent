@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.argosnotary.argos.service.adapter.in.rest.supplychain.SupplyChainLabelIdExtractor.SUPPLY_CHAIN_LABEL_ID_EXTRACTOR;
 
@@ -79,7 +80,7 @@ public class VerificationRestService implements VerificationApi {
         LayoutMetaBlock layoutMetaBlock = repository.findBySupplyChainId(supplyChainId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "no active layout could be found for supplychain:" + supplyChainId));
 
-        List<Artifact> expectedProducts = artifactMapper.mapToArtifacts(restVerifyCommand.getExpectedProducts());
+        Set<Artifact> expectedProducts = artifactMapper.mapToArtifacts(restVerifyCommand.getExpectedProducts());
         VerificationRunResult verificationRunResult = verificationProvider.verifyRun(layoutMetaBlock, expectedProducts);
         return ResponseEntity.ok(verificationResultMapper.mapToRestVerificationResult(verificationRunResult));
     }

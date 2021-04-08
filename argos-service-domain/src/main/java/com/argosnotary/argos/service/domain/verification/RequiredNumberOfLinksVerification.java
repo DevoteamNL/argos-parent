@@ -19,14 +19,12 @@
  */
 package com.argosnotary.argos.service.domain.verification;
 
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.domain.link.LinkMetaBlock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,33 +42,25 @@ public class RequiredNumberOfLinksVerification implements Verification {
     @Override
     public VerificationRunResult verify(VerificationContext context) {
 
-        return context.getLayoutMetaBlock().getLayout().getLayoutSegments()
+        return context.getLayoutMetaBlock().getLayout().getSteps()
                 .stream()
-                .filter(segment -> !verifyForSegment(segment, context))
+                .filter(step -> !isValid(step, context))
                 .findFirst()
                 .map(segment -> VerificationRunResult.builder().runIsValid(false).build())
                 .orElse(VerificationRunResult.okay());
 
     }
 
-    private boolean verifyForSegment(LayoutSegment segment, VerificationContext context) {
-        Optional<String> invalidStep = context
-                .getStepNamesBySegmentName(segment.getName())
-                .stream()
-                .filter(stepName -> !isValid(segment.getName(), stepName, context))
-                .findFirst();
-
-        return invalidStep.isEmpty();
-    }
-
-    private Boolean isValid(String segmentName, String stepName, VerificationContext context) {
-        Map<Integer, Set<LinkMetaBlock>> linkMetaBlockMap = context
-                .getLinkMetaBlocksBySegmentNameAndStepName(segmentName, stepName).stream()
+    private Boolean isValid(Step step, VerificationContext context) {
+        Map<String, Set<LinkMetaBlock>> stepLinkMetaBlockMap = context.getStepNameLinkMetaBlockMap();
+        
+        Map<Integer, Set<LinkMetaBlock>> linkMetaBlockMap = stepLinkMetaBlockMap
+                .get(step.getName()).stream()
                 .collect(groupingBy(f -> f.getLink().hashCode(), Collectors.toSet()));
         if (linkMetaBlockMap.size() == 1) {
-            return isValid(linkMetaBlockMap.values().iterator().next(), context.getStepBySegmentNameAndStepName(segmentName, stepName));
+            return isValid(linkMetaBlockMap.values().iterator().next(), step);
         } else {
-            log.info("[{}] different link objects in metablocks for step [{}]", linkMetaBlockMap.size(), stepName);
+            log.info("[{}] different link objects in metablocks for step [{}]", linkMetaBlockMap.size(), step);
             return false;
         }
     }

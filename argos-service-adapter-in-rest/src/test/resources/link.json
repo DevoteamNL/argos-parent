@@ -6,8 +6,6 @@
     "keyAlgorithm": "EC"
   },
   "link": {
-    "runId": "runId",
-    "layoutSegmentName": "layoutSegmentName",
     "materials": [
       {
         "uri": "materialsUri1",

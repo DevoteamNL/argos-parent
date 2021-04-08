@@ -29,15 +29,7 @@
       <f:textbox />
     </f:entry>
 
-    <f:entry title="${%layoutSegmentName}" field="layoutSegmentName">
-      <f:textbox />
-    </f:entry>
-
     <f:entry title="${%stepName}" field="stepName">
-      <f:textbox />
-    </f:entry>
-
-    <f:entry title="${%runId}" field="runId">
       <f:textbox />
     </f:entry>
 </j:jelly>

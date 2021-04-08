@@ -37,5 +37,5 @@ public class Layout {
     private List<PublicKey> keys;
     private List<String> authorizedKeyIds;
     private List<MatchRule> expectedEndProducts;
-    private List<LayoutSegment> layoutSegments;
+    private List<Step> steps;
 }

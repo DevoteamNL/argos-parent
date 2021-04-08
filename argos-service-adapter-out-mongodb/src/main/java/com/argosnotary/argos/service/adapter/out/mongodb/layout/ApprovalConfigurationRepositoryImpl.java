@@ -36,7 +36,6 @@ import java.util.Optional;
 public class ApprovalConfigurationRepositoryImpl implements ApprovalConfigurationRepository {
     public static final String COLLECTION = "approvalConfigurations";
     public static final String SUPPLYCHAIN_ID_FIELD = "supplyChainId";
-    public static final String SEGMENT_NAME_FIELD = "segmentName";
     public static final String STEP_NAME_FIELD = "stepName";
     private final MongoTemplate template;
 
@@ -46,10 +45,9 @@ public class ApprovalConfigurationRepositoryImpl implements ApprovalConfiguratio
         template.insert(approvalConfigurations, COLLECTION);
     }
 
-    public Optional<ApprovalConfiguration> findBySupplyChainIdSegmentNameAndStepName(String supplyChainId, String segmentName, String stepName) {
+    public Optional<ApprovalConfiguration> findBySupplyChainIdAndStepName(String supplyChainId, String stepName) {
         Criteria criteria = Criteria.where(SUPPLYCHAIN_ID_FIELD).is(supplyChainId);
         List<Criteria> andCriteria = new ArrayList<>();
-        andCriteria.add(Criteria.where(SEGMENT_NAME_FIELD).is(segmentName));
         andCriteria.add(Criteria.where(STEP_NAME_FIELD).is(stepName));
         criteria.andOperator(andCriteria.toArray(new Criteria[0]));
         Query query = new Query(criteria);

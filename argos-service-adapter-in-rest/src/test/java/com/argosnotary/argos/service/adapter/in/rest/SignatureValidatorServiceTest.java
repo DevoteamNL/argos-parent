@@ -26,7 +26,6 @@ import com.argosnotary.argos.domain.crypto.Signature;
 import com.argosnotary.argos.domain.crypto.signing.JsonSigningSerializer;
 import com.argosnotary.argos.domain.crypto.signing.Signer;
 import com.argosnotary.argos.domain.layout.Layout;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.domain.link.Artifact;
 import com.argosnotary.argos.domain.link.Link;
@@ -92,14 +91,13 @@ class SignatureValidatorServiceTest {
     	service = new SignatureValidatorService(accountService);
     	
     	Step step = Step.builder().build();
-        LayoutSegment segment = LayoutSegment.builder().steps(List.of(step)).build();
 
         // valid
         pair = KeyPair.createKeyPair(PASSPHRASE);
         keyId = KeyIdProvider.computeKeyId(pair.getPublicKey());
         domainPublicKey = new PublicKey(keyId, pair.getPublicKey());
         layout = Layout.builder()
-        		.layoutSegments(List.of(segment))
+                .steps(List.of(step))
         		.keys(List.of(domainPublicKey)).build();
         link = Link.builder()
                 .products(singletonList(Artifact.builder().hash("hash2").uri("/path/tofile2").build()))
@@ -112,7 +110,7 @@ class SignatureValidatorServiceTest {
         keyId2 = KeyIdProvider.computeKeyId(pair2.getPublicKey());
         domainPublicKey2 = new PublicKey(keyId2, pair2.getPublicKey());
         layout2 = Layout.builder()
-        		.layoutSegments(List.of(segment))
+                .steps(List.of(step))
         		.keys(List.of(domainPublicKey, domainPublicKey2)).build();
         layoutSignature2 = Signer.sign(pair2, PASSPHRASE, new JsonSigningSerializer().serialize(layout2));
         linkSignature2 = Signer.sign(pair2, PASSPHRASE, new JsonSigningSerializer().serialize(link));

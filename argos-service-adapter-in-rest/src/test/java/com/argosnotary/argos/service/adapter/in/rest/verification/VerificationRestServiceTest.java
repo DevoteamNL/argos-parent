@@ -39,6 +39,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -100,7 +101,7 @@ class VerificationRestServiceTest {
         when(layoutMetaBlockRepository.findBySupplyChainId(eq("supplyChainId")))
                 .thenReturn(Optional.of(layoutMetaBlockMetaBlock));
         when(restVerifyCommand.getExpectedProducts()).thenReturn(singletonList(restArtifact));
-        when(artifactMapper.mapToArtifacts(any())).thenReturn(singletonList(artifact));
+        when(artifactMapper.mapToArtifacts(any())).thenReturn(Set.of(artifact));
         when(verificationProvider.verifyRun(any(), any())).thenReturn(runResult);
         when(verificationResultMapper.mapToRestVerificationResult(eq(runResult))).thenReturn(restVerificationResult);
         ResponseEntity<RestVerificationResult> result = verificationRestService.performVerification("supplyChainId", restVerifyCommand);

@@ -30,13 +30,13 @@ class MatchRuleTest {
     @Test
     void nonNullTest() {
         Throwable exception = assertThrows(java.lang.NullPointerException.class, () -> {
-            MatchRule rule = new MatchRule(null, null, ArtifactType.MATERIALS, null, null, null); 
+            MatchRule rule = new MatchRule(null, null, ArtifactType.MATERIALS, null, null); 
           });
         
         assertEquals("pattern is marked non-null but is null", exception.getMessage());
         
         exception = assertThrows(java.lang.NullPointerException.class, () -> {
-            MatchRule rule = new MatchRule("", null, null, null, null, null); 
+            MatchRule rule = new MatchRule("", null, null, null, null); 
           });
         
         assertEquals("destinationType is marked non-null but is null", exception.getMessage());
@@ -47,12 +47,11 @@ class MatchRuleTest {
     void toStringTest() {
         MatchRule rule = MatchRule.builder()
                 .destinationPathPrefix("destinationPathPrefix")
-                .destinationSegmentName("destinationSegmentName")
                 .destinationType(ArtifactType.MATERIALS)
                 .pattern("**")
                 .build();
         
-        assertEquals("MatchRule(sourcePathPrefix=null, destinationType=MATERIALS, destinationPathPrefix=destinationPathPrefix, destinationSegmentName=destinationSegmentName, destinationStepName=null)", rule.toString());
+        assertEquals("MatchRule(sourcePathPrefix=null, destinationType=MATERIALS, destinationPathPrefix=destinationPathPrefix, destinationStepName=null)", rule.toString());
         
     }
 

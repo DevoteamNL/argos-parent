@@ -20,6 +20,7 @@
 package com.argosnotary.argos.service.domain.verification;
 
 import com.argosnotary.argos.domain.layout.LayoutMetaBlock;
+import com.argosnotary.argos.domain.layout.rule.MatchRule;
 import com.argosnotary.argos.domain.link.Artifact;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -46,8 +49,8 @@ public class VerificationProvider {
         verifications.forEach(verification -> log.info("{} : {}", verification.getPriority(), verification.getClass().getSimpleName()));
     }
 
-    public VerificationRunResult verifyRun(LayoutMetaBlock layoutMetaBlock, List<Artifact> productsToVerify) {
-
+    public VerificationRunResult verifyRun(LayoutMetaBlock layoutMetaBlock, Set<Artifact> productsToVerify) {
+        
         List<VerificationContext> possibleVerificationContexts = verificationContextsProvider
                 .createPossibleVerificationContexts(layoutMetaBlock, productsToVerify);
 
@@ -72,5 +75,16 @@ public class VerificationProvider {
                 })
                 .filter(VerificationRunResult::isRunIsValid)
                 .findFirst().orElse(VerificationRunResult.valid(false));
+    }
+    
+    /* Check if all expected end products Match Rules are used */
+    private VerificationRunResult expectedProductsComplete(LayoutMetaBlock layoutMetaBlock, Set<Artifact> productsToVerify) {
+        List<MatchRule> rules = layoutMetaBlock.getLayout().getExpectedEndProducts();
+        for (MatchRule rule: rules) {
+            if (ArtifactsVerificationContext.filterArtifacts(new HashSet<>(productsToVerify), rule.getPattern(), rule.getSourcePathPrefix()).isEmpty()) {
+                return VerificationRunResult.valid(false);
+            }
+        }
+        return VerificationRunResult.valid(true);
     }
 }

@@ -74,10 +74,9 @@ public class LinkBuilderImpl implements LinkBuilder {
     
     @Override
     public LinkMetaBlock create(char[] signingKeyPassphrase) {
-        Link link = Link.builder().runId(linkBuilderSettings.getRunId())
+        Link link = Link.builder()
                 .materials(materials)
                 .products(products)
-                .layoutSegmentName(linkBuilderSettings.getLayoutSegmentName())
                 .stepName(linkBuilderSettings.getStepName()).build();
         ArgosServiceClient argosServiceClient = new ArgosServiceClient(settings, signingKeyPassphrase);
         ServiceAccountKeyPair keyPair = Mappers.getMapper(RestMapper.class).convertFromRestServiceAccountKeyPair(argosServiceClient.getKeyPair());

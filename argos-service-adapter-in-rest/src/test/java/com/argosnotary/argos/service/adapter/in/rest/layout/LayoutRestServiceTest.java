@@ -25,7 +25,6 @@ import com.argosnotary.argos.domain.crypto.KeyPair;
 import com.argosnotary.argos.domain.layout.ApprovalConfiguration;
 import com.argosnotary.argos.domain.layout.Layout;
 import com.argosnotary.argos.domain.layout.LayoutMetaBlock;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.ReleaseConfiguration;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.service.adapter.in.rest.api.model.RestApprovalConfiguration;
@@ -127,9 +126,6 @@ class LayoutRestServiceTest {
     private KeyPair keyPair;
 
     @Mock
-    private LayoutSegment layoutSegment;
-
-    @Mock
     private ReleaseConfiguration releaseConfiguration;
 
     @Mock
@@ -188,8 +184,7 @@ class LayoutRestServiceTest {
         when(layoutMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID)).thenReturn(Optional.of(layoutMetaBlock));
         when(approvalConfiguration.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
         when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(createSegmentAndStep());
-        when(approvalConfiguration.getSegmentName()).thenReturn(SEGMENT_NAME);
+        when(layout.getSteps()).thenReturn(createStep());
         when(approvalConfiguration.getStepName()).thenReturn(STEP_NAME);
         when(configurationMapper.convertFromRestApprovalConfiguration(restApprovalConfiguration))
                 .thenReturn(approvalConfiguration);
@@ -203,12 +198,12 @@ class LayoutRestServiceTest {
     }
 
     @Test
-    void createApprovalConfigurationWithIncorrectSegmentNameShouldThrowValidationError() {
+    void createApprovalConfigurationWithIncorrectStepNameShouldThrowValidationError() {
         when(layoutMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID)).thenReturn(Optional.of(layoutMetaBlock));
         when(approvalConfiguration.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
+        when(approvalConfiguration.getStepName()).thenReturn("wrong-step");
         when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(createSegmentAndStep());
-        when(approvalConfiguration.getSegmentName()).thenReturn("wrong-segment");
+        when(layout.getSteps()).thenReturn(createStep());
         when(configurationMapper.convertFromRestApprovalConfiguration(restApprovalConfiguration))
                 .thenReturn(approvalConfiguration);
         List<RestApprovalConfiguration> configs = List.of(restApprovalConfiguration);
@@ -217,8 +212,8 @@ class LayoutRestServiceTest {
         );
 
         assertThat(layoutValidationException.getValidationMessages().isEmpty(), is(false));
-        assertThat(layoutValidationException.getValidationMessages().get(0).getField(), is("segmentName"));
-        assertThat(layoutValidationException.getValidationMessages().get(0).getMessage(), is("segment with name : wrong-segment does not exist in layout"));
+        assertThat(layoutValidationException.getValidationMessages().get(0).getField(), is("stepName"));
+        assertThat(layoutValidationException.getValidationMessages().get(0).getMessage(), is("step with name: wrong-step does not exist in layout"));
     }
 
     @Test
@@ -227,8 +222,7 @@ class LayoutRestServiceTest {
         when(approvalConfiguration.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
 
         when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(createSegmentAndStep());
-        when(approvalConfiguration.getSegmentName()).thenReturn(SEGMENT_NAME);
+        when(layout.getSteps()).thenReturn(createStep());
         when(approvalConfiguration.getStepName()).thenReturn("wrong-stepname");
         when(configurationMapper.convertFromRestApprovalConfiguration(restApprovalConfiguration))
                 .thenReturn(approvalConfiguration);
@@ -238,7 +232,7 @@ class LayoutRestServiceTest {
 
         assertThat(layoutValidationException.getValidationMessages().isEmpty(), is(false));
         assertThat(layoutValidationException.getValidationMessages().get(0).getField(), is("stepName"));
-        assertThat(layoutValidationException.getValidationMessages().get(0).getMessage(), is("step with name: wrong-stepname in segment: segmentName does not exist in layout"));
+        assertThat(layoutValidationException.getValidationMessages().get(0).getMessage(), is("step with name: wrong-stepname does not exist in layout"));
     }
 
 
@@ -286,8 +280,7 @@ class LayoutRestServiceTest {
     void getApprovalsForAccount() {
         when(layoutMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID)).thenReturn(Optional.of(layoutMetaBlock));
         when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(List.of(layoutSegment));
-        when(layoutSegment.getSteps()).thenReturn(List.of(step));
+        when(layout.getSteps()).thenReturn(List.of(step));
 
 
         when(accountSecurityContext.getAuthenticatedAccount()).thenReturn(Optional.of(account));
@@ -298,12 +291,10 @@ class LayoutRestServiceTest {
                 .thenReturn(restApprovalConfiguration);
 
 
-        when(approvalConfiguration.getSegmentName()).thenReturn("seg1");
         when(approvalConfiguration.getStepName()).thenReturn("step1");
         when(keyPair.getKeyId()).thenReturn("accountKeyId");
 
         when(step.getName()).thenReturn("step1");
-        when(layoutSegment.getName()).thenReturn("seg1");
         when(step.getAuthorizedKeyIds()).thenReturn(List.of("accountKeyId"));
 
         ResponseEntity<List<RestApprovalConfiguration>> responseEntity = service.getApprovalsForAccount(SUPPLY_CHAIN_ID);
@@ -311,16 +302,13 @@ class LayoutRestServiceTest {
         assertThat(responseEntity.getBody(), contains(restApprovalConfiguration));
 
         when(step.getName()).thenReturn("step1");
-        when(layoutSegment.getName()).thenReturn("seg1");
         when(step.getAuthorizedKeyIds()).thenReturn(List.of("otherAccountKeyId"));
         assertThat(service.getApprovalsForAccount(SUPPLY_CHAIN_ID).getBody(), empty());
 
         when(step.getName()).thenReturn("step2");
-        when(layoutSegment.getName()).thenReturn("seg1");
         assertThat(service.getApprovalsForAccount(SUPPLY_CHAIN_ID).getBody(), empty());
 
 
-        when(layoutSegment.getName()).thenReturn("seg2");
         assertThat(service.getApprovalsForAccount(SUPPLY_CHAIN_ID).getBody(), empty());
     }
 
@@ -368,13 +356,9 @@ class LayoutRestServiceTest {
         assertThat(response.getStatusCodeValue(), is(200));
     }
 
-    private static List<LayoutSegment> createSegmentAndStep() {
-        return singletonList(LayoutSegment
-                .builder()
-                .name(SEGMENT_NAME)
-                .steps(singletonList(Step.builder()
-                        .name(STEP_NAME)
-                        .build()))
+    private static List<Step> createStep() {
+        return singletonList(Step.builder()
+                .name(STEP_NAME)
                 .build());
     }
 

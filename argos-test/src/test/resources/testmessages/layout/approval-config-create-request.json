@@ -1,7 +1,6 @@
 [
   {
     "stepName": "build",
-    "segmentName": "segment1",
     "artifactCollectorSpecifications": [
       {
         "name": "xldeploy",

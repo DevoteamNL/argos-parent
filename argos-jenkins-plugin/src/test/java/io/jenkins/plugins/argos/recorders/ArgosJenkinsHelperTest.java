@@ -64,8 +64,9 @@ public class ArgosJenkinsHelperTest {
             r.submit(form);
             assertEquals("credentialId", ArgosServiceConfiguration.get().getPrivateKeyCredentialId());
             ArgosJenkinsHelper helper = new ArgosJenkinsHelper(
-                    "credentialId", "layout-segment-name-value",
-                    "stepname-value", "foo.bar:supplychain-identifier-value", "runIdValue");
+                    "credentialId",
+                    "stepname-value", 
+                    "foo.bar:supplychain-identifier-value");
             LinkBuilder builder = helper.createArgosLinkBuilder();
             Argos4jSettings settings = builder.getSettings();
             assertEquals(expectedKeyId, settings.getKeyId());
@@ -76,8 +77,10 @@ public class ArgosJenkinsHelperTest {
 
     @Test
     public void checkPropertiesTest() {
-        ArgosJenkinsHelper helper = new ArgosJenkinsHelper("", "layout-segment-name-value",
-                    "stepname-value", "supplychain-identifier-value", "runIdValue");
+        ArgosJenkinsHelper helper = new ArgosJenkinsHelper(
+                "",
+                "stepname-value", 
+                "supplychain-identifier-value");
         jenkinsRule.then(r -> {
             exceptionRule.expect(Argos4jError.class);
             exceptionRule.expectMessage("privateKeyCredentialId not configured");

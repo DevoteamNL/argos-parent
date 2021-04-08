@@ -26,22 +26,13 @@ import com.argosnotary.argos.domain.link.LinkMetaBlock;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface LinkMetaBlockRepository {
     List<LinkMetaBlock> findBySupplyChainId(String supplyChainId);
     List<LinkMetaBlock> findBySupplyChainAndSha(String supplyChainId, String hash);
     void save(LinkMetaBlock link);
-
-    List<LinkMetaBlock> findBySupplyChainAndSegmentNameAndStepNameAndProductHashes(String supplyChainId, String segmentName, String stepName, List<String> hashes);
-
-    List<LinkMetaBlock> findBySupplyChainAndSegmentNameAndStepNameAndMaterialHash(String supplyChainId, String segmentName, String stepName, List<String> hashes);
-
-    List<LinkMetaBlock> findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(String supplyChainId, String segmentName, String stepName, EnumMap<ArtifactType, Set<Artifact>> artifactTypeHashes);
-
-    List<LinkMetaBlock> findByRunId(String supplyChainId, String runId);
-
-    List<LinkMetaBlock> findByRunId(String supplyChainId, String segmentName, String runId, Set<String> resolvedSteps);
 
     void deleteBySupplyChainId(String supplyChainId);
 }

@@ -1,7 +1,6 @@
 [
   {
     "stepName": "stepname2",
-    "segmentName": "segment1",
     "artifactCollectorSpecifications": [
       {
         "name": "xldeploy1",
@@ -23,7 +22,6 @@
   },
   {
     "stepName": "build",
-    "segmentName": "segment1",
     "artifactCollectorSpecifications": [
       {
         "name": "git1",

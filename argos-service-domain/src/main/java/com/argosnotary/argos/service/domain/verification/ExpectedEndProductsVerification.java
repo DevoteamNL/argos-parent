@@ -19,8 +19,7 @@
  */
 package com.argosnotary.argos.service.domain.verification;
 
-import com.argosnotary.argos.domain.layout.ArtifactType;
-import com.argosnotary.argos.domain.layout.Step;
+import com.argosnotary.argos.domain.layout.rule.MatchRule;
 import com.argosnotary.argos.domain.layout.rule.Rule;
 import com.argosnotary.argos.domain.layout.rule.RuleType;
 import com.argosnotary.argos.domain.link.Artifact;
@@ -35,20 +34,19 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.argosnotary.argos.service.domain.verification.Verification.Priority.RULES;
+import static com.argosnotary.argos.service.domain.verification.Verification.Priority.EXPECTED_END_PRODUCTS;;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 @ToString
-public class RulesVerification implements Verification {
+public class ExpectedEndProductsVerification implements Verification {
 
     private final List<RuleVerification> ruleVerificationList;
 
@@ -56,7 +54,7 @@ public class RulesVerification implements Verification {
 
     @Override
     public Priority getPriority() {
-        return RULES;
+        return EXPECTED_END_PRODUCTS;
     }
 
     @PostConstruct
@@ -68,43 +66,23 @@ public class RulesVerification implements Verification {
     public VerificationRunResult verify(VerificationContext verificationContext) {
         Map<String, Link> linksMap = verificationContext.getStepLinkMap();
         
-        return verificationContext
-                .getLayoutMetaBlock()
-                .getLayout().getSteps().stream()
-                .map(step -> verifyStep(
-                        linksMap,
-                        step))
-                .filter(result1 -> !result1)
-                .findFirst()
-                .map(result2 -> VerificationRunResult.builder().runIsValid(false).build())
-                .orElse(VerificationRunResult.builder().runIsValid(true).build());
+        boolean isValid = verifyArtifacts(linksMap, 
+                verificationContext.getProductsToVerify(), 
+                verificationContext.getLayoutMetaBlock().getLayout().getExpectedEndProducts());
+        
+        return VerificationRunResult.builder().runIsValid(isValid).build();
     }
 
-    private boolean verifyStep(Map<String, Link> linksMap, Step step) {
-        Link link = linksMap.get(step.getName());
-        if (link == null) {
-            log.warn("no links for step [{}]", step.getName());
-            return false;
-        }
-        return verifyLink(linksMap, step, link);
-    }
-
-    private boolean verifyLink(Map<String, Link> linksMap, Step step, Link link) {
-        return  verifyArtifactsByType(linksMap, step, new HashSet<>(link.getMaterials()), link, ArtifactType.MATERIALS)
-                && verifyArtifactsByType(linksMap, step, new HashSet<>(link.getProducts()), link, ArtifactType.PRODUCTS);
-    }
-
-    private boolean verifyArtifactsByType(Map<String, Link> linksMap, Step step,
-            Set<Artifact> artifacts, Link link, ArtifactType type) {
+    private boolean verifyArtifacts(Map<String, Link> linksMap,
+            Set<Artifact> artifacts, List<MatchRule> rules) {
         ArtifactsVerificationContext artifactsContext = ArtifactsVerificationContext.builder()
-                .link(link)
                 .notConsumedArtifacts(artifacts)
                 .linksMap(linksMap)
                 .build();
 
-        return getExpectedArtifactRulesByType(step, type).stream()
+        return rules.stream()
                 .map(rule -> verifyRule(rule, ruleVerifier -> {
-                    log.info("verify expected [{}] [{}] for step [{}]", type, rule.getRuleType(), step.getName());
+                    log.info("verify match rule for expected end products");
                     RuleVerificationContext<Rule> context = RuleVerificationContext.builder()
                             .rule(rule)
                             .artifactsContext(artifactsContext)
@@ -123,22 +101,6 @@ public class RulesVerification implements Verification {
                     log.error("rule verification [{}] not implemented", rule.getRuleType());
                     return false;
                 });
-    }
-    
-    private List<Rule> getExpectedArtifactRulesByType(Step step, ArtifactType type){
-        if(type == ArtifactType.PRODUCTS) {
-            if (step.getExpectedProducts() != null) {
-                return step.getExpectedProducts();
-            } else {
-                return List.of();
-            }
-        } else {
-            if (step.getExpectedMaterials() != null) {
-                return step.getExpectedMaterials();
-            } else {
-                return List.of();
-            }
-        }
     }
     
     private boolean validateNotConsumedArtifacts(ArtifactsVerificationContext artifactsContext) {

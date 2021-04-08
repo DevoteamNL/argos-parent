@@ -21,7 +21,14 @@ package com.argosnotary.argos.service.domain.verification;
 
 public interface Verification {
     //pretest                                                           //these steps mutate the context
-    enum Priority {LAYOUT_AUTHORIZED_KEYID, LAYOUT_METABLOCK_SIGNATURE, STEP_AUTHORIZED_KEYID, LINK_METABLOCK_SIGNATURE, REQUIRED_NUMBER_OF_LINKS, RULES}
+    enum Priority {
+        LAYOUT_AUTHORIZED_KEYID, 
+        LAYOUT_METABLOCK_SIGNATURE, 
+        STEP_AUTHORIZED_KEYID, 
+        LINK_METABLOCK_SIGNATURE, 
+        REQUIRED_NUMBER_OF_LINKS, 
+        RULES,
+        EXPECTED_END_PRODUCTS}
 
     Priority getPriority();
 
