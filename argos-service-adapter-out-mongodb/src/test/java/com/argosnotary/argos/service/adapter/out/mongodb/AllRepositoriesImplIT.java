@@ -80,8 +80,10 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -101,8 +103,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AllRepositoriesImplIT {
-    private static final String SEGMENT_NAME = "segmentName";
     private static final String STEP_NAME = "stepName";
+    private static final String STEP_NAME_NEW = "stepNameNew";
     private static final String SUPPLY_CHAIN_ID = "supplyChainId";
     private static final String SUPPLYCHAIN = "supplychain";
     private static final String HASH_1 = "74a88c1cb96211a8f648af3509a1207b2d4a15c0202cfaa10abad8cc26300c63";
@@ -182,26 +184,23 @@ class AllRepositoriesImplIT {
     void saveAllApprovalConfigurations() {
         approvalConfigurationRepository.saveAll(SUPPLY_CHAIN_ID, List.of(ApprovalConfiguration
                 .builder()
-                .segmentName("segment2")
                 .stepName("step2")
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .build()));
 
         approvalConfigurationRepository.saveAll(SUPPLY_CHAIN_ID, List.of(ApprovalConfiguration
                 .builder()
-                .segmentName(SEGMENT_NAME)
                 .stepName(STEP_NAME)
                 .supplyChainId("otherSupplyChainId")
                 .build()));
 
         approvalConfigurationRepository.saveAll(SUPPLY_CHAIN_ID, List.of(ApprovalConfiguration
                 .builder()
-                .segmentName("new segment name")
-                .stepName(STEP_NAME)
+                .stepName(STEP_NAME_NEW)
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .build()));
         assertThat(approvalConfigurationRepository.findBySupplyChainId(SUPPLY_CHAIN_ID), hasSize(1));
-        assertThat(approvalConfigurationRepository.findBySupplyChainId(SUPPLY_CHAIN_ID).iterator().next().getSegmentName(), is("new segment name"));
+        assertThat(approvalConfigurationRepository.findBySupplyChainId(SUPPLY_CHAIN_ID).iterator().next().getStepName(), is("stepNameNew"));
         assertThat(approvalConfigurationRepository.findBySupplyChainId("otherSupplyChainId"), hasSize(1));
         
     }
@@ -253,81 +252,9 @@ class AllRepositoriesImplIT {
     }
     
     @Test
-    void findByRunIdShouldRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findByRunId(SUPPLYCHAIN, RUN_ID);
-        assertThat(links, hasSize(1));
-    }
-
-    @Test
-    void findByRunIdWithSegmentNameAndResolvedStepShouldNotRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findByRunId(SUPPLYCHAIN, SEGMENT_NAME, RUN_ID, singleton(STEP_NAME));
-        assertThat(links, hasSize(0));
-    }
-
-    @Test
-    void findByRunIdWithSegmentNameShouldRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findByRunId(SUPPLYCHAIN, SEGMENT_NAME, RUN_ID, new HashSet<>());
-        assertThat(links, hasSize(1));
-    }
-
-    @Test
-    void findBySupplyChainAndStepNameAndProductHashesShouldRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndProductHashes(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, List.of(HASH_1));
-        assertThat(links, hasSize(1));
-    }
-
-    @Test
-    void findBySupplyChainAndStepNameAndMultipleProductHashesShouldRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndProductHashes(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, List.of(HASH_1, HASH_2));
-        assertThat(links, hasSize(1));
-    }
-
-    @Test
-    void findBySupplyChainAndStepNameAndProductHashesShouldNotRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndProductHashes(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, List.of(HASH_1, "INCORRECT_HASH"));
-        assertThat(links, hasSize(0));
-    }
-
-
-    @Test
-    void findBySupplyChainAndStepNameAndMaterialsHashesShouldRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndMaterialHash(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, List.of(HASH_1));
-        assertThat(links, hasSize(1));
-    }
-
-    @Test
-    void findBySupplyChainAndStepNameAndMultipleMaterialsHashesShouldRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndMaterialHash(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, List.of(HASH_1, HASH_2));
-        assertThat(links, hasSize(1));
-    }
-
-    @Test
-    void findBySupplyChainAndStepNameAndMaterialsHashesShouldNotRetreive() {
-        List<LinkMetaBlock> links = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndMaterialHash(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, List.of(HASH_1, "INCORRECT_HASH"));
-        assertThat(links, hasSize(0));
-    }
-
-    @Test
-    void findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashesShouldRetrieve() {
-        EnumMap<ArtifactType, Set<Artifact>> artifactMap = new EnumMap<>(ArtifactType.class);
-        artifactMap.put(ArtifactType.MATERIALS, new HashSet<>());
-        artifactMap.get(ArtifactType.MATERIALS).addAll(createMaterials());
-        artifactMap.put(ArtifactType.PRODUCTS, new HashSet<>());
-        artifactMap.get(ArtifactType.PRODUCTS).addAll(createProducts());
-        List<LinkMetaBlock> blocks = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, artifactMap);
+    void findBySupplyChainAndStepNameAndArtifactTypesAndArtifactHashesShouldRetrieve() {
+        List<LinkMetaBlock> blocks = linkMetaBlockRepository.findBySupplyChainId(SUPPLYCHAIN);
         assertThat(blocks, hasSize(1));
-    }
-
-    @Test
-    void findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashesShouldNotRetrieve() {
-        EnumMap<ArtifactType, Set<Artifact>> artifactMap = new EnumMap<>(ArtifactType.class);
-        artifactMap.put(ArtifactType.MATERIALS, new HashSet<>());
-        artifactMap.get(ArtifactType.MATERIALS).addAll(createMaterials());
-        artifactMap.put(ArtifactType.PRODUCTS, new HashSet<>());
-        artifactMap.get(ArtifactType.PRODUCTS).addAll(createProducts());
-        artifactMap.get(ArtifactType.PRODUCTS).add(new Artifact("file1", "hash1"));
-        List<LinkMetaBlock> blocks = linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(SUPPLYCHAIN, SEGMENT_NAME, STEP_NAME, artifactMap);
-        assertThat(blocks, hasSize(0));
     }
     
     @Test
@@ -423,7 +350,6 @@ class AllRepositoriesImplIT {
 
         approvalConfigurationRepository.saveAll(SUPPLY_CHAIN_ID, List.of(ApprovalConfiguration
                 .builder()
-                .segmentName(SEGMENT_NAME)
                 .stepName(STEP_NAME)
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .build()));
@@ -488,8 +414,6 @@ class AllRepositoriesImplIT {
     private Link createLink() {
         return Link
                 .builder()
-                .runId(RUN_ID)
-                .layoutSegmentName(SEGMENT_NAME)
                 .stepName(STEP_NAME)
                 .materials(createMaterials())
                 .products(createProducts())

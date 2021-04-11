@@ -33,8 +33,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.argosnotary.argos.service.adapter.out.mongodb.link.LinkMetaBlockRepositoryImpl.COLLECTION;
@@ -94,52 +96,7 @@ class LinkMetaBlockRepositoryImplTest {
         verify(template).find(queryArgumentCaptor.capture(), eq(LinkMetaBlock.class), eq(COLLECTION));
         assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"supplyChainId\" : \"supplyChainId\", \"$and\" : [{ \"$or\" : [{ \"link.materials.hash\" : \"sha\"}, { \"link.products.hash\" : \"sha\"}]}]}, Fields: {}, Sort: {}"));
     }
-
-    @Test
-    void findBySupplyChainAndStepNameAndProductHashes() {
-        when(template.find(any(), eq(LinkMetaBlock.class), eq(COLLECTION))).thenReturn(singletonList(linkMetaBlock));
-        List<LinkMetaBlock> blocks = repository.findBySupplyChainAndSegmentNameAndStepNameAndProductHashes(SUPPLY_CHAIN_ID, "layoutSegmentName", "stepName", singletonList(SHA));
-        assertThat(blocks, hasSize(1));
-        assertThat(blocks.get(0), sameInstance(linkMetaBlock));
-        verify(template).find(queryArgumentCaptor.capture(), eq(LinkMetaBlock.class), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"supplyChainId\" : \"supplyChainId\", \"$and\" : [{ \"link.layoutSegmentName\" : \"layoutSegmentName\"}, { \"link.stepName\" : \"stepName\"}, { \"link.products.hash\" : \"sha\"}]}, Fields: {}, Sort: {}"));
-    }
-
-    @Test
-    void findBySupplyChainAndStepNameAndMaterialHash() {
-        when(template.find(any(), eq(LinkMetaBlock.class), eq(COLLECTION))).thenReturn(singletonList(linkMetaBlock));
-        List<LinkMetaBlock> blocks = repository.findBySupplyChainAndSegmentNameAndStepNameAndMaterialHash(SUPPLY_CHAIN_ID, "layoutSegmentName", "stepName", singletonList(SHA));
-        assertThat(blocks, hasSize(1));
-        assertThat(blocks.get(0), sameInstance(linkMetaBlock));
-        verify(template).find(queryArgumentCaptor.capture(), eq(LinkMetaBlock.class), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"supplyChainId\" : \"supplyChainId\", \"$and\" : [{ \"link.layoutSegmentName\" : \"layoutSegmentName\"}, { \"link.stepName\" : \"stepName\"}, { \"link.materials.hash\" : \"sha\"}]}, Fields: {}, Sort: {}"));
-    }
-
-    @Test
-    void findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes() {
-        new Artifact("file1", SHA);
-        EnumMap<ArtifactType, Set<Artifact>> artifactMap = new EnumMap<>(ArtifactType.class);
-        artifactMap.put(ArtifactType.MATERIALS, new HashSet<>());
-        artifactMap.get(ArtifactType.MATERIALS).add(new Artifact("file1", SHA));
-        
-        when(template.find(any(), eq(LinkMetaBlock.class), eq(COLLECTION))).thenReturn(singletonList(linkMetaBlock));
-        List<LinkMetaBlock> blocks = repository.findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(SUPPLY_CHAIN_ID, "layoutSegmentName", "stepName", artifactMap);
-        assertThat(blocks, hasSize(1));
-        assertThat(blocks.get(0), sameInstance(linkMetaBlock));
-        verify(template).find(queryArgumentCaptor.capture(), eq(LinkMetaBlock.class), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"supplyChainId\" : \"supplyChainId\", \"$and\" : [{ \"link.layoutSegmentName\" : \"layoutSegmentName\"}, { \"link.stepName\" : \"stepName\"}, { \"link.materials.hash\" : \"sha\", \"link.materials.uri\" : \"file1\"}]}, Fields: {}, Sort: {}"));
-    }
-
-    @Test
-    void findByRunId() {
-        when(template.find(any(), eq(LinkMetaBlock.class), eq(COLLECTION))).thenReturn(singletonList(linkMetaBlock));
-        List<LinkMetaBlock> blocks = repository.findByRunId(SUPPLY_CHAIN_ID, "layoutSegmentName", "runId", singleton("resolvedStep"));
-        assertThat(blocks, hasSize(1));
-        assertThat(blocks.get(0), sameInstance(linkMetaBlock));
-        verify(template).find(queryArgumentCaptor.capture(), eq(LinkMetaBlock.class), eq(COLLECTION));
-        assertThat(queryArgumentCaptor.getValue().toString(), is("Query: { \"supplyChainId\" : \"supplyChainId\", \"link.runId\" : \"runId\", \"link.layoutSegmentName\" : \"layoutSegmentName\", \"link.stepName\" : { \"$nin\" : [\"resolvedStep\"]}}, Fields: {}, Sort: {}"));
-    }
-
+    
     @Test
     void deleteBySupplyChainId() {
         repository.deleteBySupplyChainId("supplyChainId");

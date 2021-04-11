@@ -1,27 +1,27 @@
 {
 	"messages": [
 		{
-			"field": "layout.layoutSegments[0].steps[0].expectedMaterials[0].destinationStepName",
+			"field": "layout.steps[0].expectedMaterials[0].destinationStepName",
 			"type": "DATA_INPUT",
 			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
 		},
 		{
-			"field": "layout.layoutSegments[0].steps[0].name",
+			"field": "layout.steps[0].name",
 			"type": "DATA_INPUT",
 			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
 		},
 		{
-			"field": "layout.layoutSegments[0].steps[1].expectedMaterials[0].destinationStepName",
+			"field": "layout.steps[1].expectedMaterials[0].destinationStepName",
 			"type": "DATA_INPUT",
 			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
 		},
 		{
-			"field": "layout.layoutSegments[0].steps[1].name",
+			"field": "layout.steps[1].name",
 			"type": "DATA_INPUT",
 			"message": "must match \"^([a-z]|[a-z][a-z0-9-]*[a-z0-9])?$\""
 		},
 		{
-			"field": "layout.layoutSegments[0].steps[1].requiredNumberOfLinks",
+			"field": "layout.steps[1].requiredNumberOfLinks",
 			"type": "DATA_INPUT",
 			"message": "must be less than or equal to 20"
 		},

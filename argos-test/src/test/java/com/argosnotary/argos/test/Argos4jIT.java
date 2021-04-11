@@ -30,7 +30,6 @@ import com.argosnotary.argos.argos4j.VerifyBuilder;
 import com.argosnotary.argos.argos4j.rest.api.model.RestLabel;
 import com.argosnotary.argos.argos4j.rest.api.model.RestLayout;
 import com.argosnotary.argos.argos4j.rest.api.model.RestLayoutMetaBlock;
-import com.argosnotary.argos.argos4j.rest.api.model.RestLayoutSegment;
 import com.argosnotary.argos.argos4j.rest.api.model.RestMatchRule;
 import com.argosnotary.argos.argos4j.rest.api.model.RestPublicKey;
 import com.argosnotary.argos.argos4j.rest.api.model.RestRule;
@@ -92,7 +91,7 @@ class Argos4jIT {
                 .keyId(serviceAccount.getKeyId())
                 .build();
         Argos4j argos4j = new Argos4j(settings);
-        LinkBuilder linkBuilder = argos4j.getLinkBuilder(LinkBuilderSettings.builder().layoutSegmentName("layoutsegmentname").stepName("build").runId("runId").build());
+        LinkBuilder linkBuilder = argos4j.getLinkBuilder(LinkBuilderSettings.builder().stepName("build").build());
         FileCollector fileCollector = LocalFileCollector.builder().path(new File(".").toPath()).basePath(new File(".").toPath()).build();
         linkBuilder.collectProducts(fileCollector);
         linkBuilder.collectMaterials(fileCollector);
@@ -127,16 +126,14 @@ class Argos4jIT {
                 		.publicKey(serviceAccount.getPublicKey()))
                 .addAuthorizedKeyIdsItem(personalAccount.getKeyId())
                 .addExpectedEndProductsItem(new RestMatchRule()
-                        .destinationSegmentName("layoutsegmentname")
                         .destinationStepName("build")
                         .destinationType(RestMatchRule.DestinationTypeEnum.PRODUCTS)
                         .destinationPathPrefix("src/test/resources/")
                         .pattern("karate-config.js"))
-                .addLayoutSegmentsItem(new RestLayoutSegment().name("layoutsegmentname")
-                        .addStepsItem(new RestStep().requiredNumberOfLinks(1)
+                .addStepsItem(new RestStep().requiredNumberOfLinks(1)
                                 .addAuthorizedKeyIdsItem(serviceAccount.getKeyId())
                                 .addExpectedProductsItem(new RestRule().ruleType(RestRule.RuleTypeEnum.ALLOW).pattern("**"))
                                 .addExpectedMaterialsItem(new RestRule().ruleType(RestRule.RuleTypeEnum.ALLOW).pattern("**"))
-                                .name("build")));
+                                .name("build"));
     }
 }

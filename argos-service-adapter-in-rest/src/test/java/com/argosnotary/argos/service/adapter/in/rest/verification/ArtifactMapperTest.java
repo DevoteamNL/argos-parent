@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,7 +49,7 @@ class ArtifactMapperTest {
         RestArtifact restArtifact = new RestArtifact();
         restArtifact.setHash(HASH);
         restArtifact.setUri(URI);
-        List<Artifact> artifacts = artifactMapper.mapToArtifacts(singletonList(restArtifact));
+        Set<Artifact> artifacts = artifactMapper.mapToArtifacts(singletonList(restArtifact));
         assertThat(artifacts, hasSize(1));
         assertThat(artifacts.iterator().next().getHash(), is(HASH));
         assertThat(artifacts.iterator().next().getUri(), is(URI));

@@ -60,12 +60,10 @@ public class DatabaseChangelog {
         IndexDefinition indexDefinition = 
                 new CompoundIndexDefinition(
                         new Document(Map.of(
-                                ApprovalConfigurationRepositoryImpl.SUPPLYCHAIN_ID_FIELD, 1, 
-                                ApprovalConfigurationRepositoryImpl.SEGMENT_NAME_FIELD, 1, 
+                                ApprovalConfigurationRepositoryImpl.SUPPLYCHAIN_ID_FIELD, 1,
                                 ApprovalConfigurationRepositoryImpl.STEP_NAME_FIELD, 1)))
                     .named(
                             ApprovalConfigurationRepositoryImpl.SUPPLYCHAIN_ID_FIELD + "_" 
-                                    + ApprovalConfigurationRepositoryImpl.SEGMENT_NAME_FIELD + "_" 
                                     + ApprovalConfigurationRepositoryImpl.STEP_NAME_FIELD)
                     .unique();
         
@@ -130,11 +128,9 @@ public class DatabaseChangelog {
         template.indexOps(LinkMetaBlockRepositoryImpl.COLLECTION)
             .ensureIndex(new CompoundIndexDefinition(
                     new Document(Map.of(
-                            LinkMetaBlockRepositoryImpl.SUPPLY_CHAIN_ID_FIELD, 1, 
-                            LinkMetaBlockRepositoryImpl.SEGMENT_NAME_FIELD, 1, 
+                            LinkMetaBlockRepositoryImpl.SUPPLY_CHAIN_ID_FIELD, 1,
                             LinkMetaBlockRepositoryImpl.STEP_NAME_FIELD, 1)))
                 .named(LinkMetaBlockRepositoryImpl.SUPPLY_CHAIN_ID_FIELD + "_" 
-                            + LinkMetaBlockRepositoryImpl.SEGMENT_NAME_FIELD + "_" 
                         + LinkMetaBlockRepositoryImpl.STEP_NAME_FIELD));
     }
 

@@ -107,7 +107,7 @@ class Argos4jTest {
                 .build();
 
         argos4j = new Argos4j(settings);
-        linkBuilder = argos4j.getLinkBuilder(LinkBuilderSettings.builder().stepName("build").runId("runId").layoutSegmentName("layoutSegmentName").build());
+        linkBuilder = argos4j.getLinkBuilder(LinkBuilderSettings.builder().stepName("build").build());
         verifyBuilder = argos4j.getVerifyBuilder(null);
         releaseBuilder = argos4j.getReleaseBuilder();
         RestReleaseDossierMetaData restReleaseDossierMetaData = new RestReleaseDossierMetaData().addReleaseArtifactsItem(Arrays.asList("cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91"));
@@ -134,7 +134,7 @@ class Argos4jTest {
         linkBuilder.store(KEY_PASSPHRASE);
         List<LoggedRequest> requests = wireMockServer.findRequestsMatching(RequestPattern.everything()).getRequests();
         assertThat(requests, hasSize(3));
-        assertThat(requests.get(2).getBodyAsString(), endsWith(",\"link\":{\"runId\":\"runId\",\"stepName\":\"build\",\"layoutSegmentName\":\"layoutSegmentName\",\"materials\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}],\"products\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}]}}"));
+        assertThat(requests.get(2).getBodyAsString(), endsWith(",\"link\":{\"stepName\":\"build\",\"materials\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}],\"products\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}]}}"));
     }
 
     @Test
@@ -149,7 +149,7 @@ class Argos4jTest {
         linkBuilder.store(KEY_PASSPHRASE);
         List<LoggedRequest> requests = wireMockServer.findRequestsMatching(RequestPattern.everything()).getRequests();
         assertThat(requests, hasSize(3));
-        assertThat(requests.get(2).getBodyAsString(), endsWith(",\"link\":{\"runId\":\"runId\",\"stepName\":\"build\",\"layoutSegmentName\":\"layoutSegmentName\",\"materials\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}],\"products\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}]}}"));
+        assertThat(requests.get(2).getBodyAsString(), endsWith(",\"link\":{\"stepName\":\"build\",\"materials\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}],\"products\":[{\"uri\":\"text.txt\",\"hash\":\"cb6bdad36690e8024e7df13e6796ae6603f2cb9cf9f989c9ff939b2ecebdcb91\"}]}}"));
     }
 
     @Test

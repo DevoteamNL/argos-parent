@@ -85,10 +85,10 @@ public class ReleaseServiceImpl implements ReleaseService {
         Optional<LayoutMetaBlock> optionalLayoutMetaBlock = layoutMetaBlockRepository.findBySupplyChainId(supplyChainId);
         if (optionalLayoutMetaBlock.isPresent()) {
 
-            List<Artifact> allArtifacts = releaseArtifacts
+            Set<Artifact> allArtifacts = releaseArtifacts
                     .stream()
                     .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
             VerificationRunResult verificationRunResult = verificationProvider.verifyRun(optionalLayoutMetaBlock.get(), allArtifacts);
             releaseBuilder.releaseIsValid(verificationRunResult.isRunIsValid());

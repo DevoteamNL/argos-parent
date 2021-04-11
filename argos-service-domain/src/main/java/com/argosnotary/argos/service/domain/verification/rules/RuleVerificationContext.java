@@ -55,12 +55,8 @@ public class RuleVerificationContext<R extends Rule> {
         artifactsContext.consume(artifacts);
     }
     
-    public String getSegmentName() {
-        return artifactsContext.getSegmentName();
-    }
-    
-    public Optional<Link> getLinkBySegmentNameAndStepName(String segmentName, String stepName) {
-        return artifactsContext.getLinkBySegmentNameAndStepName(segmentName, stepName);
+    public Optional<Link> getLinkByStepName(String stepName) {
+        return artifactsContext.getLinkByStepName(stepName);
     }
     
     public Set<Artifact> getMaterials() {

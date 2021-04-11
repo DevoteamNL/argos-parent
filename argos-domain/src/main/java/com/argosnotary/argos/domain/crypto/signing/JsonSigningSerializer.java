@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.argosnotary.argos.domain.ArgosError;
 import com.argosnotary.argos.domain.layout.Layout;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.domain.link.Artifact;
 import com.argosnotary.argos.domain.link.Link;
@@ -46,8 +45,7 @@ public class JsonSigningSerializer implements SigningSerializer {
     @Override
     public String serialize(Layout layout) {
         Layout layoutClone = Mappers.getMapper(Cloner.class).clone(layout);
-        layoutClone.getLayoutSegments().sort(comparing(LayoutSegment::getName));
-        layoutClone.getLayoutSegments().forEach(layoutSegment -> layoutSegment.getSteps().sort(comparing(Step::getName)));
+        layoutClone.getSteps().sort(comparing(Step::getName));
         return serializeSignable(layoutClone);
     }
 

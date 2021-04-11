@@ -40,9 +40,8 @@ import java.util.stream.Collectors;
 @Getter
 public class ArtifactsVerificationContext {
 
-    private final Map<String, Map<String, Link>> linksMap;
+    private final Map<String, Link> linksMap;
     
-    @NonNull
     private final Link link;
     
     @NonNull
@@ -50,9 +49,6 @@ public class ArtifactsVerificationContext {
     
     @Builder.Default
     private Set<Artifact> consumedArtifacts = new HashSet<>();
-    
-    @NonNull
-    private final String segmentName;
 
     public Set<Artifact> getFilteredArtifacts(String pattern) {
         return getFilteredArtifacts(pattern, null);
@@ -80,11 +76,11 @@ public class ArtifactsVerificationContext {
         }
     }
     
-    public Optional<Link> getLinkBySegmentNameAndStepName(String segmentName, String stepName) {
-        if (linksMap == null || linksMap.get(segmentName) == null || linksMap.get(segmentName).get(stepName) == null) {
+    public Optional<Link> getLinkByStepName(String stepName) {
+        if (linksMap == null || linksMap.get(stepName) == null) {
             return Optional.empty();
         }
-        return Optional.of(linksMap.get(segmentName).get(stepName));
+        return Optional.of(linksMap.get(stepName));
     }
 
     public Set<Artifact> getMaterials() {

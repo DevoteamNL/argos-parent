@@ -21,7 +21,6 @@ package com.argosnotary.argos.service.domain.verification;
 
 import com.argosnotary.argos.domain.layout.Layout;
 import com.argosnotary.argos.domain.layout.LayoutMetaBlock;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.domain.layout.rule.Rule;
 import com.argosnotary.argos.domain.layout.rule.RuleType;
@@ -47,6 +46,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.argosnotary.argos.service.domain.verification.Verification.Priority.RULES;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -80,9 +80,7 @@ class RulesVerificationTest {
 
     @Mock
     private Layout layout;
-    @Mock
-    private LayoutSegment layoutSegment;
-
+    
     private Rule allowAllRule = new Rule(RuleType.ALLOW, "**");
     
     private Rule allowRuleWithNotFound = new Rule(RuleType.ALLOW, "not found");
@@ -126,7 +124,6 @@ class RulesVerificationTest {
                 .builder().link(Link.builder()
                         .materials(List.of(artifact1))
                         .products(List.of(artifact2))
-                        .layoutSegmentName(SEGMENT_NAME)
                         .stepName(STEP_NAME).build()).build()));
         setupMocks();
         assertThat(verification.verify(verificationContext).isRunIsValid(), is(true));
@@ -142,7 +139,6 @@ class RulesVerificationTest {
                 .builder().link(Link.builder()
                         .materials(List.of(artifact1))
                         .products(List.of(artifact2))
-                        .layoutSegmentName(SEGMENT_NAME)
                         .stepName(STEP_NAME).build()).build()));
         setupMocks();
         assertThat(verification.verify(verificationContext).isRunIsValid(), is(false));
@@ -158,7 +154,6 @@ class RulesVerificationTest {
                 .link(Link.builder()
                 .materials(List.of(artifact1))
                 .products(List.of(artifact2))
-                .layoutSegmentName(SEGMENT_NAME)
                 .stepName(STEP_NAME).build())
                 .build()));
         setupMocks();
@@ -175,7 +170,6 @@ class RulesVerificationTest {
                 .builder().link(Link.builder()
                         .materials(List.of(artifact1))
                         .products(List.of(artifact2))
-                        .layoutSegmentName(SEGMENT_NAME)
                         .stepName(STEP_NAME).build()).build()));
         setupMocks();
         assertThat(verification.verify(verificationContext).isRunIsValid(), is(false));
@@ -192,7 +186,6 @@ class RulesVerificationTest {
                 .builder().link(Link.builder()
                         .materials(List.of(artifact1))
                         .products(List.of(artifact2))
-                        .layoutSegmentName(SEGMENT_NAME)
                         .stepName(STEP_NAME).build()).build()));
         setupMocks();
         assertThat(verification.verify(verificationContext).isRunIsValid(), is(false));
@@ -209,7 +202,6 @@ class RulesVerificationTest {
                 .builder().link(Link.builder()
                         .materials(List.of(artifact1))
                         .products(List.of(artifact2))
-                        .layoutSegmentName(SEGMENT_NAME)
                         .stepName(STEP_NAME).build()).build()));
         setupMocks();
         assertThat(verification.verify(verificationContext).isRunIsValid(), is(false));
@@ -218,13 +210,12 @@ class RulesVerificationTest {
 
     private void setupMocks() {
         when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(Collections.singletonList(layoutSegment));
-        when(layoutSegment.getSteps()).thenReturn(Collections.singletonList(step));
-        when(layoutSegment.getName()).thenReturn(SEGMENT_NAME);
+        when(layout.getSteps()).thenReturn(Collections.singletonList(step));
         verificationContext = VerificationContext
                 .builder()
                 .layoutMetaBlock(layoutMetaBlock)
                 .linkMetaBlocks(linkMetaBlocks)
+                .productsToVerify(Set.of())
                 .build();
     }
 }

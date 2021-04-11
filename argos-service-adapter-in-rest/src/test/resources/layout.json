@@ -1,110 +1,102 @@
 {
-  "signatures": [
-    {
-      "keyId": "keyId1",
-      "signature": "signature1",
-      "keyAlgorithm": "EC",
-      "hashAlgorithm": "SHA384"
-    },
-    {
-      "keyId": "keyId2",
-      "signature": "signature2"
-    }
-  ],
-  "layout": {
-    "keys": [
-      {
-        "keyId": "authorizedKeyId1",
-        "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnB7t5WVvXmbwKo7vn49tDyigfZF+wqB68v4i2fgv+/625yVomAKrtQDX8ANTCbZ6UQEkXNQhI9muPo8hhYb2zEaEdEckslSQ9lFJgDHCHekC2EYwXmc4VnwLzyiITtlXSSveav5qUpGVb7t7AK4f9yueojwqUjgQGkXgmeDrg8r15G/nVuYq5WyIS3OKxXKQmm2mJTr5A+kt8SiYPmDQoJwkK6ezZU7qsobY5jloU5SdIiGn2d8KHioj5ekki9kgBszuwHHqg94Ml6JT28EWRKdfBVA2P7PRLzl3V8qdA0srkTsuy4+emEI+NAeNQkeMsucfW4xIVBMQZ28GIFmJcwIDAQAB"
-      }
-    ],
-    "authorizedKeyIds": [
-      "authorizedKeyId1",
-      "authorizedKeyId2"
-    ],
-    "expectedEndProducts": [
-      {
-        "pattern": "MATCHpattern",
-        "destinationType": "PRODUCTS",
-        "destinationStepName": "destinationStepName",
-        "destinationSegmentName": "destinationSegmentName"
-      }
-    ],
-    "layoutSegments": [
-      {
-        "name": "segment1",
-        "steps": [
-          {
-            "name": "stepName1",
-            "authorizedKeyIds": [
-              "stepName1 authorizedKeyId 1",
-              "stepName1 authorizedKeyId 2"
-            ],
-            "requiredNumberOfLinks": 3,
-            "expectedMaterials": [
-              {
-                "ruleType": "MATCH",
-                "pattern": "MATCHpattern",
-                "sourcePathPrefix": "sourcePathPrefix",
-                "destinationPathPrefix": "destinationPathPrefix",
-                "destinationType": "PRODUCTS",
-                "destinationSegmentName": "destinationSegmentName",
-                "destinationStepName": "destinationStepName"
-              },
-              {
-                "ruleType": "CREATE",
-                "pattern": "CREATEpattern"
-              },
-              {
-                "ruleType": "DELETE",
-                "pattern": "DELETEpattern"
-              },
-              {
-                "ruleType": "DISALLOW",
-                "pattern": "DISALLOWpattern"
-              }
-            ],
-            "expectedProducts": [
-              {
-                "ruleType": "CREATE",
-                "pattern": "CREATEpattern"
-              }
-            ]
-          },
-          {
-            "name": "stepName2",
-            "authorizedKeyIds": [
-              "stepName2 authorizedKeyId"
-            ],
-            "requiredNumberOfLinks": 45,
-            "expectedMaterials": [
-              {
-                "ruleType": "MATCH",
-                "pattern": "MATCH pattern",
-                "sourcePathPrefix": "sourcePathPrefix",
-                "destinationPathPrefix": "destinationPathPrefix",
-                "destinationType": "MATERIALS",
-                "destinationStepName": "destinationStepName",
-                "destinationSegmentName": "segment1"
-              }
-            ],
-            "expectedProducts": [
-              {
-                "ruleType": "ALLOW",
-                "pattern": "ALLOW pattern"
-              },
-              {
-                "ruleType": "MODIFY",
-                "pattern": "MODIFY pattern"
-              },
-              {
-                "ruleType": "REQUIRE",
-                "pattern": "REQUIRE pattern"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+	"signatures": [
+		{
+			"keyId": "keyId1",
+			"signature": "signature1",
+			"keyAlgorithm": "EC",
+			"hashAlgorithm": "SHA384"
+		},
+		{
+			"keyId": "keyId2",
+			"signature": "signature2"
+		}
+	],
+	"layout": {
+		"keys": [
+			{
+				"keyId": "authorizedKeyId1",
+				"publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnB7t5WVvXmbwKo7vn49tDyigfZF+wqB68v4i2fgv+/625yVomAKrtQDX8ANTCbZ6UQEkXNQhI9muPo8hhYb2zEaEdEckslSQ9lFJgDHCHekC2EYwXmc4VnwLzyiITtlXSSveav5qUpGVb7t7AK4f9yueojwqUjgQGkXgmeDrg8r15G/nVuYq5WyIS3OKxXKQmm2mJTr5A+kt8SiYPmDQoJwkK6ezZU7qsobY5jloU5SdIiGn2d8KHioj5ekki9kgBszuwHHqg94Ml6JT28EWRKdfBVA2P7PRLzl3V8qdA0srkTsuy4+emEI+NAeNQkeMsucfW4xIVBMQZ28GIFmJcwIDAQAB"
+			}
+		],
+		"authorizedKeyIds": [
+			"authorizedKeyId1",
+			"authorizedKeyId2"
+		],
+		"expectedEndProducts": [
+			{
+				"pattern": "MATCHpattern",
+				"destinationType": "PRODUCTS",
+				"destinationStepName": "destinationStepName"
+			}
+		],
+		"steps": [
+			{
+				"name": "stepName1",
+				"authorizedKeyIds": [
+					"stepName1 authorizedKeyId 1",
+					"stepName1 authorizedKeyId 2"
+				],
+				"requiredNumberOfLinks": 3,
+				"expectedMaterials": [
+					{
+						"ruleType": "MATCH",
+						"pattern": "MATCHpattern",
+						"sourcePathPrefix": "sourcePathPrefix",
+						"destinationPathPrefix": "destinationPathPrefix",
+						"destinationType": "PRODUCTS",
+						"destinationStepName": "destinationStepName"
+					},
+					{
+						"ruleType": "CREATE",
+						"pattern": "CREATEpattern"
+					},
+					{
+						"ruleType": "DELETE",
+						"pattern": "DELETEpattern"
+					},
+					{
+						"ruleType": "DISALLOW",
+						"pattern": "DISALLOWpattern"
+					}
+				],
+				"expectedProducts": [
+					{
+						"ruleType": "CREATE",
+						"pattern": "CREATEpattern"
+					}
+				]
+			},
+			{
+				"name": "stepName2",
+				"authorizedKeyIds": [
+					"stepName2 authorizedKeyId"
+				],
+				"requiredNumberOfLinks": 45,
+				"expectedMaterials": [
+					{
+						"ruleType": "MATCH",
+						"pattern": "MATCH pattern",
+						"sourcePathPrefix": "sourcePathPrefix",
+						"destinationPathPrefix": "destinationPathPrefix",
+						"destinationType": "MATERIALS",
+						"destinationStepName": "destinationStepName"
+					}
+				],
+				"expectedProducts": [
+					{
+						"ruleType": "ALLOW",
+						"pattern": "ALLOW pattern"
+					},
+					{
+						"ruleType": "MODIFY",
+						"pattern": "MODIFY pattern"
+					},
+					{
+						"ruleType": "REQUIRE",
+						"pattern": "REQUIRE pattern"
+					}
+				]
+			}
+		]
+	}
 }

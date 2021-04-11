@@ -7,8 +7,6 @@
       "hashAlgorithm": "SHA384"
     },
     "link": {
-      "runId": "#string",
-      "layoutSegmentName": "segment1",
       "materials": [
         {
           "uri": "src/test/java/com/argosnotary/argos/test/ArgosServiceTestIT.java",

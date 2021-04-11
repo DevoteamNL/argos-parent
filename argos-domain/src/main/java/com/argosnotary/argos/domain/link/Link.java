@@ -34,8 +34,6 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 public class Link {
-    private String runId;
-    private String layoutSegmentName;
     private String stepName;
     @Builder.Default
     private List<Artifact> materials = new ArrayList<>();

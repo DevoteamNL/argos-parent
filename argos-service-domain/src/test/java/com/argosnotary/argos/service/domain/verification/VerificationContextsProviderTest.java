@@ -19,10 +19,10 @@
  */
 package com.argosnotary.argos.service.domain.verification;
 
+import com.argosnotary.argos.domain.crypto.Signature;
 import com.argosnotary.argos.domain.layout.ArtifactType;
 import com.argosnotary.argos.domain.layout.Layout;
 import com.argosnotary.argos.domain.layout.LayoutMetaBlock;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.domain.layout.rule.MatchRule;
 import com.argosnotary.argos.domain.layout.rule.Rule;
@@ -44,7 +44,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -62,12 +68,6 @@ class VerificationContextsProviderTest {
     private static final String STEP_NAME_2 = "stepName2";
     private static final String STEP_NAME_3 = "stepName3";
     private static final String SUPPLY_CHAIN_ID = "supplyChainId";
-    private static final String SEGMENT_NAME_1 = "segmentName1";
-    private static final String SEGMENT_NAME_2 = "segmentName2";
-    private static final String SEGMENT_NAME_3 = "segmentName3";
-    private static final String RUN_ID_1 = "runId1";
-    private static final String RUN_ID_2 = "runId2";
-    private static final String RUN_ID_3 = "runId3";
 
     @Mock
     private LinkMetaBlockRepository linkMetaBlockRepository;
@@ -77,15 +77,6 @@ class VerificationContextsProviderTest {
 
     @Mock
     private Layout layout;
-
-    @Mock
-    private LayoutSegment layoutSegment1;
-
-    @Mock
-    private LayoutSegment layoutSegment2;
-
-    @Mock
-    private LayoutSegment layoutSegment3;
 
     @Mock
     private Step step1;
@@ -128,9 +119,7 @@ class VerificationContextsProviderTest {
                 .builder()
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .link(Link.builder()
-                        .layoutSegmentName(SEGMENT_NAME_1)
                         .stepName(STEP_NAME_1)
-                        .runId(RUN_ID_1)
                         .materials(artifacts)
                         .products(artifacts)
                         .build()
@@ -140,9 +129,7 @@ class VerificationContextsProviderTest {
                 .builder()
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .link(Link.builder()
-                        .layoutSegmentName(SEGMENT_NAME_1)
                         .stepName(STEP_NAME_1)
-                        .runId(RUN_ID_1)
                         .materials(artifacts)
                         .products(artifacts2)
                         .build()
@@ -152,9 +139,7 @@ class VerificationContextsProviderTest {
                 .builder()
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .link(Link.builder()
-                        .layoutSegmentName(SEGMENT_NAME_2)
                         .stepName(STEP_NAME_2)
-                        .runId(RUN_ID_2)
                         .materials(artifacts)
                         .products(artifacts)
                         .build()
@@ -164,9 +149,7 @@ class VerificationContextsProviderTest {
                 .builder()
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .link(Link.builder()
-                        .layoutSegmentName(SEGMENT_NAME_3)
                         .stepName(STEP_NAME_3)
-                        .runId(RUN_ID_3)
                         .materials(artifacts)
                         .products(artifacts)
                         .build()
@@ -176,9 +159,7 @@ class VerificationContextsProviderTest {
                 .builder()
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .link(Link.builder()
-                        .layoutSegmentName(SEGMENT_NAME_1)
                         .stepName(STEP_NAME_2)
-                        .runId(RUN_ID_1)
                         .materials(artifacts)
                         .products(artifacts)
                         .build()
@@ -188,9 +169,7 @@ class VerificationContextsProviderTest {
                 .builder()
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .link(Link.builder()
-                        .layoutSegmentName(SEGMENT_NAME_1)
                         .stepName(STEP_NAME_2)
-                        .runId(RUN_ID_1)
                         .materials(artifacts)
                         .products(artifacts2)
                         .build()
@@ -226,14 +205,12 @@ class VerificationContextsProviderTest {
         MatchRule matchFilterProduct = MatchRule.builder()
                 .destinationType(ArtifactType.PRODUCTS)
                 .destinationStepName(STEP_NAME_1)
-                .destinationSegmentName(SEGMENT_NAME_1)
                 .pattern("**/*.jar")
                 .build();
 
         MatchRule matchFilterMaterials = MatchRule.builder()
                 .destinationType(ArtifactType.MATERIALS)
                 .destinationStepName(STEP_NAME_1)
-                .destinationSegmentName(SEGMENT_NAME_1)
                 .pattern("**/*.jar")
                 .build();
 
@@ -245,7 +222,6 @@ class VerificationContextsProviderTest {
         MatchRule matchFilterMaterials = MatchRule.builder()
                 .destinationType(ArtifactType.MATERIALS)
                 .destinationStepName(STEP_NAME_1)
-                .destinationSegmentName(SEGMENT_NAME_1)
                 .pattern("**/*.jar")
                 .build();
 
@@ -254,15 +230,15 @@ class VerificationContextsProviderTest {
 
     @Test
     void createPossibleVerificationContextsWithMultipleStepsAndMultipleEqualLinkSets() {
-        setupMocksForMultipleSteps();
-        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, artifacts);
-        assertThat(verificationContexts, hasSize(2));
+        setupMocksForSingleLink();
+        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, new HashSet<>(artifacts));
+        assertThat(verificationContexts, hasSize(1));
     }
 
     @Test
     void createPossibleVerificationContextsSingleStepAndMultipleEqualLinkSets() {
         setupMocksForSingleStep();
-        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, artifacts);
+        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, new HashSet<>(artifacts));
         assertThat(verificationContexts, hasSize(2));
     }
 
@@ -270,27 +246,26 @@ class VerificationContextsProviderTest {
     @Test
     void createPossibleVerificationContextsWithNonMatchingArtifacts() {
         when(layoutMetaBlock.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
-        when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(singletonList(layoutSegment1));
-        when(layoutSegment1.getName()).thenReturn(SEGMENT_NAME_1);
-        when(layoutSegment1.getSteps()).thenReturn(singletonList(step1));
+        when(linkMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID))
+                .thenReturn(List.of());
+        
         Artifact wrongArtifact = Artifact.builder().uri("/wrong.exe").hash("hash").build();
-        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, singletonList(wrongArtifact));
+        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, Set.of(wrongArtifact));
         assertThat(verificationContexts, hasSize(0));
     }
 
     @Test
     void createPossibleVerificationContextsWithMatchinMaterialArtifacts() {
-        setupMocksForMultipleSteps();
+        setupMocksForSingleLink();
         createMatchRuleMaterials();
-        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, artifacts);
-        assertThat(verificationContexts, hasSize(2));
+        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, new HashSet<>(artifacts));
+        assertThat(verificationContexts, hasSize(1));
     }
 
     @Test
     void createPossibleVerificationContextsWithMultipleSegmentsShouldReturnOneVerificationContext() {
-        setupMocksForMultipleSegments();
-        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, artifacts);
+        setupMocksForMultipleSteps();
+        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, new HashSet<>(artifacts));
         assertThat(verificationContexts, hasSize(1));
         VerificationContext verificationContext = verificationContexts.iterator().next();
         assertThat(verificationContext.getLinkMetaBlocks(), hasSize(3));
@@ -306,13 +281,11 @@ class VerificationContextsProviderTest {
         MatchRule matchRule4StepOne2StepTwo = MatchRule.builder()
                 .destinationStepName(STEP_NAME_2).pattern("**/*.jar")
                 .destinationType(ArtifactType.PRODUCTS)
-                .destinationSegmentName(SEGMENT_NAME_2)
                 .build();
 
         MatchRule matchRule4StepTwo2StepThree = MatchRule.builder()
                 .destinationStepName(STEP_NAME_3).pattern("**/*.jar")
                 .destinationType(ArtifactType.PRODUCTS)
-                .destinationSegmentName(SEGMENT_NAME_3)
                 .build();
 
         matchRulesForProductsStep1 = List.of(matchRule4StepOne2StepTwo);
@@ -322,27 +295,18 @@ class VerificationContextsProviderTest {
         Step step2 = Step.builder().name(STEP_NAME_2).expectedProducts(matchRulesForProductsStep2).build();
         Step step3 = Step.builder().name(STEP_NAME_3).build();
         
-        LayoutSegment layoutSegment1 = LayoutSegment.builder().name(SEGMENT_NAME_1).steps(List.of(step1)).build();
-        LayoutSegment layoutSegment2 = LayoutSegment.builder().name(SEGMENT_NAME_2).steps(List.of(step2)).build();
-        LayoutSegment layoutSegment3 = LayoutSegment.builder().name(SEGMENT_NAME_3).steps(List.of(step3)).build();
-        
-        Layout layout = Layout.builder().expectedEndProducts(matchRule).layoutSegments(List.of(layoutSegment1, layoutSegment2, layoutSegment3)).build();        
+        Layout layout = Layout.builder().expectedEndProducts(matchRule).steps(List.of(step1, step2, step3)).build();        
         LayoutMetaBlock layoutMetaBlock = LayoutMetaBlock.builder().supplyChainId(SUPPLY_CHAIN_ID).layout(layout).build();
+        
+        Map<String, EnumMap<ArtifactType, Set<Artifact>>> stepMap1 = new HashMap<>();
+        
+        
+        
 
-        when(linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_1), eq(STEP_NAME_1), any()))
-                .thenReturn(List.of(linkMetaBlockFromInput));
+        when(linkMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID))
+                .thenReturn(List.of(linkMetaBlockFromInput, linkMetaBlockFromMatchRuleSegment2_1, linkMetaBlockFromMatchRuleSegment3));
 
-        when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_2), eq(STEP_NAME_2), any()))
-                .thenReturn(List.of(linkMetaBlockFromMatchRuleSegment2_1));
-
-        when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_3), eq(STEP_NAME_3), any()))
-                .thenReturn(List.of(linkMetaBlockFromMatchRuleSegment3));
-
-        when(linkMetaBlockRepository.findByRunId(any(), any(), any(), any()))
-                .thenReturn(emptyList());
-        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, artifacts);
+        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, new HashSet<>(artifacts));
         assertThat(verificationContexts, hasSize(1));
         VerificationContext verificationContext = verificationContexts.iterator().next();
         assertThat(verificationContext.getLinkMetaBlocks(), hasSize(3));
@@ -353,149 +317,147 @@ class VerificationContextsProviderTest {
 
     @Test
     void createPossibleVerificationContextsWithMultipleSegmentsWithHopShouldReturnFourVerificationContexts() {
-        setupMocksForMultipleSegmentsWithHopMultipleSets();
-        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, artifacts);
+        setupMocksWithHopMultipleSets();
+        List<VerificationContext> verificationContexts = verificationContextsProvider.createPossibleVerificationContexts(layoutMetaBlock, new HashSet<>(artifacts));
         assertThat(verificationContexts, hasSize(2));
     }
+    
+    @Test
+    void permutateAndAddLinkMetaBlocksTest() {
+        Artifact artifact11 = new Artifact("file11", "hash111");
+        Artifact artifact12 = new Artifact("file12", "hash112");
+        Artifact artifact21 = new Artifact("file21", "hash121");
+        Artifact artifact22 = new Artifact("file22", "hash122");
+        Artifact artifact31 = new Artifact("file31", "hash211");
+        Artifact artifact32 = new Artifact("file32", "hash212");
+
+        Link link11 = Link.builder().stepName("step1").materials(List.of(artifact11)).build();
+        Link link12 = Link.builder().stepName("step1").materials(List.of(artifact12)).build();
+        Link link21 = Link.builder().stepName("step2").materials(List.of(artifact21)).build();
+        Link link22 = Link.builder().stepName("step2").materials(List.of(artifact22)).build();
+        LinkMetaBlock block11 = LinkMetaBlock.builder().link(link11).build();
+        LinkMetaBlock block12 = LinkMetaBlock.builder().link(link12).build();
+        LinkMetaBlock block21 = LinkMetaBlock.builder().link(link21).build();
+        LinkMetaBlock block22 = LinkMetaBlock.builder().link(link22).build();
+        Set<Set<LinkMetaBlock>> expectedSets = new HashSet<>();
+        expectedSets.add(Set.of(block11, block21));
+        expectedSets.add(Set.of(block11, block22));
+        expectedSets.add(Set.of(block12, block21));
+        expectedSets.add(Set.of(block12, block22));
+
+        Set<Set<LinkMetaBlock>> actualSets = VerificationContextsProvider.permutateOnSteps(Set.of(block11, block12, block21, block22));
+        
+        assertThat(actualSets, is(expectedSets));
+
+        Link link3 = Link.builder().stepName("step3").materials(List.of(artifact31)).build();
+        Signature sig1 = Signature.builder().keyId("keyId1").build();
+        Signature sig2 = Signature.builder().keyId("keyId2").build();
+        LinkMetaBlock block31 = LinkMetaBlock.builder().link(link3).signature(sig1).build();
+        LinkMetaBlock block32 = LinkMetaBlock.builder().link(link3).signature(sig2).build();
+        
+        expectedSets = new HashSet<>();
+        expectedSets.add(Set.of(block11, block21, block31, block32));
+        expectedSets.add(Set.of(block12, block21, block31, block32));
+        expectedSets.add(Set.of(block11, block22, block31, block32));
+        expectedSets.add(Set.of(block12, block22, block31, block32));
+
+        actualSets = VerificationContextsProvider.permutateOnSteps(
+                Set.of(block11, block12, block21, block22, block31, block32));
+        
+        assertThat(actualSets, is(expectedSets));
+    }
+    
+    @Test
+    void permutateOnStepsAndWithMultipleLinks() {
+        Artifact artifact111 = new Artifact("file111", "hash111");
+        Artifact artifact112 = new Artifact("file112", "hash112");
+        Artifact artifact121 = new Artifact("file121", "hash121");
+        Artifact artifact122 = new Artifact("file122", "hash122");
+
+        Link link111 = Link.builder().stepName("step11").materials(List.of(artifact111)).build();
+        Link link112 = Link.builder().stepName("step11").materials(List.of(artifact112)).build();
+        Link link121 = Link.builder().stepName("step12").materials(List.of(artifact121)).build();
+        Link link122 = Link.builder().stepName("step12").materials(List.of(artifact122)).build();
+        LinkMetaBlock block111 = LinkMetaBlock.builder().link(link111).build();
+        LinkMetaBlock block112 = LinkMetaBlock.builder().link(link112).build();
+        LinkMetaBlock block121 = LinkMetaBlock.builder().link(link121).build();
+        LinkMetaBlock block122 = LinkMetaBlock.builder().link(link122).build();
+        Set<Set<LinkMetaBlock>> expectedSets = new HashSet<>();
+        expectedSets.add(Set.of(block111));
+        expectedSets.add(Set.of(block112));
+        Set<Set<LinkMetaBlock>> actualSets = VerificationContextsProvider.permutateOnSteps(Set.of(block111, block112));
+        
+        assertThat(actualSets, is(expectedSets));
+        
+        expectedSets = new HashSet<>();
+        expectedSets.add(Set.of(block111, block121));
+        expectedSets.add(Set.of(block112, block121));
+        expectedSets.add(Set.of(block111, block122));
+        expectedSets.add(Set.of(block112, block122));
+        actualSets = VerificationContextsProvider.permutateOnSteps(Set.of(block111, block112, block121, block122));
+        
+        assertThat(actualSets, is(expectedSets));
+    }
+
 
     private void setupMocksForSingleStep() {
         when(layoutMetaBlock.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
-        when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(singletonList(layoutSegment1));
-        when(layoutSegment1.getName()).thenReturn(SEGMENT_NAME_1);
-        when(layoutSegment1.getSteps()).thenReturn(singletonList(step1));
-        when(step1.getName()).thenReturn(STEP_NAME_1);
-        when(layout.getExpectedEndProducts()).thenReturn(matchRule);
         when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(any(), any(), any(), any()))
+                .findBySupplyChainId(SUPPLY_CHAIN_ID))
                 .thenReturn(List.of(linkMetaBlockFromInput, linkMetaBlockFromInput2));
     }
 
-    void setupMocksForMultipleSteps() {
+    void setupMocksForSingleLink() {
         when(layoutMetaBlock.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
-        when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(singletonList(layoutSegment1));
-        when(layoutSegment1.getName()).thenReturn(SEGMENT_NAME_1);
-        when(layoutSegment1.getSteps()).thenReturn(singletonList(step1));
-        when(step1.getName()).thenReturn(STEP_NAME_1);
-        when(layout.getExpectedEndProducts()).thenReturn(matchRule);
-        when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(any(), any(), any(), any()))
+        when(linkMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID))
                 .thenReturn(List.of(linkMetaBlockFromInput));
-
-        when(linkMetaBlockRepository.findByRunId(any(), any(), any(), any()))
-                .thenReturn(List.of(linkMetaBlockFromRunId1_1, linkMetaBlockFromRunId1_2));
     }
 
-    void setupMocksForMultipleSegments() {
+    void setupMocksForMultipleSteps() {
         MatchRule matchRule4StepOne2StepTwo = MatchRule.builder()
                 .destinationStepName(STEP_NAME_2).pattern("**/*.jar")
                 .destinationType(ArtifactType.PRODUCTS)
-                .destinationSegmentName(SEGMENT_NAME_2)
                 .build();
 
         MatchRule matchRule4StepOne2StepThree = MatchRule.builder()
                 .destinationStepName(STEP_NAME_3).pattern("**/*.jar")
                 .destinationType(ArtifactType.PRODUCTS)
-                .destinationSegmentName(SEGMENT_NAME_3)
                 .build();
         matchRulesForProductsStep1 = List.of(matchRule4StepOne2StepTwo, matchRule4StepOne2StepThree);
         when(layoutMetaBlock.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
-        when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(List.of(layoutSegment1, layoutSegment2, layoutSegment3));
-        when(layoutSegment1.getSteps()).thenReturn(singletonList(step1));
-        when(layoutSegment1.getName()).thenReturn(SEGMENT_NAME_1);
-
-        when(layoutSegment2.getSteps()).thenReturn(singletonList(step2));
-        when(layoutSegment2.getName()).thenReturn(SEGMENT_NAME_2);
-
-        when(layoutSegment3.getSteps()).thenReturn(singletonList(step3));
-        when(layoutSegment3.getName()).thenReturn(SEGMENT_NAME_3);
-        when(layoutSegment3.getSteps()).thenReturn(singletonList(step3));
-        when(step1.getExpectedProducts()).thenReturn(matchRulesForProductsStep1);
-        when(step2.getExpectedProducts()).thenReturn(emptyList());
-        when(step1.getName()).thenReturn(STEP_NAME_1);
-        when(step2.getName()).thenReturn(STEP_NAME_2);
-        when(step3.getName()).thenReturn(STEP_NAME_3);
-        when(layout.getExpectedEndProducts()).thenReturn(matchRule);
-
-        when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_1), eq(STEP_NAME_1), any()))
-                .thenReturn(List.of(linkMetaBlockFromInput));
-
-        when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_2), eq(STEP_NAME_2), any()))
-                .thenReturn(List.of(linkMetaBlockFromMatchRuleSegment2_1));
-
-        when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_3), eq(STEP_NAME_3), any()))
-                .thenReturn(List.of(linkMetaBlockFromMatchRuleSegment3));
-
-        when(linkMetaBlockRepository.findByRunId(any(), any(), any(), any()))
-                .thenReturn(emptyList());
+        when(linkMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID))
+            .thenReturn(List.of(linkMetaBlockFromInput, linkMetaBlockFromMatchRuleSegment2_1, linkMetaBlockFromMatchRuleSegment3));
     }
 
-    private void setupMocksForMultipleSegmentsWithHopMultipleSets() {
+    private void setupMocksWithHopMultipleSets() {
 
         linkMetaBlockFromMatchRuleSegment2_2 = LinkMetaBlock
                 .builder()
                 .supplyChainId(SUPPLY_CHAIN_ID)
                 .link(Link.builder()
-                        .layoutSegmentName(SEGMENT_NAME_2)
                         .stepName(STEP_NAME_2)
-                        .runId(RUN_ID_2)
-                        .materials(artifacts)
-                        .products(artifacts2)
+                        .materials(new ArrayList<>(artifacts))
+                        .products(new ArrayList<>(artifacts2))
                         .build()
                 ).build();
 
         MatchRule matchRule4StepOne2StepTwo = MatchRule.builder()
                 .destinationStepName(STEP_NAME_2).pattern("**/*.jar")
                 .destinationType(ArtifactType.PRODUCTS)
-                .destinationSegmentName(SEGMENT_NAME_2)
                 .build();
 
         MatchRule matchRule4StepTwo2StepThree = MatchRule.builder()
                 .destinationStepName(STEP_NAME_3).pattern("**/*.jar")
                 .destinationType(ArtifactType.PRODUCTS)
-                .destinationSegmentName(SEGMENT_NAME_3)
                 .build();
 
         matchRulesForProductsStep1 = List.of(matchRule4StepOne2StepTwo);
         List<Rule> matchRulesForProductsStep2 = List.of(matchRule4StepTwo2StepThree);
 
         when(layoutMetaBlock.getSupplyChainId()).thenReturn(SUPPLY_CHAIN_ID);
-        when(layoutMetaBlock.getLayout()).thenReturn(layout);
-        when(layout.getLayoutSegments()).thenReturn(List.of(layoutSegment1, layoutSegment2, layoutSegment3));
 
-        when(layoutSegment1.getSteps()).thenReturn(singletonList(step1));
-        when(layoutSegment1.getName()).thenReturn(SEGMENT_NAME_1);
-
-        when(layoutSegment2.getSteps()).thenReturn(singletonList(step2));
-        when(layoutSegment2.getName()).thenReturn(SEGMENT_NAME_2);
-
-        when(layoutSegment3.getSteps()).thenReturn(singletonList(step3));
-        when(layoutSegment3.getName()).thenReturn(SEGMENT_NAME_3);
-
-        when(step1.getExpectedProducts()).thenReturn(matchRulesForProductsStep1);
-        when(step2.getExpectedProducts()).thenReturn(matchRulesForProductsStep2);
-        when(step1.getName()).thenReturn(STEP_NAME_1);
-        when(step2.getName()).thenReturn(STEP_NAME_2);
-        when(step3.getName()).thenReturn(STEP_NAME_3);
-        when(layout.getExpectedEndProducts()).thenReturn(matchRule);
-
-        when(linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_1), eq(STEP_NAME_1), any()))
-                .thenReturn(List.of(linkMetaBlockFromInput));
-
-        when(linkMetaBlockRepository.findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_2), eq(STEP_NAME_2), any()))
-                .thenReturn(List.of(linkMetaBlockFromMatchRuleSegment2_1, linkMetaBlockFromMatchRuleSegment2_2));
-
-        when(linkMetaBlockRepository
-                .findBySupplyChainAndSegmentNameAndStepNameAndArtifactTypesAndArtifactHashes(eq(SUPPLY_CHAIN_ID), eq(SEGMENT_NAME_3), eq(STEP_NAME_3), any()))
-                .thenReturn(List.of(linkMetaBlockFromMatchRuleSegment3));
-
-        when(linkMetaBlockRepository.findByRunId(any(), any(), any(), any()))
-                .thenReturn(emptyList());
+        when(linkMetaBlockRepository.findBySupplyChainId(SUPPLY_CHAIN_ID))
+                .thenReturn(List.of(linkMetaBlockFromInput, linkMetaBlockFromMatchRuleSegment2_1, linkMetaBlockFromMatchRuleSegment2_2, linkMetaBlockFromMatchRuleSegment3));
     }
 
 }

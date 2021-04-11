@@ -1,5 +1,4 @@
 {
-  "layoutSegmentName": "layoutSegmentName",
   "materials": [
     {
       "hash": "hash2",
@@ -20,6 +19,5 @@
       "uri": "_bc.jar"
     }
   ],
-  "runId": "runId",
   "stepName": "stepName"
 }

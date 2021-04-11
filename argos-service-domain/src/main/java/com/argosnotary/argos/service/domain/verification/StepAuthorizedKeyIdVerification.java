@@ -23,7 +23,9 @@ import com.argosnotary.argos.domain.link.LinkMetaBlock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.argosnotary.argos.service.domain.verification.Verification.Priority.STEP_AUTHORIZED_KEYID;
@@ -39,11 +41,16 @@ public class StepAuthorizedKeyIdVerification implements Verification {
 
     @Override
     public VerificationRunResult verify(VerificationContext context) {
+        Map<String,List<String>> stepAndKeyIds = new HashMap<>();
+        context
+            .getLayoutMetaBlock()
+            .getLayout()
+            .getSteps().forEach(step -> stepAndKeyIds.put(step.getName(), step.getAuthorizedKeyIds()));
 
         List<LinkMetaBlock> failedLinkAuthorizedKeyIdVerifications = context
                 .getLinkMetaBlocks()
                 .stream()
-                .filter(linkMetaBlock -> linkIsNotSignedByAuthorizedFunctionary(context, linkMetaBlock))
+                .filter(linkMetaBlock -> linkIsNotSignedByAuthorizedFunctionary(stepAndKeyIds, linkMetaBlock))
                 .collect(Collectors.toList());
 
         if (!failedLinkAuthorizedKeyIdVerifications.isEmpty()) {
@@ -56,13 +63,8 @@ public class StepAuthorizedKeyIdVerification implements Verification {
         return VerificationRunResult.okay();
     }
 
-    private static boolean linkIsNotSignedByAuthorizedFunctionary(VerificationContext context, LinkMetaBlock linkMetaBlock) {
-        return !context
-                .getStepBySegmentNameAndStepName(
-                        linkMetaBlock.getLink().getLayoutSegmentName(),
-                        linkMetaBlock.getLink().getStepName()
-                )
-                .getAuthorizedKeyIds()
+    private static boolean linkIsNotSignedByAuthorizedFunctionary(Map<String,List<String>> stepAndKeyIds, LinkMetaBlock linkMetaBlock) {
+        return !stepAndKeyIds.get(linkMetaBlock.getLink().getStepName())
                 .contains(linkMetaBlock.getSignature().getKeyId());
     }
 

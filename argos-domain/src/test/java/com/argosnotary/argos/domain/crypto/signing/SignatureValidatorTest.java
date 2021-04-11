@@ -71,7 +71,7 @@ class SignatureValidatorTest {
 
         ecPair = generator.generateKeyPair();
         
-        layout = Layout.builder().layoutSegments(new ArrayList<>()).build();
+        layout = Layout.builder().steps(new ArrayList<>()).build();
         
     }
 

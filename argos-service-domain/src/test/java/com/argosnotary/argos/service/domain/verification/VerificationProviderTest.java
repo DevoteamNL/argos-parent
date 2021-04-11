@@ -31,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
@@ -86,7 +87,7 @@ class VerificationProviderTest {
         when(highPrio.verify(any(VerificationContext.class))).thenReturn(verificationRunResultHigh);
         when(verificationRunResultLow.isRunIsValid()).thenReturn(true);
         when(verificationRunResultHigh.isRunIsValid()).thenReturn(true);
-        assertThat(verificationProvider.verifyRun(layoutMetaBlock, List.of(artifact)).isRunIsValid(), is(true));
+        assertThat(verificationProvider.verifyRun(layoutMetaBlock, Set.of(artifact)).isRunIsValid(), is(true));
         verify(lowPrio).verify(verificationContextArgumentCaptor.capture());
     }
 
@@ -95,7 +96,7 @@ class VerificationProviderTest {
         setupMocking();
         when(verificationRunResultHigh.isRunIsValid()).thenReturn(false);
         when(highPrio.verify(any(VerificationContext.class))).thenReturn(verificationRunResultHigh);
-        assertThat(verificationProvider.verifyRun(layoutMetaBlock, List.of(artifact)).isRunIsValid(), is(false));
+        assertThat(verificationProvider.verifyRun(layoutMetaBlock, Set.of(artifact)).isRunIsValid(), is(false));
     }
 
     private void setupMocking() {

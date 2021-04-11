@@ -1,6 +1,5 @@
 {
   "stepName": "stepName",
-  "segmentName": "segmentName",
   "artifactCollectorSpecifications": [
     {
       "name": "xl deploy",

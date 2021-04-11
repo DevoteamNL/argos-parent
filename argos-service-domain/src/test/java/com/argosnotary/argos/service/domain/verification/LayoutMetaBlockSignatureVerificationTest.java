@@ -27,7 +27,6 @@ import com.argosnotary.argos.domain.crypto.signing.JsonSigningSerializer;
 import com.argosnotary.argos.domain.crypto.signing.Signer;
 import com.argosnotary.argos.domain.layout.Layout;
 import com.argosnotary.argos.domain.layout.LayoutMetaBlock;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
 import com.argosnotary.argos.domain.layout.Step;
 
 import org.bouncycastle.operator.OperatorCreationException;
@@ -72,14 +71,12 @@ class LayoutMetaBlockSignatureVerificationTest {
         verification = new LayoutMetaBlockSignatureVerification();
         
         Step step = Step.builder().build();
-        LayoutSegment segment = LayoutSegment.builder().steps(List.of(step)).build();
-
         // valid
         KeyPair pair = KeyPair.createKeyPair(PASSPHRASE);
         keyId = KeyIdProvider.computeKeyId(pair.getPublicKey());
         domainPublicKey = new PublicKey(keyId, pair.getPublicKey());
         Layout layout = Layout.builder()
-        		.layoutSegments(List.of(segment))
+                .steps(List.of(step))
         		.keys(List.of(domainPublicKey)).build();
         
         signature = Signer.sign(pair, PASSPHRASE, new JsonSigningSerializer().serialize(layout));
@@ -92,7 +89,7 @@ class LayoutMetaBlockSignatureVerificationTest {
         keyId2 = KeyIdProvider.computeKeyId(pair.getPublicKey());
         domainPublicKey2 = new PublicKey(keyId2, pair.getPublicKey());
         layout = Layout.builder()
-        		.layoutSegments(List.of(segment))
+                .steps(List.of(step))
         		.keys(List.of(domainPublicKey)).build();
         signature2 = Signer.sign(pair, PASSPHRASE, new JsonSigningSerializer().serialize(layout));
         layoutMetaBlock2 = LayoutMetaBlock.builder()
@@ -101,7 +98,7 @@ class LayoutMetaBlockSignatureVerificationTest {
         
         // not valid
         layout = Layout.builder()
-        		.layoutSegments(List.of(segment))
+                .steps(List.of(step))
         		.keys(List.of(domainPublicKey, domainPublicKey2)).build();
         layoutMetaBlock3 = LayoutMetaBlock.builder()
         		.signatures(List.of(signature, signature2))

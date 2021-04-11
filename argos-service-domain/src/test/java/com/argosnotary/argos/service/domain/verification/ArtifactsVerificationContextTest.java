@@ -52,10 +52,6 @@ class ArtifactsVerificationContextTest {
     private ArtifactsVerificationContext verificationContext5;
     private ArtifactsVerificationContext verificationContext6;
     
-    private String segmentName = "segmentName";
-    
-    private String segmentName2 = "segmentName2";
-    
     private Step step;
     
     private Step step2;
@@ -64,7 +60,7 @@ class ArtifactsVerificationContextTest {
     
     private ArtifactType type = ArtifactType.MATERIALS;
     
-    private Map<String, Map<String, Link>> linksMap;
+    private Map<String, Link> linksMap;
 
     private String patternWithPrefix = "someDir/*.jar";    
     private String patternWithSuffix = "*.jar";
@@ -89,46 +85,36 @@ class ArtifactsVerificationContextTest {
                 .materials(List.of(artifact1, artifact2))
                 .products(List.of(artifact1, artifact2, artifact3, artifact4)).build();
         linksMap = new HashMap<>();
-        Map<String, Link> stepmap = new HashMap<>();
-        stepmap.put(step.getName(), link);
-        linksMap.put(segmentName, stepmap);
-        Map<String, Link> stepmap2 = new HashMap<>();
-        stepmap.put(step2.getName(), null);
-        linksMap.put(segmentName2, stepmap2);
+        linksMap.put(step.getName(), link);
+        linksMap.put(step2.getName(), null);
         
         verificationContext1 = ArtifactsVerificationContext.builder()
-                .segmentName(segmentName)
                 .notConsumedArtifacts(Set.of(artifact1, artifact2))
                 .link(link)
                 .linksMap(linksMap)
                 .build();
         verificationContext2 = ArtifactsVerificationContext.builder()
-                .segmentName(segmentName)
                 .notConsumedArtifacts(Set.of(artifact1, artifact2))
                 .link(link)
                 .linksMap(linksMap)
                 .build();
         verificationContext3 = ArtifactsVerificationContext.builder()
-                .segmentName(segmentName)
                 .notConsumedArtifacts(Set.of(artifact1, artifact2))
                 .link(link)
                 .linksMap(linksMap)
                 .build();
         verificationContext4 = ArtifactsVerificationContext.builder()
-                .segmentName(segmentName)
                 .notConsumedArtifacts(Set.of(artifact1, artifact2, artifact3, artifact4))
                 .link(link)
                 .linksMap(linksMap)
                 //.rule(ruleWithPrefix)
                 .build();
         verificationContext5 = ArtifactsVerificationContext.builder()
-                .segmentName(segmentName)
                 .notConsumedArtifacts(Set.of(artifact1, artifact2, artifact3, artifact4))
                 .link(link)
                 .linksMap(linksMap)
                 .build();
         verificationContext6 = ArtifactsVerificationContext.builder()
-                .segmentName(segmentName)
                 .notConsumedArtifacts(Set.of(artifact1, artifact2, artifact3, artifact4, artifact5))
                 .link(link)
                 .linksMap(linksMap)
@@ -164,25 +150,15 @@ class ArtifactsVerificationContextTest {
     
     @Test
     void getLinkBySegmentNameAndStepName() {
-        assertEquals(Optional.of(link), verificationContext1.getLinkBySegmentNameAndStepName(segmentName, step.getName()));
-        assertThat(verificationContext1.getLinkBySegmentNameAndStepName(segmentName, "foo"), is(Optional.empty()));
-        assertThat(verificationContext1.getLinkBySegmentNameAndStepName("foo", step.getName()), is(Optional.empty()));
+        assertEquals(Optional.of(link), verificationContext1.getLinkByStepName(step.getName()));
+        assertThat(verificationContext1.getLinkByStepName("foo"), is(Optional.empty()));
+        assertThat(verificationContext1.getLinkByStepName(step.getName()), is(Optional.of(link)));
     }
     
     @Test
     void nonNull() {
         Throwable exception = assertThrows(java.lang.NullPointerException.class, () -> {
             ArtifactsVerificationContext.builder()
-            .segmentName(null)
-            .notConsumedArtifacts(Set.of(artifact1, artifact2))
-            .linksMap(linksMap)
-            .build();
-          });
-        assertEquals("segmentName is marked non-null but is null", exception.getMessage());
-
-        exception = assertThrows(java.lang.NullPointerException.class, () -> {
-            ArtifactsVerificationContext.builder()
-            .segmentName(segmentName)
             .notConsumedArtifacts(null)
             .linksMap(linksMap)
             .build();

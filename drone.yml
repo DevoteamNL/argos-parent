@@ -11,22 +11,22 @@ environment:
   DOCKER_TAG_PRFX: 
   
 steps:
-- name: pre-argos
-  image: argosnotary/argos4j-cli:1.0.1
-  commands:
-  - argos-cli --config-file argos-settings.json postLink --phase PRE -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
-  environment:  
-    WORKSPACE: /home/argos
-    CREDENTIALS_PASSPHRASE:
-      from_secret: drone_sa_password
-    CREDENTIALS_KEY_ID:
-      from_secret: drone_sa_keyid
-  volumes:
-  - name: argos_workspace
-    path: /home/argos
-  when:
-    event:
-    - tag
+# - name: pre-argos
+#   image: argosnotary/argos4j-cli:1.0.1
+#   commands:
+#   - argos-cli --config-file argos-settings.json postLink --phase PRE -b /drone/src -p /drone/src --step build -q ${DRONE_TAG}
+#   environment:  
+#     WORKSPACE: /home/argos
+#     CREDENTIALS_PASSPHRASE:
+#       from_secret: drone_sa_password
+#     CREDENTIALS_KEY_ID:
+#       from_secret: drone_sa_keyid
+#   volumes:
+#   - name: argos_workspace
+#     path: /home/argos
+#   when:
+#     event:
+#     - tag
 
 - name: build
   image: argosnotary/argos-build:3.6.3-docker
@@ -40,26 +40,26 @@ steps:
   - name: mvn_cache
     path: /root/.m2/repository
   depends_on:
-  - pre-argos
+  #- pre-argos
   
-- name: post-argos
-  image: argosnotary/argos4j-cli:1.0.1
-  commands:
-  - argos-cli --config-file argos-settings.json postLink --phase POST -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
-  environment:  
-    WORKSPACE: /home/argos
-    CREDENTIALS_PASSPHRASE:
-      from_secret: drone_sa_password
-    CREDENTIALS_KEY_ID:
-      from_secret: drone_sa_keyid
-  volumes:
-  - name: argos_workspace
-    path: /home/argos
-  when:
-    event:
-    - tag
-  depends_on:
-  - build
+# - name: post-argos
+#   image: argosnotary/argos4j-cli:1.0.1
+#   commands:
+#   - argos-cli --config-file argos-settings.json postLink --phase POST -b /drone/src -p /drone/src --step build -q ${DRONE_TAG}
+#   environment:  
+#     WORKSPACE: /home/argos
+#     CREDENTIALS_PASSPHRASE:
+#       from_secret: drone_sa_password
+#     CREDENTIALS_KEY_ID:
+#       from_secret: drone_sa_keyid
+#   volumes:
+#   - name: argos_workspace
+#     path: /home/argos
+#   when:
+#     event:
+#     - tag
+#   depends_on:
+#   - build
 
 - name: build images
   image: argosnotary/argos-build:3.6.3-docker
@@ -71,7 +71,7 @@ steps:
     path: /var/run/docker.sock
   depends_on:
   - build
-  - post-argos
+  #- post-argos
 
 - name: mongodb
   image: argosnotary/mongo:4.2.8
@@ -129,7 +129,7 @@ steps:
     path: /root/.m2/repository
   depends_on:
   - build images
-  - post-argos
+  #- post-argos
   
 - name: regression test
   image: argosnotary/argos-build:3.6.3-docker
@@ -144,25 +144,25 @@ steps:
   - argos-service
   - argos-integration-test-service
   - mongodb
-  - post-argos
+  #- post-argos
 
-- name: argos-release-check
-  image: argosnotary/argos4j-cli:1.0.1
-  commands:
-  - argos-cli --config-file argos-settings.json release
-  environment:  
-    CREDENTIALS_PASSPHRASE:
-      from_secret: drone_sa_password
-    CREDENTIALS_KEY_ID:
-      from_secret: drone_sa_keyid
-  volumes:
-  - name: argos_workspace
-    path: /home/argos/workspace
-  when:
-    event:
-    - tag
-  depends_on:
-  - regression test
+# - name: argos-release-check
+#   image: argosnotary/argos4j-cli:1.0.1
+#   commands:
+#   - argos-cli --config-file argos-settings.json release
+#   environment:  
+#     CREDENTIALS_PASSPHRASE:
+#       from_secret: drone_sa_password
+#     CREDENTIALS_KEY_ID:
+#       from_secret: drone_sa_keyid
+#   volumes:
+#   - name: argos_workspace
+#     path: /home/argos/workspace
+#   when:
+#     event:
+#     - tag
+#   depends_on:
+#   - regression test
 
 - name: release argos service image
   image: argosnotary/argos-build:3.6.3-docker
@@ -188,7 +188,7 @@ steps:
     - tag
   depends_on:
   - regression test
-  - argos-release-check
+  #- argos-release-check
 
 - name: sign artifacts
   image: plugins/gpgsign
@@ -207,7 +207,8 @@ steps:
     event:
     - tag
   depends_on:
-  - argos-release-check
+  - regression test
+  #- argos-release-check
 
 - name: deploy release to sonatype
   image: argosnotary/argos-build:3.6.3-docker
@@ -285,6 +286,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: cba8f43b3e65469ac1543318b6d82702c4448bd6a83891b88d39924be4b312dc
+hmac: ac4920054a6b6a4dc78e4d40743b7612ebeb62d880aef6a240f8ecd3f033755b
 
 ...

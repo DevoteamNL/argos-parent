@@ -50,9 +50,7 @@ public class MatchRuleVerification implements RuleVerification {
         MatchRule rule = context.getRule();
         Set<Artifact> filteredArtifacts = context.getFilteredArtifacts(rule.getSourcePathPrefix());
         
-        String destinationSegmentName = rule.getDestinationSegmentName() != null ? rule.getDestinationSegmentName() : context.getSegmentName();
-
-        Optional<Link> optionalLink = context.getLinkBySegmentNameAndStepName(destinationSegmentName, rule.getDestinationStepName());
+        Optional<Link> optionalLink = context.getLinkByStepName(rule.getDestinationStepName());
         
         if (optionalLink.isPresent()) {
             Link link = optionalLink.get();

@@ -24,8 +24,7 @@ import com.argosnotary.argos.domain.account.Account;
 import com.argosnotary.argos.domain.crypto.KeyPair;
 import com.argosnotary.argos.domain.layout.ApprovalConfiguration;
 import com.argosnotary.argos.domain.layout.Layout;
-import com.argosnotary.argos.domain.layout.LayoutMetaBlock;
-import com.argosnotary.argos.domain.layout.LayoutSegment;
+import com.argosnotary.argos.domain.layout.LayoutMetaBlock; 
 import com.argosnotary.argos.domain.layout.ReleaseConfiguration;
 import com.argosnotary.argos.domain.layout.Step;
 import com.argosnotary.argos.domain.permission.Permission;
@@ -73,7 +72,6 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api")
 public class LayoutRestService implements LayoutApi {
 
-    private static final String SEGMENT_NAME = "segmentName";
     private final LayoutMetaBlockMapper layoutMetaBlockConverter;
     private final LayoutMetaBlockRepository layoutMetaBlockRepository;
     private final LayoutValidatorService validator;
@@ -176,14 +174,12 @@ public class LayoutRestService implements LayoutApi {
                 .map(configurationConverter::convertToRestReleaseConfiguration)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "release configuration not found")));
     }
-
+    
     private boolean canApprove(ApprovalConfiguration approvalConf, String activeAccountKeyId, Layout layout) {
-        return layout.getLayoutSegments().stream()
-                .filter(layoutSegment -> layoutSegment.getName().equals(approvalConf.getSegmentName()))
-                .map(LayoutSegment::getSteps).flatMap(Collection::stream)
+        Optional<Boolean> canApprove = layout.getSteps().stream()
                 .filter(step -> step.getName().equals(approvalConf.getStepName()))
-                .map(Step::getAuthorizedKeyIds).flatMap(Collection::stream)
-                .anyMatch(authorizedKeyId -> authorizedKeyId.equals(activeAccountKeyId));
+                .map(step -> step.getAuthorizedKeyIds().contains(activeAccountKeyId)).findFirst();
+        return canApprove.isPresent() && canApprove.get();
     }
 
     private void validateContextFieldsForCollectorSpecification(RestApprovalConfiguration approvalConfiguration) {
@@ -204,50 +200,29 @@ public class LayoutRestService implements LayoutApi {
         validateContextFieldsForCollectorSpecification(restApprovalConfiguration);
         ApprovalConfiguration approvalConfiguration = configurationConverter.convertFromRestApprovalConfiguration(restApprovalConfiguration);
         approvalConfiguration.setSupplyChainId(supplyChainId);
-        verifyStepNameAndSegmentNameExistInLayout(approvalConfiguration);
+        verifyStepNameExistInLayout(approvalConfiguration);
         return approvalConfiguration;
     }
 
-    private void verifyStepNameAndSegmentNameExistInLayout(ApprovalConfiguration approvalConfiguration) {
-        Map<String, Set<String>> segmentStepNameCombinations = getSegmentsAndSteps(approvalConfiguration);
-        if (segmentNameIsNotPresentInLayout(approvalConfiguration, segmentStepNameCombinations)) {
-            throwLayoutValidationException(
-                    MODEL_CONSISTENCY,
-                    SEGMENT_NAME,
-                    "segment with name : " + approvalConfiguration.getSegmentName() + " does not exist in layout"
-            );
-        } else if (stepNameIsNotPresentInSegment(approvalConfiguration, segmentStepNameCombinations)) {
+    private void verifyStepNameExistInLayout(ApprovalConfiguration approvalConfiguration) {
+        Set<String> stepNames = getSteps(approvalConfiguration);
+        if (!stepNames.contains(approvalConfiguration.getStepName())) {
             throwLayoutValidationException(
                     MODEL_CONSISTENCY,
                     "stepName",
-                    "step with name: " + approvalConfiguration.getStepName() + " in segment: " + approvalConfiguration.getSegmentName() + " does not exist in layout"
+                    "step with name: " + approvalConfiguration.getStepName() + " does not exist in layout"
             );
         }
     }
 
-    private Map<String, Set<String>> getSegmentsAndSteps(ApprovalConfiguration approvalConfiguration) {
+    private Set<String> getSteps(ApprovalConfiguration approvalConfiguration) {
         return layoutMetaBlockRepository.findBySupplyChainId(approvalConfiguration.getSupplyChainId())
                 .map(layoutMetaBlock -> layoutMetaBlock
-                        .getLayout().getLayoutSegments()
-                        .stream()
-                        .collect(Collectors
-                                .toMap(LayoutSegment::getName,
-                                        segment -> segment.getSteps()
-                                                .stream().map(Step::getName)
-                                                .collect(Collectors.toSet())))
+                    .getLayout().getSteps()
+                    .stream()
+                    .map(Step::getName)
+                    .collect(Collectors.toSet())
                 )
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "layout not found"));
     }
-
-    private static boolean stepNameIsNotPresentInSegment(ApprovalConfiguration approvalConfiguration, Map<String, Set<String>> segmentStepNameCombinations) {
-        return !segmentStepNameCombinations
-                .get(approvalConfiguration.getSegmentName())
-                .contains(approvalConfiguration.getStepName());
-    }
-
-    private static boolean segmentNameIsNotPresentInLayout(ApprovalConfiguration approvalConfiguration, Map<String, Set<String>> segmentStepNameCombinations) {
-        return !segmentStepNameCombinations.containsKey(approvalConfiguration.getSegmentName());
-    }
-
-
 }

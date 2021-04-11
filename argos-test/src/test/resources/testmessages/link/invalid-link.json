@@ -6,8 +6,6 @@
     "hashAlgorithm": "SHA384"
   },
   "link": {
-    "runId": "69af2dd",
-    "layoutSegmentName": "segment1",
     "materials": [
       {
         "uri": "materialsUri1",

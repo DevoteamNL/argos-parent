@@ -27,7 +27,5 @@ import java.io.Serializable;
 @Builder
 @Getter
 public class LinkBuilderSettings implements Serializable {
-    private final String runId;
     private final String stepName;
-	private final String layoutSegmentName;
 }

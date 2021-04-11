@@ -48,10 +48,8 @@ import java.util.Optional;
 public class ArgosJenkinsHelper {
 
     private final String privateKeyCredentialId;
-    private final String layoutSegmentName;
     private final String stepName;
     private final String supplyChainIdentifier;
-    private final String runId;
 
     public LinkBuilder createArgosLinkBuilder() {
 
@@ -65,10 +63,8 @@ public class ArgosJenkinsHelper {
         }
         
         checkProperty(privateKeyCredentialId, "privateKeyCredentialId");
-        checkProperty(layoutSegmentName, "layoutSegmentName");
         checkProperty(stepName, "stepName");
         checkProperty(supplyChainIdentifier, "supplyChainIdentifier");
-        checkProperty(runId, "runId");
 
 
         String argosServiceBaseUrl = getArgosServiceBaseApiUrl();
@@ -87,9 +83,8 @@ public class ArgosJenkinsHelper {
                     .supplyChainName(supplyChainName).build())
                     .getLinkBuilder(
                             LinkBuilderSettings.builder()
-                                .layoutSegmentName(layoutSegmentName)
                                 .stepName(stepName)
-                                .runId(runId).build());
+                                .build());
     }
 
     public static char[] getPrivateKeyPassword(String privateKeyCredentialId) {

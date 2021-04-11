@@ -71,22 +71,10 @@ public class ArgosRecorder extends Recorder {
     private String privateKeyCredentialId;
 
     /**
-     * Name of the segment to execute.
-     */
-    @DataBoundSetter
-    private final String layoutSegmentName;
-
-    /**
      * Name of the step to execute.
      */
     @DataBoundSetter
     private String stepName;
-
-    /**
-     * Run Id of the pipeline
-     */
-    @DataBoundSetter
-    private String runId;
 
     /**
      * Link metadata used to record this step
@@ -95,13 +83,11 @@ public class ArgosRecorder extends Recorder {
 
 
     @DataBoundConstructor
-    public ArgosRecorder(String supplyChainIdentifier, String privateKeyCredentialId, String layoutSegmentName, String stepName, String runId) {
+    public ArgosRecorder(String supplyChainIdentifier, String privateKeyCredentialId, String stepName) {
         this.stepName = stepName;
-        this.layoutSegmentName = layoutSegmentName;
         this.supplyChainIdentifier = supplyChainIdentifier;
         String credentialId = privateKeyCredentialId != null ? privateKeyCredentialId : ArgosServiceConfiguration.get().getPrivateKeyCredentialId();
         this.privateKeyCredentialId = credentialId;
-        this.runId = runId;
     }
 
     public String getSupplyChainIdentifier() {
@@ -116,14 +102,6 @@ public class ArgosRecorder extends Recorder {
         return stepName;
     }
 
-    public String getLayoutSegmentName() {
-        return layoutSegmentName;
-    }
-
-    public String getRunId() {
-        return runId;
-    }
-
     @Override
     public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
         try {
@@ -135,9 +113,7 @@ public class ArgosRecorder extends Recorder {
             argos4jLinkBuilder = new ArgosJenkinsHelper(
                     environment.expand(privateKeyCredentialId),
                     environment.expand(stepName),
-                    environment.expand(layoutSegmentName),
-                    environment.expand(supplyChainIdentifier),
-                    environment.expand(runId)).createArgosLinkBuilder();
+                    environment.expand(supplyChainIdentifier)).createArgosLinkBuilder();
 
             argos4jLinkBuilder.collectMaterials(createFileCollector(cwdStr));
             return true;
