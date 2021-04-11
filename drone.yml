@@ -14,7 +14,7 @@ steps:
 - name: pre-argos
   image: argosnotary/argos4j-cli:1.0.1
   commands:
-  - argos-cli --config-file argos-settings.json postLink --phase PRE -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
+  - argos-cli --config-file argos-settings.json postLink --phase PRE -b /drone/src -p /drone/src --step build -q ${DRONE_TAG}
   environment:  
     WORKSPACE: /home/argos
     CREDENTIALS_PASSPHRASE:
@@ -45,7 +45,7 @@ steps:
 - name: post-argos
   image: argosnotary/argos4j-cli:1.0.1
   commands:
-  - argos-cli --config-file argos-settings.json postLink --phase POST -b /drone/src -p /drone/src --segment drone --step build -q ${DRONE_TAG} --runId ${DRONE_TAG}
+  - argos-cli --config-file argos-settings.json postLink --phase POST -b /drone/src -p /drone/src --step build -q ${DRONE_TAG}
   environment:  
     WORKSPACE: /home/argos
     CREDENTIALS_PASSPHRASE:
@@ -285,6 +285,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: cba8f43b3e65469ac1543318b6d82702c4448bd6a83891b88d39924be4b312dc
+hmac: 964e0b802067ad6211f95dfa9dc65f547cf3c12c431ce6d065905a5a20b9e759
 
 ...
