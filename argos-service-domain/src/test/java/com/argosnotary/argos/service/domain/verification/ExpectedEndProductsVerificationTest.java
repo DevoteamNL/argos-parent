@@ -154,7 +154,7 @@ class ExpectedEndProductsVerificationTest {
     @Test
     void verifyToVerifyProductsMatchesSeveralRules() {
         matchRule1 = new MatchRule(PATTERN1, null, ArtifactType.PRODUCTS, null, DESTINATION_STEP_NAME1);
-        matchRule2 = new MatchRule(PATTERN2, null, ArtifactType.PRODUCTS, null, DESTINATION_STEP_NAME1);
+        matchRule2 = new MatchRule(PATTERN3, null, ArtifactType.PRODUCTS, null, DESTINATION_STEP_NAME1);
         layout = Layout.builder().expectedEndProducts(List.of(matchRule1, matchRule2)).steps(List.of(step1)).build();
         layoutMetaBlock = LayoutMetaBlock.builder().layout(layout).build();
         linkMetaBlocks = new ArrayList<>(List.of(LinkMetaBlock
@@ -165,7 +165,7 @@ class ExpectedEndProductsVerificationTest {
                 .builder()
                 .linkMetaBlocks(linkMetaBlocks)
                 .layoutMetaBlock(layoutMetaBlock)
-                .productsToVerify(Set.of(artifact1))
+                .productsToVerify(Set.of(artifact1, artifact2))
                 .build();
         assertThat(verification.verify(verificationContext).isRunIsValid(), is(true));
     }
@@ -185,7 +185,7 @@ class ExpectedEndProductsVerificationTest {
                 .layoutMetaBlock(layoutMetaBlock)
                 .productsToVerify(Set.of(artifact1))
                 .build();
-        assertThat(verification.verify(verificationContext).isRunIsValid(), is(true));
+        assertThat(verification.verify(verificationContext).isRunIsValid(), is(false));
     }
     
     @Test
@@ -202,6 +202,25 @@ class ExpectedEndProductsVerificationTest {
                 .linkMetaBlocks(linkMetaBlocks)
                 .layoutMetaBlock(layoutMetaBlock)
                 .productsToVerify(Set.of(artifact1, artifact2))
+                .build();
+        assertThat(verification.verify(verificationContext).isRunIsValid(), is(false));
+
+    }
+    
+    @Test
+    void toVerifyProductsRealSubSetOfMatchedSet() {
+        matchRule1 = new MatchRule(PATTERN3, null, ArtifactType.PRODUCTS, null, DESTINATION_STEP_NAME1);
+        layout = Layout.builder().expectedEndProducts(List.of(matchRule1)).steps(List.of(step1)).build();
+        layoutMetaBlock = LayoutMetaBlock.builder().layout(layout).build();
+        linkMetaBlocks = new ArrayList<>(List.of(LinkMetaBlock
+                .builder().link(Link.builder()
+                        .products(List.of(artifact1, artifact2))
+                        .stepName(DESTINATION_STEP_NAME1).build()).build()));
+        verificationContext = VerificationContext
+                .builder()
+                .linkMetaBlocks(linkMetaBlocks)
+                .layoutMetaBlock(layoutMetaBlock)
+                .productsToVerify(Set.of(artifact1))
                 .build();
         assertThat(verification.verify(verificationContext).isRunIsValid(), is(false));
 

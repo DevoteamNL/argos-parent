@@ -68,7 +68,7 @@ public class ArtifactsVerificationContext {
     	return (StringUtils.hasLength(prefix) && artifact.getUri().startsWith(prefix)) || !StringUtils.hasLength(prefix);
     }
 
-    private static String getUri(Artifact artifact, String prefix) {
+    public static String getUri(Artifact artifact, String prefix) {
         if (StringUtils.hasLength(prefix) && artifact.getUri().startsWith(prefix)) {
             return Paths.get(prefix).relativize(Paths.get(artifact.getUri())).toString();
         } else {

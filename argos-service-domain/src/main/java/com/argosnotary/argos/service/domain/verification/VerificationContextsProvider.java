@@ -71,10 +71,10 @@ public class VerificationContextsProvider {
      * Create a list of Verification contexts starting with the end products.
      * 
      * @param layoutMetaBlock
-     * @param productsToVerify List of expected product artifacts
+     * @param artifactsToRelease List of expected product artifacts
      * @return List of VerificationContexts
      */
-    public List<VerificationContext> createPossibleVerificationContexts(LayoutMetaBlock layoutMetaBlock, Set<Artifact> productsToVerify) {
+    public List<VerificationContext> createPossibleVerificationContexts(LayoutMetaBlock layoutMetaBlock, Set<Artifact> artifactsToRelease) {
         Set<Set<LinkMetaBlock>> linkMetaBlockSets = new HashSet<>();
         // create context
         Set<LinkMetaBlock> links = new HashSet<>(linkMetaBlockRepository.findBySupplyChainId(layoutMetaBlock.getSupplyChainId()));
@@ -94,7 +94,7 @@ public class VerificationContextsProvider {
                         .builder()
                         .layoutMetaBlock(layoutMetaBlock)
                         .linkMetaBlocks(new ArrayList<>(linkSet))
-                        .productsToVerify(productsToVerify).build())
+                        .productsToVerify(artifactsToRelease).build())
                 .collect(Collectors.toList());
     }
     

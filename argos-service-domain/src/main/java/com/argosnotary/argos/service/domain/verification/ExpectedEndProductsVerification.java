@@ -19,26 +19,28 @@
  */
 package com.argosnotary.argos.service.domain.verification;
 
+import com.argosnotary.argos.domain.layout.ArtifactType;
 import com.argosnotary.argos.domain.layout.rule.MatchRule;
-import com.argosnotary.argos.domain.layout.rule.Rule;
 import com.argosnotary.argos.domain.layout.rule.RuleType;
 import com.argosnotary.argos.domain.link.Artifact;
 import com.argosnotary.argos.domain.link.Link;
 import com.argosnotary.argos.service.domain.verification.rules.RuleVerification;
-import com.argosnotary.argos.service.domain.verification.rules.RuleVerificationContext;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+
+import java.nio.file.Paths;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.argosnotary.argos.service.domain.verification.Verification.Priority.EXPECTED_END_PRODUCTS;;
 
@@ -65,51 +67,40 @@ public class ExpectedEndProductsVerification implements Verification {
     @Override
     public VerificationRunResult verify(VerificationContext verificationContext) {
         Map<String, Link> linksMap = verificationContext.getStepLinkMap();
+                
+        Set<Artifact> matchedArtifacts = getMatchedArtifacts(linksMap, verificationContext.getLayoutMetaBlock().getLayout().getExpectedEndProducts());
+        Set<Artifact> artifactsToRelease = verificationContext.getArtifactsToRelease();
         
-        boolean isValid = verifyArtifacts(linksMap, 
-                verificationContext.getProductsToVerify(), 
-                verificationContext.getLayoutMetaBlock().getLayout().getExpectedEndProducts());
-        
-        return VerificationRunResult.builder().runIsValid(isValid).build();
+        return VerificationRunResult.builder().runIsValid(matchedArtifacts.containsAll(artifactsToRelease) && artifactsToRelease.containsAll(matchedArtifacts)).build();
     }
 
-    private boolean verifyArtifacts(Map<String, Link> linksMap,
-            Set<Artifact> artifacts, List<MatchRule> rules) {
-        ArtifactsVerificationContext artifactsContext = ArtifactsVerificationContext.builder()
-                .notConsumedArtifacts(artifacts)
-                .linksMap(linksMap)
-                .build();
-
-        return rules.stream()
-                .map(rule -> verifyRule(rule, ruleVerifier -> {
-                    log.info("verify match rule for expected end products");
-                    RuleVerificationContext<Rule> context = RuleVerificationContext.builder()
-                            .rule(rule)
-                            .artifactsContext(artifactsContext)
-                            .build();
-                    return ruleVerifier.verify(context);
-                }))
-                .filter(valid -> !valid)
-                .findFirst()
-                .orElseGet(() -> validateNotConsumedArtifacts(artifactsContext));        
-    }
-
-    private boolean verifyRule(Rule rule, Predicate<RuleVerification> ruleVerifyFunction) {
-        return Optional.ofNullable(rulesVerificationMap.get(rule.getRuleType()))
-                .map(ruleVerifyFunction::test)
-                .orElseGet(() -> {
-                    log.error("rule verification [{}] not implemented", rule.getRuleType());
-                    return false;
-                });
+    private Set<Artifact> getMatchedArtifacts(Map<String, Link> linksMap, List<MatchRule> expectedEndProducts) {
+        Set<Artifact> matchedArtifacts = new HashSet<>();
+        for (MatchRule rule : expectedEndProducts) {
+            Link link = linksMap.get(rule.getDestinationStepName());
+            Set<Artifact> tempArtifacts = new HashSet<>();
+            if (rule.getDestinationType().equals(ArtifactType.MATERIALS)) {
+                tempArtifacts.addAll(link.getMaterials());
+            } else {
+                tempArtifacts.addAll(link.getProducts());
+            }
+            matchedArtifacts.addAll(ArtifactsVerificationContext
+                    .filterArtifacts(tempArtifacts, rule.getPattern(), rule.getDestinationPathPrefix())
+                    .stream()
+                    .map(artifact -> normalize(artifact, rule.getSourcePathPrefix(), rule.getDestinationPathPrefix())).collect(Collectors.toSet()));            
+            
+        }
+        return matchedArtifacts;
     }
     
-    private boolean validateNotConsumedArtifacts(ArtifactsVerificationContext artifactsContext) {
-        if (!artifactsContext.getNotConsumedArtifacts().isEmpty()) {
-            artifactsContext.getNotConsumedArtifacts().stream().forEach(artifact -> 
-                log.info("Not consumed artifact [{}]", artifact));
-            return false;
-        }
-        return true;
+    private Artifact normalize(Artifact artifact, String srcPrefix, String destPrefix) {
+        String uri = ArtifactsVerificationContext.getUri(artifact, destPrefix);
+        if (StringUtils.hasLength(srcPrefix)) {
+            uri = Paths.get(srcPrefix, uri).toString();
+        }            
+        return Artifact.builder()
+                .hash(artifact.getHash())
+                .uri(uri).build();
     }
 
 }

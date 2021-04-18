@@ -45,7 +45,7 @@ public class VerificationContext {
     private final LayoutMetaBlock layoutMetaBlock;
     
     @Getter
-    private final Set<Artifact> productsToVerify;
+    private final Set<Artifact> artifactsToRelease;
 
     @Builder
     public VerificationContext(@NonNull List<LinkMetaBlock> linkMetaBlocks, 
@@ -53,7 +53,7 @@ public class VerificationContext {
         this.linkMetaBlocks = new ArrayList<>(linkMetaBlocks);
         this.originalLinkMetaBlocks = new ArrayList<>(linkMetaBlocks);
         this.layoutMetaBlock = layoutMetaBlock;
-        this.productsToVerify = new HashSet<>(productsToVerify);
+        this.artifactsToRelease = new HashSet<>(productsToVerify);
     }
     
     public void removeLinkMetaBlocks(List<LinkMetaBlock> linkMetaBlocksToRemove) {
