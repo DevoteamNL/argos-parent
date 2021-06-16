@@ -80,7 +80,7 @@
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <bouncycastle-api.version>2.18</bouncycastle-api.version>
-        <credentials.version>2.3.12</credentials.version>
+        <credentials.version>2.3.19</credentials.version>
         <plain-credentials.version>1.7</plain-credentials.version>
         <workflow-step-api.version>2.22</workflow-step-api.version>
         <workflow-api.version>2.40</workflow-api.version>
