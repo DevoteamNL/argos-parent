@@ -23,6 +23,7 @@ import com.argosnotary.argos.service.security.TokenProviderImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -63,7 +64,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<String> redirectUri = httpCookieOAuth2AuthorizationRequestRepository.getRedirectUri(request);
         URI targetUrl = redirectUri.map(URI::create).orElse(URI.create(getDefaultTargetUrl()));
 
-        String token = tokenProvider.createToken(authentication.getPrincipal().getUsername());
+        String token = tokenProvider.createToken(((OAuth2User) authentication.getPrincipal()).getUsername());
 
         return UriComponentsBuilder.fromUri(frontendRedirectBasePath).path(targetUrl.getPath())
                 .query(targetUrl.getQuery())
