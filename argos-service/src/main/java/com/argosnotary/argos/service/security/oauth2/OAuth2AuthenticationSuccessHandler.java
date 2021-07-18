@@ -63,7 +63,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<String> redirectUri = httpCookieOAuth2AuthorizationRequestRepository.getRedirectUri(request);
         URI targetUrl = redirectUri.map(URI::create).orElse(URI.create(getDefaultTargetUrl()));
 
-        String token = tokenProvider.createToken(authentication.getPrincipal().getName());
+        String token = tokenProvider.createToken(authentication.getPrincipal().getUsername());
 
         return UriComponentsBuilder.fromUri(frontendRedirectBasePath).path(targetUrl.getPath())
                 .query(targetUrl.getQuery())
